@@ -1,0 +1,114 @@
+/*优惠活动
+=========*/
+.promotion-page .gb-main-r{
+    width: 980px;
+}
+.promotion-item{
+    margin-bottom: 20px;
+    background: #fff;
+    border:1px solid #d2d2d2;
+    box-shadow: 0 4px 8px rgba(0,0,0,.3);
+}
+.promotion-item .promotion-brief{
+    position: relative;
+    /* height: 223px; */
+    overflow: hidden;
+    cursor: pointer;
+}
+.promotion-brief .promotion-tit,
+.promotion-brief .time,
+.promotion-brief .pic{
+    padding-left: 20px;
+    padding-right:20px;
+}
+.promotion-brief .promotion-tit{
+    line-height: 58px;
+    font-size: 22px;
+    border-bottom: 1px solid #dadada;
+}
+.promotion-brief:hover .promotion-tit{
+    animation:bounceInRight .7s both;
+    -webkit-animation:bounceInRight .7s both;
+}
+.promotion-brief .time{
+    font-size: 14px;
+    height: 23px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    /* line-height:34px; */
+    color: #bababa;
+    border-bottom: 1px solid #dadada;
+}
+.promotion-brief .pic img{
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    overflow: hidden;
+}
+.promotion-brief:hover .pic img{
+    opacity: .75;
+}
+.promotion-item .promotion-content{
+    padding: 30px 20px;
+    background-color: #fff;
+    display: none;
+}
+
+.promotion-content strong,
+.promotion-content em{
+    font-weight: 600;
+}
+.promotion-content p,
+.promotion-content h3,
+.promotion-content div{
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+.promotion-content p,
+.promotion-content h2{
+    line-height: 1.6;
+}
+.promotion-content h2{
+    font-size: 22px;
+    font-weight: 700;
+}
+.promotion-content h3{
+    font-size: 16px;
+    font-weight: 700;
+}
+.promotion-content .table{
+    border: 1px solid #fff;
+}
+.promotion-content .table th{
+    font-size: 14px;
+    background: #4d85e6;
+    border: 1px solid #fff;
+    color: #fff;
+}
+.promotion-content .table td{
+    background-color: #eee;
+    border: 1px solid #fff;
+}
+.promotion-content .table tr:hover td{
+    background-color: #ddd;
+}
+.promotion-item .btn-reback{
+    display: block;
+    padding: 12px 14px;
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-bottom: -31px;
+    color: #fff;
+    background: #4d85e6;
+    text-align: center;
+}
+
+/*优惠活动banner头部*/
+.favo_banner{
+  position: relative; margin-bottom:15px;
+}
+.favo_banner img{
+  width: 100%;
+}

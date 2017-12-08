@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WebProxyApply">
+	<typeAlias alias="webProxyApply" type="com.gameportal.manage.sitesettings.model.WebProxyApply"/>
+	
+	<sql id="commonColumns">
+		<![CDATA[
+			aid,
+			truename,
+			qqskype,
+			aemail,
+			spreadfs,
+			applysource,
+			applytime,
+			status as status,
+			description
+		]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="aid">
+	             aid = #aid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="truename">
+	             <![CDATA[truename like '%$truename$%']]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+	<insert id="insert" parameterClass="webProxyApply">
+		<![CDATA[
+			 INSERT INTO
+	         a_web_proxy_apply (
+	        	aid,
+				truename,
+				qqskype,
+				aemail,
+				spreadfs,
+				applysource,
+				applytime,
+				status,
+				description
+	        ) VALUES (
+	        	#aid#,
+				#truename#,
+				#qqskype#,
+				#aemail#,
+				#spreadfs#,
+				#applysource#,
+				#applytime#,
+				#status#,
+				#description#
+	        )
+		]]>
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="aid" >
+           SELECT  last_insert_id()
+        </selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="webProxyApply">
+		<![CDATA[
+			UPDATE a_web_proxy_apply SET 
+				truename = #truename#,
+				qqskype = #qqskype#,
+				aemail = #aemail#,
+				spreadfs = #spreadfs#,
+				applysource = #applysource#,
+				applytime = #applytime#,
+				status = #status#,
+				description = #description#
+			WHERE 
+	        	aid = #aid#
+		]]>
+	</update>
+	
+	<delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_web_proxy_apply where
+        aid = #aid#
+    ]]>
+    </delete>
+    
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_web_proxy_apply
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <select id="pageSelect" resultClass="webProxyApply">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_web_proxy_apply 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+	
+</sqlMap>

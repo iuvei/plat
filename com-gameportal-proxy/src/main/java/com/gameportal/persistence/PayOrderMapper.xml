@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.PayOrderMapper">
+ <insert id="insert" parameterType="PayOrder">
+    <![CDATA[
+        INSERT INTO
+        a_pay_order (
+       		 poid,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date ,
+        	update_date ,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	kfopttime ,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	cwopttime,
+        	ordertype,
+        	beforebalance,
+	        laterbalance
+        ) VALUES (
+            #{poid},
+        	#{platformorders} ,
+        	#{uiid} ,
+        	#{paytyple} ,
+        	#{ppid} ,
+        	#{paymethods} ,
+        	#{bankname} ,
+        	#{bankcard} ,
+        	#{openname} ,
+        	#{deposit} ,
+        	#{deposittime} ,
+        	#{amount} ,
+        	#{paystatus} ,
+        	#{status} ,
+        	#{remarks} ,
+        	#{ordercontent} ,
+        	#{createDate} ,
+        	#{updateDate} ,
+        	#{uaccount},
+        	#{urealname} ,
+        	#{kfremarks},
+        	#{kfid},
+        	#{kfname},
+        	#{kfopttime},
+        	#{cwremarks},
+        	#{cwid},
+        	#{cwname},
+        	#{cwopttime},
+        	#{ordertype},
+        	#{beforebalance},
+	        #{laterbalance}
+        )
+    ]]>
+    </insert>
+    
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="selectRow">
+	    <![CDATA[
+           	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ordertype,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date ,
+        	update_date ,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	kfopttime ,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	cwopttime,
+        	beforebalance,
+        	laterbalance,
+        	hdnumber
+	    ]]>
+	</sql>
+	
+	<!-- 查询条件    -->
+	<sql id="selectWhere">
+		<if test="pd.startDate !=null and pd.startDate !=''">
+			and p.deposittime >= #{pd.startDate}
+		</if>
+		<if test="pd.endDate !=null and pd.endDate !=''">
+			<![CDATA[and p.deposittime <= #{pd.endDate}]]>
+		</if> 
+  		<if test="pd.uaccount !=null and pd.uaccount !=''">
+			and p.uaccount = #{pd.uaccount}
+		</if>
+		<if test="pd.puiid !=null and pd.puiid !=''">
+			and u.puiid = #{pd.puiid}
+		</if>
+		<if test="pd.status !=null and pd.status !=''">
+			and p.status = #{pd.status}
+		</if>
+		<if test="pd.paytyple !=null and pd.paytyple !=''">
+			and p.paytyple in ${pd.paytyple}
+		</if>
+		<if test="pd.paymethods !=null and pd.paymethods !=''">
+			and p.paymethods = #{pd.paymethods}
+		</if>
+	</sql>
+	
+	<!-- 代理下线出入款记录 -->
+	<select id="findlistPageOrderLog" resultType="PayOrder" parameterType="page">
+		<![CDATA[
+		SELECT p.uiid,p.uaccount,p.urealname,p.amount,p.paytyple,p.paymethods,p.cwremarks,p.deposittime,p.status FROM a_pay_order p LEFT JOIN a_user_info u ON p.uiid = u.uiid  where 1=1
+		]]> 
+		<include refid="selectWhere"/>
+		order by p.deposittime desc
+	</select>
+	
+	<!-- 代理下线出去款记录总计 -->
+	<select id="selectProxyPayOrderTotal" resultType="string">
+		<![CDATA[
+			SELECT IFNULL(sum(p.amount),'0') FROM a_pay_order p LEFT JOIN a_user_info u ON p.uiid = u.uiid where 1=1
+		]]> 
+		<if test="startDate !=null and startDate !=''">
+			and p.deposittime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and p.deposittime <= #{endDate}]]>
+		</if> 
+  		<if test="uaccount !=null and uaccount !=''">
+			and p.uaccount = #{uaccount}
+		</if>
+		<if test="puiid !=null and puiid !=''">
+			and u.puiid = #{puiid}
+		</if>
+		<if test="status !=null and status !=''">
+			and p.status = #{status}
+		</if>
+		<if test="ordertype !=null and ordertype !=''">
+			and p.ordertype = #{ordertype}
+		</if>
+		<if test="paytyple !=null and paytyple !=''">
+			and p.paytyple in ${paytyple}
+		</if>
+		<if test="paymethods !=null and paymethods !=''">
+			and p.paymethods = #{paymethods}
+		</if>
+	</select>
+</mapper>

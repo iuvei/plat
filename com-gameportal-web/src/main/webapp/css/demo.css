@@ -1,0 +1,347 @@
+
+
+.btn-link {
+  color: #fce01d;
+}
+.btn-link:link,
+.btn-link:visited,
+.btn-link:active,
+.btn-link:hover,
+.btn-link:focus {
+  outline: none;
+  /*text-decoration: none;*/
+  color: #fff;
+}
+/* ��ʾ�ɫ */
+.tooltip .tooltip-inner {
+  background: #000000;
+}
+.top.tooltip .tooltip-arrow {
+  border-top-color: #000000;
+}
+.required {
+  color: #ff0000;
+}
+.form-control {
+  width: auto;
+  display: inline-block;
+}
+#ajaxLodding {
+  position: fixed;
+  z-index: 10000;
+  display: none;
+  width: 100px;
+  height: 100px;
+  line-height: 48px;
+  border: none;
+  padding: 15px;
+  /*background-color: #000;*/
+  /*-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	opacity: .7;*/
+  top: 50%;
+  left: 50%;
+  margin: -50px 0 0 -50px;
+  text-align: center;
+}
+
+select {
+  border: none;
+  color: #000;
+}
+/*#region ݔ�����ʾ�ɫ */
+::-webkit-input-placeholder {
+  /* WebKit browsers */
+  color: #c7c7c7;
+}
+:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #c7c7c7;
+}
+::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #c7c7c7;
+}
+:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  color: #c7c7c7;
+}
+/*#endregion */
+.header {
+  width: 100%;
+  height: 151px;
+  background: #cccccc;
+  box-shadow: 0 5px 5px -5px #000000;
+}
+.header .box {
+  width: 989px;
+  margin: auto;
+}
+.header .box .logo img {
+  margin: 25px 10px;
+}
+
+#game-lobby-container {
+  width: 958px;
+  margin: auto;
+  /*#left-border, #right-border {
+		width: 3px;
+		height: 445px;
+		background: -webkit-linear-gradient(top, #7dea0e 0, #26282c 75%, transparent);
+		background: linear-gradient(to bottom, #7dea0e 0, #26282c 75%, transparent);
+	}
+
+	#header-border {
+		height: 3px;
+		background-color: #7dea0e;
+	}
+
+	#left-border {
+		float: left;
+	}*/
+}
+#game-lobby-container #content-container {
+  float: left;
+  width: 958px;
+  padding-top: 0px;
+  margin-bottom: 0px;
+}
+#game-lobby-container #content-container .row-3 {
+  margin-bottom: 6px;
+}
+#game-lobby-container #content-container .row-3 div {
+  float: left;
+  margin-left: 8px;
+  margin-bottom: 6px;
+}
+#game-lobby-container #content-container .row-3 div:first-child {
+  margin-left: 10px;
+}
+#game-lobby-container #content-container .row-3 div span {
+  left: 200px;
+  top: 95px;
+}
+#game-lobby-container #content-container .row-1 div,
+#game-lobby-container #content-container .row-2 div,
+#game-lobby-container #content-container .row-3 div,
+#game-lobby-container #content-container .row-4 div {
+  position: relative;
+}
+#game-lobby-container #content-container .row-1 div .mask,
+#game-lobby-container #content-container .row-2 div .mask,
+#game-lobby-container #content-container .row-3 div .mask,
+#game-lobby-container #content-container .row-4 div .mask {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  line-height: 138px;
+}
+#game-lobby-container #content-container .row-1 div .mask img,
+#game-lobby-container #content-container .row-2 div .mask img,
+#game-lobby-container #content-container .row-3 div .mask img,
+#game-lobby-container #content-container .row-4 div .mask img {
+  vertical-align: middle;
+}
+#game-lobby-container #content-container .row-1 div .table,
+#game-lobby-container #content-container .row-2 div .table,
+#game-lobby-container #content-container .row-3 div .table,
+#game-lobby-container #content-container .row-4 div .table {
+  line-height: 0;
+}
+#game-lobby-container #content-container .row-1 div .table table,
+#game-lobby-container #content-container .row-2 div .table table,
+#game-lobby-container #content-container .row-3 div .table table,
+#game-lobby-container #content-container .row-4 div .table table {
+  height: 105px;
+  margin: 30px auto 30px auto;
+}
+#game-lobby-container #content-container .row-1 div span,
+#game-lobby-container #content-container .row-2 div span,
+#game-lobby-container #content-container .row-3 div span,
+#game-lobby-container #content-container .row-4 div span {
+  position: absolute;
+  z-index: 1;
+  font-size: 15px;
+  color: #006d04;
+  font-weight: bold;
+}
+#game-lobby-container #content-container #maintain {
+  margin: auto;
+  width: 600px;
+}
+#game-lobby-container #content-container #mg-electronic-game-container {
+  width: 920px;
+  margin: auto;
+  padding-top: 20px;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .ui-widget-header {
+  background: transparent;
+  padding: 0;
+  border: 0;
+  border-bottom: solid 1px #cccccc;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .ui-widget-header .ui-state-default {
+  background: #fac313;
+  border: solid 1px #b7b7b7;
+  border-bottom: 0;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .ui-widget-header .ui-state-default a {
+  color: #588729;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .ui-widget-header .ui-state-hover,
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .ui-widget-header .ui-state-active {
+  background: #cccccc;
+  border: solid 1px #588729;
+  border-bottom: 0;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .ui-widget-header .ui-state-hover a,
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .ui-widget-header .ui-state-active a {
+  color: #000;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content {
+  padding-left: 0;
+  padding-right: 0;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content {
+  float: left;
+  width: 159px;
+  margin-right: 26px;
+  height: 174px;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox {
+  /*width: 159px;
+							height: 148px;*/
+  border: solid 1px #050505;
+  padding: 0px;
+  background-color: #a3a3a3;
+  overflow: hidden;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox:hover {
+  border: solid 1px #67c00d;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox .image-box {
+  width: 153px;
+  height: 106px;
+  border: none;
+  -moz-transition: margin-left 0.1s ease-out;
+  -webkit-transition: margin-left 0.1s ease-out;
+  -o-transition: margin-left 0.1s ease-out;
+  transition: margin-left 0.1s ease-out;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox .image-box:hover {
+  margin-left: -147px;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox a {
+  text-align: center;
+  margin: auto;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox a img {
+  height: 106px;
+  width: 153px;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox .progressives {
+  position: absolute;
+  margin-top: -30px;
+  margin-left: -5px;
+  width: 157px;
+  height: 17px;
+  background: #252525;
+  line-height: 16px;
+  text-align: center;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox .progressives .odometer {
+  display: none;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .divbox .progressives span {
+  font-size: 16px;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content .gamename {
+  width: 159px;
+  height: 28px;
+  margin: 1px auto 3px auto;
+  color: #ff0000;
+  text-align: center;
+  font-size: 16px;
+  margin-top: 10px;
+}
+#game-lobby-container #content-container #mg-electronic-game-container .tabs .content .game-content:nth-child(5n) {
+  margin-right: 0;
+}
+#game-lobby-container #right-border {
+  float: right;
+}
+a:link {text-decoration:none; font-size:14px; color:#006d04;}
+a:visited {text-decoration:none; font-size:14px; color:#006d04;}
+a:hover {text-decoration:none; font-size:14px; color:#b18702;}
+a:active {text-decoration:none; font-size:14px; color:#b18702;}
+/*# sourceMappingURL=demo.css.map */
+
+/*---老虎机---*/
+.slots_bt{ width:280px;height:68px; background:url(../images/slots_bt.png); position:absolute;top:-15px; left:460px;}
+.slots_menu{float:left;width:280px;margin:30px 0px;}
+.slots_menu ul li{float:left;width:180px;height:42px;line-height:42px; background:url(../images/casino_hen.png) center bottom no-repeat; padding-left:100px;}
+.slots_menu ul li a{color:#666; font-family:"黑体";font-size:16px;}
+.slots_menu ul li a:hover{color:#d90000;}
+.slots_down2{ float:left;width:280px;height:51px; background:url(../images/slots_down2.png) center no-repeat;margin-bottom:20px;}
+.slots_down2 a{display:block;width:280px;height:51px;}
+.slot_box{float:left;width:204px;margin-left:17px; background:#fff; color:#d90000;margin-top:15px;  border:1px solid #ddd;}
+.slot_box:hover{ background:#d90000;color:#fff;cursor:pointer;}
+.slot_box_big{float:left;width:424px;margin-left:20px; background:#fff; color:#d90000;margin-top:15px;  border:1px solid #ddd;}
+.slot_box_big:hover{ background:#d90000;color:#fff;cursor:pointer;}
+.slot_b1_big{padding:2px;width:420px;height:150px;overflow:hidden;}
+.slot_b2_big{height:80px;line-height:40px;overflow:hidden;}
+.slot_b1{padding:2px;width:200px;height:139px;}
+.slot_b1 img{}
+.slot_b2{}
+.slot_jc{float:left;width:190px;margin-left:10px;height:26px;line-height:26px; background:#eee; border:1px solid #ccc;text-indent:10px;border-radius:0px;margin:5px;color:#d90000;font-family:'DS-DIGIB';font-size:22px;}
+.slot_kk{height:100px}
+.slot_kk span{height:25px;line-height:25px;float:left;}
+span.slot_tt{width:205px;text-align:center; font-family:'DS-DIGIB','微软雅黑'; font-size:14px; overflow:hidden; font-size:12px;}
+span.slot_bb{width:205px;text-align:center;}
+.slot_hen{width:100%;height:2px; background:url(../images/reg_hen.png) center no-repeat;float:left;margin-top:30px ;}
+.remen{width:100%;height:40px;line-height:50px; background:url(../images/dun.png) 20px center no-repeat;margin-top:20px;font-size:18px; text-indent:70px;float:left;color:#d90000;font-family:'黑体';}
+.slot_fenlei{width:100%;height:30px;line-height:30px; font-family:'黑体';margin-top:20px;font-size:15px; text-indent:20px;float:left;color:#d90000;}
+#slot-1{width:100%;float:left;}
+.mover{display:none}
+.slot_b2_big .slot_jc{
+	margin: 5px 10px 5px 9px;
+    width: 400px;
+    text-indent: 45px;
+}
+
+.slot_b2_big .slot_kk span {
+    line-height: 37px;
+    margin-left: 3px;
+}
+a.ks_slots{display:block;width:106px;height:40px; background:url(../images/ks_slots.png) center no-repeat;}
+
+a.ks_slots2{display:block;width:95px;height:30px; line-height:30px;border-radius:5px;background:#ffbe68;color:#d90000;font-size:12px; margin-top:3px;margin-left:5px; float: left;}
+#slotmain{
+    position:relative;
+    margin:10px auto;
+    width:915px;
+    float:left;
+}
+
+#holder{
+
+    width:915px;
+    overflow:hidden;
+    position:relative;
+}

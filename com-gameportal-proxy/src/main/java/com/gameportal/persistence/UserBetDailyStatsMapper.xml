@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.UserBetDailyStatsMapper">
+	<!-- 插入报表数据 -->
+	<insert id="insertBetDailyStats" parameterType="UserBetDailyStats"  useGeneratedKeys="true" keyProperty="stId">  
+    	insert into a_user_daily_stats (uiid,createDate,puid,account,realName,scale,betCount,betAmount,validAmount,payoutAmount,finalAmount)   
+    	values (#{uiid},#{createDate},#{puid},#{account},#{realName},#{scale},#{betCount},#{betAmount},#{validAmount},#{payoutAmount},#{finalAmount})   
+	</insert> 
+	
+	<!-- 批量添加注单数据 -->
+	<insert id="insertBetDailyStatList" parameterType="java.util.List">
+		<selectKey resultType="long" keyProperty="stId" order="AFTER">  
+        SELECT LAST_INSERT_ID()  
+    	</selectKey>  
+		INSERT INTO a_user_daily_stats 
+		(
+		  uiid,createDate,puid,account,realName,scale,betCount,betAmount,validAmount,payoutAmount,finalAmount
+		) VALUES 
+		<foreach collection="list" item="item" index="index" separator=",">
+			 (#{item.uiid},#{item.createDate},#{item.puid},#{item.account},#{item.realName},#{item.scale},#{item.betCount},#{item.betAmount},#{item.validAmount},
+			 #{item.payoutAmount},#{item.finalAmount})  
+		</foreach>
+	</insert>
+</mapper>

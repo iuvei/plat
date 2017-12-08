@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ActivityFlag">
+
+	<typeAlias alias="activityFlag"
+		type="com.gameportal.web.activity.model.ActivityFlag" />
+
+	<resultMap id="activityFlagResult" class="activityFlag">
+		<result property="flagid" column="flagid" />
+		<result property="type" column="type" />
+		<result property="numbers" column="numbers" />
+		<result property="flagtime" column="flagtime" />
+		<result property="hms" column="hms" />
+		<result property="uiid" column="uiid" />
+		<result property="acid" column="acid" />
+		<result property="acgroup" column="acgroup" />
+	</resultMap>
+	
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	flagid,
+        type,
+        numbers,
+        flagtime,
+        hms,
+        uiid,
+        acid,
+        acgroup
+	  ]]>
+	</sql>
+
+	<insert id="insert" parameterClass="activityFlag">
+    <![CDATA[
+        INSERT INTO
+        a_activity_flag (
+        	flagid,
+        	type,
+        	numbers,
+        	flagtime,
+        	hms,
+        	uiid,
+        	acid,
+       	 	acgroup
+        ) VALUES (
+        	#flagid#,
+        	#type#,
+        	#numbers#,
+        	#flagtime#,
+        	#hms#,
+        	#uiid#,
+        	#acid#,
+        	#acgroup#
+        )
+    ]]>
+		<selectKey resultClass="java.lang.Long" type="post"
+			keyProperty="flagid">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="activityFlag">
+    <![CDATA[
+        UPDATE a_activity_flag SET
+	        numbers = #numbers#
+        WHERE 
+	        flagid = #flagid# 
+    ]]>
+    </update>
+	
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="type">
+				type = #type#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="flagtime">
+				flagtime =#flagtime#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hms">
+				hms = #hms#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="uiid">
+				uiid = #uiid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acid">
+				acid = #acid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acgroup">
+				acgroup = #acgroup#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acids">
+				acid in  ($acids$)
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<select id="queryAll" resultMap="activityFlagResult">
+	  select <include refid="commonColumns"/>
+	  <![CDATA[
+	    from a_activity_flag
+	  ]]>
+	  <include refid="dyncmicWhere"/>
+	</select>
+	
+</sqlMap>

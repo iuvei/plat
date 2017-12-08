@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MemberXimaDetail">
+
+    <typeAlias alias="memberXimaDetail" type="com.gameportal.web.user.model.MemberXimaDetail"/>
+
+    <resultMap id="memberXimaDetailResult" class="memberXimaDetail">
+        <result property="mxdid" column="mxdid"/>
+        <result property="gpid" column="gpid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="amount" column="amount"/>
+        <result property="ymdstart" column="ymdstart"/>
+        <result property="ymdend" column="ymdend"/>
+        <result property="optuiid" column="optuiid"/>
+        <result property="optusername" column="optusername"/>
+        <result property="opttype" column="opttype"/>
+        <result property="opttime" column="opttime"/>
+        <result property="paramlog" column="paramlog"/>
+        <result property="gpname" column="gpname"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+      		m.mxdid ,
+        	m.gpid ,
+        	m.uiid ,
+        	m.amount ,
+        	m.ymdstart ,
+        	m.ymdend ,
+        	m.optuiid ,
+        	m.optusername ,
+        	m.opttype ,
+        	m.opttime ,
+        	m.paramlog ,
+        	g.fullname as gpname
+	    ]]>
+	</sql>
+	
+	<!-- 查询条件 -->	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="mxdid">
+	             mxdid = #mxdid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ymdstart">
+	             ymdstart = #ymdstart#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ymdend">
+	             ymdend = #ymdend#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="optuiid">
+	             optuiid = #optuiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="optusername">
+	             optusername = #optusername#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="opttype">
+	             opttype = #opttype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="opttime">
+	             opttime = #opttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paramlog">
+	             paramlog = #paramlog#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+    
+    <!--会员洗码明细分页查询 -->
+    <select id="pageSelectDetail" resultMap="memberXimaDetailResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from c_member_xima_detail m left join  a_game_platform g on m.gpid=g.gpid
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <!--分页总计-->
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from c_member_xima_detail m left join  a_game_platform g on m.gpid=g.gpid
+    ]]>
+	<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--新增洗码明细-->
+    <insert id="insert" parameterClass="memberXimaDetail">
+    <![CDATA[
+        INSERT INTO
+        c_member_xima_detail (
+        	mxdid ,
+        	gpid ,
+        	uiid ,
+        	amount ,
+        	ymdstart ,
+        	ymdend ,
+        	optuiid ,
+        	optusername ,
+        	opttype ,
+        	opttime ,
+        	paramlog 
+        ) VALUES (
+        	#mxdid# ,
+        	#gpid# ,
+        	#uiid# ,
+        	#amount# ,
+        	#ymdstart# ,
+        	#ymdend# ,
+        	#optuiid# ,
+        	#optusername# ,
+        	#opttype# ,
+        	#opttime# ,
+        	#paramlog# 
+        )
+    ]]>
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="mxdid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+	<!--修改洗码明细-->
+    <update id="update" parameterClass="memberXimaDetail">
+    <![CDATA[
+        UPDATE c_member_xima_detail SET
+	        gpid = #gpid# ,
+	        uiid = #uiid# ,
+	        amount = #amount# ,
+	        ymdstart = #ymdstart# ,
+	        ymdend = #ymdend# ,
+	        optuiid = #optuiid# ,
+	        optusername = #optusername# ,
+	        opttype = #opttype# ,
+	        opttime = #opttime# ,
+	        paramlog = #paramlog# 
+        WHERE 
+	        mxdid = #mxdid# 
+    ]]>
+    </update>
+	
+</sqlMap>

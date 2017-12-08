@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings 
+	cacheModelsEnabled="true" 
+	lazyLoadingEnabled="true"
+	enhancementEnabled="true" 
+	maxSessions="64" 
+	maxTransactions="20"
+	maxRequests="128" 
+	useStatementNamespaces="true" 
+	defaultStatementTimeout="25000"/>
+	<!-- 权限 -->
+	<sqlMap resource="ibatis/system/SystemUserSqlMap.xml" />
+	<sqlMap resource="ibatis/system/SystemUserRoleSqlMap.xml" />
+	<sqlMap resource="ibatis/system/SystemRoleSqlMap.xml" />
+	<sqlMap resource="ibatis/system/SystemRoleModuleSqlMap.xml" />
+	<sqlMap resource="ibatis/system/SystemModuleSqlMap.xml" />
+	<sqlMap resource="ibatis/system/SystemFieldSqlMap.xml" />
+	<sqlMap resource="ibatis/system/SystemDepartmentSqlMap.xml" />
+	<sqlMap resource="ibatis/system/SystemUserLoginLogSqlMap.xml" />
+	<!-- 基本 -->
+	<sqlMap resource="ibatis/gameplatform/GamePlatformSqlMap.xml" />
+	<sqlMap resource="ibatis/gameplatform/MGElectronicSqlMap.xml" />
+	<sqlMap resource="ibatis/payplatform/PayPlatformSqlMap.xml" />
+	<sqlMap resource="ibatis/sitesettings/SiteSettingsSqlMap.xml" />
+	<sqlMap resource="ibatis/sitesettings/WebAdSqlMap.xml" />
+	<sqlMap resource="ibatis/sitesettings/WebBulletinSqlMap.xml" />
+	<sqlMap resource="ibatis/sitesettings/WebProxyApplySqlMap.xml" />
+	<!-- 短信平台 -->
+	<sqlMap resource="ibatis/smsplatform/SmsPlatAccountSqlMap.xml" />
+	<sqlMap resource="ibatis/smsplatform/SmsPlatBlacklistSqlMap.xml" />
+	<sqlMap resource="ibatis/smsplatform/SmsPlatInfoSqlMap.xml" />
+	<sqlMap resource="ibatis/smsplatform/SmsPlatReceivelogSqlMap.xml" />
+	<sqlMap resource="ibatis/smsplatform/SmsPlatSendlogSqlMap.xml" />
+	<sqlMap resource="ibatis/smsplatform/SmsPlatUseSqlMap.xml" />
+	<!-- 会员信息管理  -->
+	<sqlMap resource="ibatis/user/UserInfoSqlMap.xml" />
+	<sqlMap resource="ibatis/member/MemberSqlMap.xml" />
+	<sqlMap resource="ibatis/member/MemberGradeSqlMap.xml" />
+	<sqlMap resource="ibatis/member/GameTransferLogSqlMap.xml" />
+	<sqlMap resource="ibatis/member/MemberUpgradeLogSqlMap.xml" />
+	<sqlMap resource="ibatis/member/GameAccountSqlMap.xml" />
+	<sqlMap resource="ibatis/member/GameTransferSqlMap.xml" />
+	<sqlMap resource="ibatis/member/UserXimaSetSqlMap.xml" />
+	<sqlMap resource="ibatis/member/UserManagerSqlMap.xml" />
+	<sqlMap resource="ibatis/member/XimaFlagSqlMap.xml" />
+	<sqlMap resource="ibatis/member/FcRecordSqlMap.xml" />
+	
+	
+	<!-- 代理 -->
+	<sqlMap resource="ibatis/proxy/ProxyInfoSqlMap.xml" />
+	<sqlMap resource="ibatis/proxy/ProxySetSqlMap.xml" />
+	<sqlMap resource="ibatis/proxy/ProxyClearingSqlMap.xml" />
+	<sqlMap resource="ibatis/proxy/ProxyClearingLogSqlMap.xml" />
+	<sqlMap resource="ibatis/proxy/ProxyUserXimaLogSqlMap.xml" />
+	
+	
+	<!-- 财务 -->
+	<sqlMap resource="ibatis/pay/PayOrderSqlMap.xml" />
+	<sqlMap resource="ibatis/order/CompanyCardSqlMap.xml" />
+	<sqlMap resource="ibatis/order/CCGroupSqlMap.xml" />
+	<sqlMap resource="ibatis/order/CCAndGroupSqlMap.xml" />
+	<sqlMap resource="ibatis/order/CCGroupxAndUserSqlMap.xml" />
+
+	<!-- <sqlMap resource="ibatis/order/DepositOrderSqlMap.xml" />
+	<sqlMap resource="ibatis/order/PickUpOrderSqlMap.xml" /> -->
+
+	<sqlMap resource="ibatis/user/AccountMoneySqlMap.xml" />
+	<sqlMap resource="ibatis/user/CardPackageSqlMap.xml" />
+
+	
+	<!-- 押注-->
+	<sqlMap resource="ibatis/betlog/BetLogSqlMap.xml" />
+	<sqlMap resource="ibatis/betlog/GameInfoSqlMap.xml" />
+	<sqlMap resource="ibatis/betlog/SysParamSqlMap.xml" />
+	<sqlMap resource="ibatis/betlog/CollectLogSqlMap.xml" />
+	
+	<!-- 洗码 -->
+	<sqlMap resource="ibatis/xima/MemberXimaSetSqlMap.xml" />
+	<sqlMap resource="ibatis/xima/MemberXimaDetailSqlMap.xml" />
+	<sqlMap resource="ibatis/xima/MemberXimaMainSqlMap.xml" />
+	<sqlMap resource="ibatis/xima/ProxyXimaSetSqlMap.xml" />
+	<sqlMap resource="ibatis/xima/ProxyXimaDetailSqlMap.xml" />
+	<sqlMap resource="ibatis/xima/ProxyXimaMainSqlMap.xml" />
+	<!-- 代理域名 -->
+	<sqlMap resource="ibatis/proxydomain/ProxyDomianSqlMap.xml" />
+	
+	<!-- E-mail -->
+	<sqlMap resource="ibatis/mail/EmailLogSqlMap.xml" />
+	<!-- 图形报表数据 -->
+	<sqlMap resource="ibatis/reportform/TotalReportFormSqlMap.xml" />
+	<sqlMap resource="ibatis/reportform/ReportFormSqlMap.xml" />
+	<!-- 会员明细报表-->
+	<sqlMap resource="ibatis/reportform/MemberDetailReportSqlMap.xml"/>
+	<!-- 订单管理报表-->
+	<sqlMap resource="ibatis/reportform/OrderManageReportFormSqlMap.xml"/>
+	<!-- 电销客户分析表-->
+	<sqlMap resource="ibatis/reportform/DxMemberReportSqlMap.xml"/>
+	<!-- 活动 -->
+	<sqlMap resource="ibatis/activity/ActivitySqlMap.xml"/>
+	<!-- 平台余额记录 -->
+	<sqlMap resource="ibatis/reportform/PlatMoneyLogSqlMap.xml"/>
+	<!--市场推广管理-->
+	<sqlMap resource="ibatis/marketing/MarketingChannelSqlMap.xml"/>
+	
+</sqlMapConfig>

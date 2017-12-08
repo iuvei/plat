@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WebBulletinEntity">
+
+	<typeAlias alias="webBulletinEntity" type="com.gameportal.manage.sitesettings.model.WebBulletinEntity"/>
+	
+	<sql id="commonColumns">
+		<![CDATA[
+			bid,
+			btitle,
+			bcontext,
+			status,
+			blocation,
+			edittime
+		]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="bid">
+	             bid = #bid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="btitle">
+	             <![CDATA[btitle like '%$btitle$%']]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+	<insert id="insert" parameterClass="webBulletinEntity">
+		<![CDATA[
+			 INSERT INTO
+	         a_web_bulletin (
+	        	bid,
+				btitle,
+				bcontext,
+				status,
+				blocation,
+				edittime
+	        ) VALUES (
+	        	#bid#,
+				#btitle#,
+				#bcontext#,
+				#status#,
+				#blocation#,
+				#edittime#
+	        )
+		]]>
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="bid" >
+           SELECT  last_insert_id()
+        </selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="webBulletinEntity">
+		<![CDATA[
+			UPDATE a_web_bulletin SET 
+				btitle = #btitle#,
+				bcontext = #bcontext#,
+				status = #status#,
+				blocation = #blocation#,
+				edittime = #edittime#
+			WHERE 
+	        	bid = #bid#
+		]]>
+	</update>
+	
+	<delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_web_bulletin where
+        bid = #bid#
+    ]]>
+    </delete>
+    
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_web_bulletin
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <select id="pageSelect" resultClass="webBulletinEntity">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_web_bulletin 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+</sqlMap>

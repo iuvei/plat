@@ -1,0 +1,17 @@
+//查询重复字段
+SELECT platformcode,`betno`,COUNT(*) AS counts FROM `a_game_betlog` GROUP BY `betno` HAVING counts>1;
+
+//删除重复数据保留最大一条
+DELETE FROM a_game_betlog  WHERE `platformcode` = 'AG' AND pdid IN (SELECT pdid FROM (SELECT  MAX(pdid) AS pdid,COUNT(betno) AS counts FROM a_game_betlog GROUP BY betno HAVING counts >1 ORDER BY betno DESC) AS tab );
+
+
+//查询日期列表
+CREATE TABLE num (i int);  INSERT INTO num (i) VALUES (0), (1), (2), (3), (4), (5), (6), (7), (8), (9);  select adddate('2012-09-01', numlist.id) as `date` from (SELECT n1.i + n10.i*10 + n100.i*100 AS id FROM num n1 cross join num as n10 cross join num as n100) as numlist where adddate('2012-09-01', numlist.id) <= '2012-09-10';
+
+//统计
+SELECT `i` AS numid,(SELECT COUNT(DISTINCT uiid) FROM a_pay_order WHERE `poid`=numid) AS counts FROM num;
+
+//查询首次充值的用户数量
+  SELECT ADDDATE('2015-8-01', numlist.id) AS times,
+IFNULL((SELECT COUNT(DISTINCT uiid) FROM a_pay_order WHERE DATE_FORMAT(deposittime,'%Y-%m-%d')=times AND paytyple='0' AND uiid NOT IN (SELECT DISTINCT uiid AS counrs FROM a_pay_order WHERE DATE_FORMAT(deposittime,'%Y-%m-%d')<times AND paytyple='0')),'0') AS firstPayNumber
+FROM (SELECT n1.i + n10.i*10 + n100.i*100 AS id FROM num n1 CROSS JOIN num AS n10 CROSS JOIN num AS n100) AS numlist WHERE ADDDATE('2015-08-01', numlist.id) <= '2015-08-25';  

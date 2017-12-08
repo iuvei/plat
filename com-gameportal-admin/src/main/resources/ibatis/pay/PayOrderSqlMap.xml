@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PayOrder">
+
+    <typeAlias alias="payOrder" type="com.gameportal.manage.pay.model.PayOrder"/>
+	<typeAlias alias="withdrawalcountLog" type="com.gameportal.manage.user.model.WithdrawalcountLog"/>
+	<typeAlias alias="payOrderLog" type="com.gameportal.manage.pay.model.PayOrderLog" />
+	
+    <resultMap id="payOrderResult" class="payOrder">
+        <result property="poid" column="poid"/>
+        <result property="platformorders" column="platformorders"/>
+        <result property="uiid" column="uiid"/>
+        <result property="paytyple" column="paytyple"/>
+        <result property="ordertype" column="ordertype"/>
+        <result property="ppid" column="ppid"/>
+        <result property="paymethods" column="paymethods"/>
+        <result property="bankname" column="bankname"/>
+        <result property="bankcard" column="bankcard"/>
+        <result property="openname" column="openname"/>
+        <result property="deposit" column="deposit"/>
+        <result property="deposittime" column="deposittime"/>
+        <result property="amount" column="amount"/>
+        <result property="paystatus" column="paystatus"/>
+        <result property="status" column="status"/>
+        <result property="remarks" column="remarks"/>
+        <result property="ordercontent" column="ordercontent"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="uaccount" column="uaccount"/>
+        <result property="urealname" column="urealname"/>
+        <result property="kfremarks" column="kfremarks"/>
+        <result property="kfid" column="kfid"/>
+        <result property="kfname" column="kfname"/>
+        <result property="kfopttime" column="kfopttime"/>
+        <result property="cwremarks" column="cwremarks"/>
+        <result property="cwid" column="cwid"/>
+        <result property="cwname" column="cwname"/>
+        <result property="cwopttime" column="cwopttime"/>
+        <result property="beforebalance" column="beforebalance"/>
+        <result property="laterbalance" column="laterbalance"/>
+        <result property="hdnumber" column="hdnumber"/>
+        <result property="ordernumber" column="ordernumber"/>
+        <result property="proxyname" column="proxy_name"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ordertype,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	DATE_FORMAT(deposittime,'%Y-%m-%d %H:%i:%s') as deposittime,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	DATE_FORMAT(create_date,'%Y-%m-%d %H:%i:%s') as create_date,
+        	DATE_FORMAT(update_date,'%Y-%m-%d %H:%i:%s') as update_date,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	DATE_FORMAT(kfopttime,'%Y-%m-%d %H:%i:%s') as kfopttime,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	DATE_FORMAT(cwopttime,'%Y-%m-%d %H:%i:%s') as cwopttime,
+        	beforebalance,
+        	laterbalance,
+        	hdnumber,
+        	ordernumber,
+        	proxy_name
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="payOrder">
+    <![CDATA[
+        INSERT INTO
+        a_pay_order (
+        	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ordertype,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date ,
+        	update_date ,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	kfopttime ,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	cwopttime,
+        	beforebalance,
+        	laterbalance,
+        	hdnumber,
+        	ordernumber,
+        	proxy_name
+        ) VALUES (
+        	#poid# ,
+        	#platformorders# ,
+        	#uiid# ,
+        	#paytyple# ,
+        	#ordertype#,
+        	#ppid# ,
+        	#paymethods# ,
+        	#bankname# ,
+        	#bankcard# ,
+        	#openname# ,
+        	#deposit# ,
+        	#deposittime# ,
+        	#amount# ,
+        	#paystatus# ,
+        	#status# ,
+        	#remarks# ,
+        	#ordercontent# ,
+        	#createDate# ,
+        	#updateDate# ,
+        	#uaccount# ,
+        	#urealname# ,
+        	#kfremarks# ,
+        	#kfid# ,
+        	#kfname# ,
+        	#kfopttime# ,
+        	#cwremarks# ,
+        	#cwid# ,
+        	#cwname# ,
+        	#cwopttime#,
+        	#beforebalance#,
+        	#laterbalance#,
+        	#hdnumber#,
+	        #ordernumber#,
+	        #proxyname#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+    </insert>
+    
+    <insert id="insertPayLog" parameterClass="payOrderLog">
+    <![CDATA[
+        INSERT INTO
+        a_pay_order_log (
+        	coid ,
+        	uiid ,
+        	orderid ,
+        	amount ,
+        	walletlog ,
+        	gamelog ,
+        	type,
+        	remark ,
+        	createtime 
+        ) VALUES (
+        	#coid# ,
+        	#uiid# ,
+        	#orderid# ,
+        	#amount# ,
+        	#walletlog# ,
+        	#gamelog# ,
+        	#type#,
+        	#remark# ,
+        	#createtime#
+        )
+    ]]>
+     <selectKey resultClass="java.lang.Long" type="post" keyProperty="coid" >
+           SELECT  last_insert_id()
+     </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="payOrder">
+    <![CDATA[
+        UPDATE a_pay_order SET
+	        platformorders = #platformorders# ,
+	        uiid = #uiid# ,
+	        paytyple = #paytyple# ,
+	        ordertype = #ordertype#,
+	        ppid = #ppid# ,
+	        paymethods = #paymethods# ,
+	        bankname = #bankname# ,
+	        bankcard = #bankcard# ,
+	        openname = #openname# ,
+	        deposit = #deposit# ,
+	        deposittime = #deposittime# ,
+	        amount = #amount# ,
+	        paystatus = #paystatus# ,
+	        status = #status# ,
+	        remarks = #remarks# ,
+	        ordercontent = #ordercontent# ,
+	        update_date = #updateDate# ,
+	        uaccount = #uaccount# ,
+	        urealname = #urealname# ,
+	        kfremarks = #kfremarks# ,
+	        kfid = #kfid# ,
+	        kfname = #kfname# ,
+	        kfopttime = #kfopttime# ,
+	        cwremarks = #cwremarks# ,
+	        cwid = #cwid# ,
+	        cwname = #cwname# ,
+	        cwopttime = #cwopttime#, 
+	        beforebalance=#beforebalance#,
+        	laterbalance=#laterbalance# ,
+        	hdnumber = #hdnumber#
+        WHERE 
+	        poid = #poid# 
+    ]]>
+    </update>
+    
+	<update id="updateWithdrawalcount" parameterClass="withdrawalcountLog">
+		<![CDATA[
+			UPDATE u_withdrawalcount_log SET
+				withdrawalcount = withdrawalcount+#withdrawalcount#
+			WHERE 
+	        	uiid = #uiid# and daytime = #daytime#
+		]]>
+	</update>
+	
+	<select id="getWithdrawalcount" resultClass="withdrawalcountLog">
+		<![CDATA[
+			select wid,uiid,daytime,withdrawalcount from u_withdrawalcount_log
+		]]>
+		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="wid">
+	             wid = #wid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="daytime">
+	             daytime = #daytime#
+	       </isNotEmpty>
+	    </dynamic>
+	</select>
+	
+    <delete id="delete" parameterClass="java.lang.String">
+    <![CDATA[
+        delete from a_pay_order where
+        poid = #poid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultClass="payOrder">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_pay_order 
+	        where 
+		        poid = #poid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="poid">
+	             poid = #poid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="platformorders">
+	             platformorders = #platformorders#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paytyple">
+	             paytyple = #paytyple#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ordertype">
+	             ordertype = #ordertype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ppid">
+	             ppid = #ppid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paymethods">
+	             paymethods = #paymethods#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankname">
+	             bankname = #bankname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankcard">
+	             bankcard = #bankcard#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="openname">
+	             openname = #openname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deposit">
+	             deposit = #deposit#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deposittime">
+	             deposittime = #deposittime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paystatus">
+	             paystatus = #paystatus#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remarks">
+	             remarks = #remarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ordercontent">
+	             ordercontent = #ordercontent#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uaccount">
+	             uaccount = #uaccount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="urealname">
+	             urealname = #urealname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfremarks">
+	             kfremarks = #kfremarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfid">
+	             kfid = #kfid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfname">
+	             kfname = #kfname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfopttime">
+	             kfopttime = #kfopttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwremarks">
+	             cwremarks = #cwremarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwid">
+	             cwid = #cwid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwname">
+	             cwname = #cwname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwopttime">
+	             cwopttime = #cwopttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="proxyname">
+	             proxy_name = #proxyname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="startDate">
+	        	<![CDATA[
+	             update_date >= #startDate#
+	            ]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="endDate">
+	            <![CDATA[
+	             update_date <= #endDate#
+	            ]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="beforebalance">
+	             beforebalance = #beforebalance#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="laterbalance">
+	             laterbalance = #laterbalance#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ordernumber">
+	       		ordernumber =#ordernumber#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="platname">
+	       		poid like CONCAT(#platname#,'%')
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="manageIds">
+	            uiid in (select a.uiid from a_user_info a where a.uiid in ($manageIds$) or a.puiid in ($manageIds$))
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_pay_order
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!-- 查询未处理的提款和扣款订单 -->
+    <select id="selectAlertCount" resultClass="java.lang.String">
+    	select paytyple <![CDATA[
+	        from a_pay_order where (status=1 or status=2) and paytyple is not null and (paymethods = 0 or paymethods is null)
+	    ]]>
+	    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="payOrderResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_pay_order 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <select id="pageSelectRP" resultMap="payOrderResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_pay_order 
+	        where ((paytyple in (0,2,3) and status=3) or (paytyple = 1 and status !=4))
+	    ]]>
+	       <isNotEmpty prepend="AND" property="poid">
+	             poid = #poid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="platformorders">
+	             platformorders = #platformorders#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ordertype">
+	             ordertype = #ordertype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paytyple">
+	             paytyple = #paytyple#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ppid">
+	             ppid = #ppid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paymethods">
+	             paymethods = #paymethods#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankname">
+	             bankname = #bankname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankcard">
+	             bankcard = #bankcard#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="openname">
+	             openname = #openname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deposit">
+	             deposit = #deposit#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deposittime">
+	             deposittime = #deposittime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paystatus">
+	             paystatus = #paystatus#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remarks">
+	             remarks = #remarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ordercontent">
+	             ordercontent = #ordercontent#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uaccount">
+	             uaccount = #uaccount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="urealname">
+	             urealname = #urealname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfremarks">
+	             kfremarks = #kfremarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfid">
+	             kfid = #kfid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfname">
+	             kfname = #kfname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfopttime">
+	             kfopttime = #kfopttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwremarks">
+	             cwremarks = #cwremarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwid">
+	             cwid = #cwid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwname">
+	             cwname = #cwname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwopttime">
+	             cwopttime = #cwopttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="beforebalance">
+	             beforebalance = #beforebalance#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="laterbalance">
+	             laterbalance = #laterbalance#
+	       </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+     <select id="countRP" resultClass="long">
+	    <![CDATA[
+	        select count(0) from a_pay_order
+	        where ((paytyple in (0,2,3) and status=3) or (paytyple = 1 and status !=4))
+	    ]]>
+	       <isNotEmpty prepend="AND" property="poid">
+	             poid = #poid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="platformorders">
+	             platformorders = #platformorders#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="ordertype">
+	             ordertype = #ordertype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paytyple">
+	             paytyple = #paytyple#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ppid">
+	             ppid = #ppid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paymethods">
+	             paymethods = #paymethods#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankname">
+	             bankname = #bankname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankcard">
+	             bankcard = #bankcard#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="openname">
+	             openname = #openname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deposit">
+	             deposit = #deposit#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deposittime">
+	             deposittime = #deposittime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paystatus">
+	             paystatus = #paystatus#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remarks">
+	             remarks = #remarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ordercontent">
+	             ordercontent = #ordercontent#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uaccount">
+	             uaccount = #uaccount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="urealname">
+	             urealname = #urealname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfremarks">
+	             kfremarks = #kfremarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfid">
+	             kfid = #kfid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfname">
+	             kfname = #kfname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kfopttime">
+	             kfopttime = #kfopttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwremarks">
+	             cwremarks = #cwremarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwid">
+	             cwid = #cwid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwname">
+	             cwname = #cwname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="cwopttime">
+	             cwopttime = #cwopttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="beforebalance">
+	             beforebalance = #beforebalance#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="laterbalance">
+	             laterbalance = #laterbalance#
+	       </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    
+    <select id="selectGiftAmount" resultClass="long">
+	    <![CDATA[
+	    	select sum(ifnull(amount,0)) 
+	    	from a_pay_order
+	    	where paytyple=#paytyple# 
+	    		and uiid in( select uiid from a_user_info where puiid=#uiid# )
+	    		and cwopttime >= #ymdstart# and cwopttime < #ymdend#
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+	
+	<!-- 代理查询下线出入款记录 -->
+	<sql id="proxySelectWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >= #startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				<![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="uaccount">
+				p.uaccount = #uaccount#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="puiid">
+				u.puiid = #puiid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="status">
+				p.status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="paytyple">
+				p.paytyple in $paytyple$
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="paymethods">
+	             paymethods = #paymethods#
+	       </isNotEmpty>
+		</dynamic>
+	</sql>
+	<select id="selectProxyPayOrderLogCount" resultClass="long">
+		<![CDATA[
+		SELECT COUNT(0) FROM a_pay_order p LEFT JOIN a_user_info u ON p.uiid = u.uiid 
+		]]>
+		<include refid="proxySelectWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="selectProxyPayOrderLog" resultClass="payOrder">
+		<![CDATA[
+		SELECT p.uiid,p.uaccount,p.urealname,p.amount,p.paytyple,p.paymethods,p.cwremarks,p.deposittime,p.status FROM a_pay_order p LEFT JOIN a_user_info u ON p.uiid = u.uiid
+		]]> 
+		<include refid="proxySelectWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 会员提款记录总计 -->
+	<select id="selectProxyPayOrderTotal" resultClass="string">
+		<![CDATA[
+		SELECT IFNULL(sum(p.amount),'0') FROM a_pay_order p LEFT JOIN a_user_info u ON p.uiid = u.uiid
+		]]> 
+		<include refid="proxySelectWhere"/>
+	</select>
+</sqlMap>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GameTransfer">
+
+    <typeAlias alias="gameTransfer" type="com.gameportal.web.game.model.GameTransfer"/>
+
+    <resultMap id="gameTransferResult" class="gameTransfer">
+        <result property="gtid" column="gtid"/>
+        <result property="uuid" column="uuid"/>
+        <result property="gpid" column="gpid"/>
+        <result property="gamename" column="gamename"/>
+        <result property="togpid" column="togpid"/>
+        <result property="togamename" column="togamename"/>
+        <result property="amount" column="amount"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="balance" column="balance"/>
+        <result property="origamount" column="origamount"/>
+        <result property="otherbefore" column="otherbefore"/>
+        <result property="otherafter" column="otherafter"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	gtid ,
+        	uuid ,
+        	gpid ,
+        	gamename ,
+        	togpid ,
+        	togamename ,
+        	amount ,
+        	remark ,
+        	status ,
+        	create_date ,
+        	update_date ,
+        	balance,
+        	origamount,
+        	otherbefore,
+        	otherafter
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="gameTransfer">
+    <![CDATA[
+        INSERT INTO
+        a_game_transfer (
+        	gtid ,
+        	uuid ,
+        	gpid ,
+        	gamename ,
+        	togpid ,
+        	togamename ,
+        	amount ,
+        	remark ,
+        	status ,
+        	create_date ,
+        	update_date,
+        	balance,
+        	origamount,
+        	otherbefore,
+        	otherafter
+        ) VALUES (
+        	#gtid# ,
+        	#uuid# ,
+        	#gpid# ,
+        	#gamename# ,
+        	#togpid# ,
+        	#togamename# ,
+        	#amount# ,
+        	#remark# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate#,
+        	#balance#,
+        	#origamount#,
+        	#otherbefore#,
+        	#otherafter#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_game_transfer_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="gtid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="gameTransfer">
+    <![CDATA[
+        UPDATE a_game_transfer SET
+	        uuid = #uuid# ,
+	        gpid = #gpid# ,
+	        gamename = #gamename# ,
+	        togpid = #togpid# ,
+	        togamename = #togamename# ,
+	        amount = #amount# ,
+	        remark = #remark# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate#,
+	        balance=#balance#,
+        	origamount=#origamount#,
+        	otherbefore=#otherbefore#,
+        	otherafter=#otherafter# 
+        WHERE 
+	        gtid = #gtid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_game_transfer where
+        gtid = #gtid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="gameTransferResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_transfer 
+	        where 
+		        gtid = #gtid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="gtid">
+	             gtid = #gtid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uuid">
+	             uuid = #uuid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gamename">
+	             gamename = #gamename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="togpid">
+	             togpid = #togpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="togamename">
+	             togamename = #togamename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remark">
+	             remark = #remark#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+	<sql id="tranferOrderWhere">
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="starttime">
+				<![CDATA[ create_date >= #starttime#]]>
+			</isNotNull>
+			<isNotNull prepend="AND" property="endtime">
+				<![CDATA[ create_date <= #endtime#]]>
+			</isNotNull>
+			<isNotNull prepend="AND" property="account">
+				account = #account#
+			</isNotNull>
+			<isNotEmpty prepend="AND" property="gtid">
+	             gtid = #gtid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uuid">
+	             uuid = #uuid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gamename">
+	             gamename = #gamename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="togpid">
+	             togpid = #togpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="togamename">
+	             togamename = #togamename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remark">
+	             remark = #remark#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+		</dynamic>
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_transfer
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="gameTransferResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_transfer 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <!-- 查询转账记录 -->
+	<select id="selectTranferOrder" resultMap="gameTransferResult">
+		select <include refid="commonColumns"/>
+		<![CDATA[
+		  from a_game_transfer
+		 ]]>
+		 <include refid="tranferOrderWhere"/>
+		 <dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<!-- 统计游戏注单条数 -->
+	<select id="selectTranferOrderCount" resultClass="long">
+		 <![CDATA[
+        select count(0) from a_game_transfer
+    ]]>
+		<include refid="tranferOrderWhere"/>    
+	</select>
+
+	
+</sqlMap>

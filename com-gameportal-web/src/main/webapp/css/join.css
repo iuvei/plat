@@ -1,0 +1,184 @@
+@charset "utf-8";
+/* CSS Document */
+.nav{ border-bottom:none;}
+.join_step{ text-align:center; background:#0dadfb;}
+.notice{ color:#fff; font-size:16px; padding:18px 0;}
+.join_nav{ width:158px; float:left; background:#484860; border-left:solid 1px #666888; padding-bottom:20px;}
+.join_nav h1{ text-align:center; background:#ff9900; height:34px; padding-top:6px;}
+.join_list li a{ height:40px; line-height:40px; display:block; font-size:14px; color:#9c9baa; padding-left:40px;}
+.join_list li a.curr,.join_list li a:hover{ background:url(../images/icon_center.png) -69px 0 no-repeat; color:#ff9900;}
+.join_con{ width:800px; float:left; border:solid 1px #666888; border-left:solid 1px #ff9900; min-height:549px; background:#232232;}
+.joincon_h{ height:38px; line-height:38px; padding-left:15px; color:#ff9900; font-size:14px; background:#484860; border-bottom:solid 1px #666888;}
+.joincon_h2{ font-size:22px; color:#0babff; text-align:center; padding-bottom:20px;}
+.intro{ color:#ccc; padding:15px 20px; line-height:24px;}
+.intro p{ margin-bottom:1em;}
+.contact{ padding:0 0 20px 20px;}
+.contact div{ margin-bottom:20px;}
+.contact div label{ width:6em; display:inline-block; vertical-align:middle; font-size:14px; color:#fff;}
+.contact div label .red{ vertical-align:middle; font-weight:bold;}
+.contact div .textB{ width:605px; color:#23252a;}
+.contact div label.vt{ vertical-align:top; padding-top:5px;}
+.contact div .textaA{ width:605px; color:#23252a; padding:5px; line-height:22px; height:5em; resize:none; vertical-align:middle; font-family:'微软雅黑'; font-size:12px;}
+
+.handsOpt{ padding:25px 0 20px; text-align:center;}
+.handsOpt span{ display:inline-block;}
+.handsOpt span input{ opacity:0; filter:alpha(opacity=0); outline:none;}
+.handsOpt span label,.handsOpt span a{ background:#484860; color:#7b7a8a; display:inline-block; width:120px; height:30px; line-height:30px; text-align:center; float:left; font-size:14px; cursor:pointer; outline:none;}
+.handsOpt span label.lab1{ border-radius:30px 0 0 30px;}
+.handsOpt span a.lab3{ border-radius:0 30px 30px 0;}
+.handsOpt span label.curr{ background:#ff9900; color:#331f00;}
+
+#scheme{ padding:15px 40px;}
+
+.formli{ margin-bottom:20px;}
+.formli span.red{ font-weight:bold; vertical-align:middle;}
+.formli label{width:8em; text-align:right; color:#fff; font-size:12px; display:inline-block; vertical-align:middle;}
+.handsTip{ color:#999; font-size:12px; margin-top:6px; padding-left:15.7em;}
+.getCode{ margin-left:6px; width:118px; height:30px; font-size:0; border:solid 1px #dbdbdb; overflow:hidden; display:inline-block; vertical-align:middle;}
+.getCode img{ width:118px;}
+.hands{ padding-bottom:30px;}
+.hands .formli label{ width:15.5em;}
+.hands .textB{ width:388px;}
+.hands .selA{ width:400px;}
+.hands .textC{ width:257px;}
+
+.registerOpt{ padding:0 0 0 15.7em;}
+.registerOpt label{ vertical-align:middle; color:#fff;}
+.deal{ color:#0babff; text-decoration:underline; vertical-align:middle;}
+.regSubmit,.regMask{ width:160px; height:40px; text-align:center; line-height:40px; color:#fff; font-size:20px; background:#0babff; margin:20px 0 0 120px; display:inline-block; border:none; font-family:'微软雅黑'; cursor:pointer;}
+.regMask{ background:#ccc; color:#999; cursor:default;}
+.none{ display:none;}
+
+#dealBox{ width:962px;}
+#dealBox .box_con{ padding:20px 20px 0;}
+#dealBox .box_con h2{ font-size:14px; margin-bottom:10px; color:#1d1c21; font-weight:bold;}
+#dealBox .box_con p{ color:#63666e; font-size:14px; line-height:22px; margin-bottom:10px;}
+#dealBox .box_btn{ text-align:center; padding:10px 0 25px;}
+
+
+/*代理主页
+========*/
+.bg-agent{
+    background: #FBFBFB url("../images/banner/agent.jpg") no-repeat;
+    padding-top: 453px;
+    padding-bottom: 100px;
+}
+.agent-page .tab-panel{
+    padding: 40px 30px;
+    border: 1px solid #d7d7d7;
+    border-top:none;
+}
+.agent-tab{
+    margin-top:-66px
+}
+.agent-tab>li{
+    float: left;
+    width:20%;
+}
+.agent-tab>li>a{
+    display: block;
+    line-height:66px;
+    text-align: center;
+    background-color: #12316c;
+    background-color: rgba(18,49,108,.8);
+    margin-left:2px;
+    font-size: 16px;
+    color: #fff;
+}
+.agent-tab>li:first-child>a{
+    border-left: none;
+}
+.agent-tab>li.active a{
+    background-color: #e97206;
+}
+.link-check{
+    display: inline-block;
+    padding: 8px;
+    border: #d7d7d7;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    background-color: #fff;
+}
+.agent-page .m-content h1,
+.agent-page .advantage-list{
+    margin-top:40px;
+    margin-bottom:40px;
+}
+.advantage-list .index{
+    display: inline-block;
+    padding: 0px 0px 0px 40px;
+    background-color: #ae6f00;
+    color: #fff;
+    margin-right: 16px;
+}
+.advantage-list p{
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+
+.form-reg{
+    position: relative;
+    width: 960px;
+    margin: 0 auto;
+}
+.form-reg,
+.form-reg .reg-tit{
+    color: #787878;
+    border: none;
+}
+.form-reg .reg-tit{
+    font-size: 18px;
+    height: 68px;
+    line-height: 68px;
+    padding-left: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e4e4e4;
+    display: block;
+}
+.form-reg .ipt-group{
+    margin-bottom: 18px;
+}
+.form-reg .label{
+    text-align: right;
+    font-weight: normal;
+    display: inline-block;
+    width: 120px;
+    padding-right: 10px;
+}
+.form-reg .ipt-txt{
+    width: 340px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    padding: 0 4px;
+    height: 36px;
+    line-height: 36px;
+    color: #666;
+}
+.form-reg .btn-reg{
+    font-size: 18px;
+    width: 350px;
+    height: 40px;
+    cursor: pointer;
+    background-color: #4d8df9;
+    color: #fff;
+}
+.form-reg .ipt-tip{
+    padding-left: 1em;
+    padding-top: .6em;
+}
+.form-reg .pl{
+    padding-left: 136px;
+}
+.form-reg .reback{
+    margin-left: 10px;
+}
+.form-reg .ipt-group label.error-tip{
+    left: 586px;
+    top: 0;
+}
+.form-reg .ipt-group input.error-tip,
+.form-reg .ipt-group input.error-tip:focus{
+    outline: rgba(255, 0, 0, .6);
+    box-shadow: 0 0 6px rgba(255, 0, 0, .6);
+    border: 1px solid #fc4949;
+}

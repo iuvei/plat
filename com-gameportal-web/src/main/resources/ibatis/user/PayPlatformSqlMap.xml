@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PayPlatform">
+
+    <typeAlias alias="payPlatform" type="com.gameportal.web.payPlat.model.PayPlatform"/>
+
+    <resultMap id="payPlatformResult" class="payPlatform">
+        <result property="ppid" column="ppid"/>
+        <result property="pname" column="pname"/>
+        <result property="domainname" column="domainname"/>
+        <result property="platformkey" column="platformkey"/>
+        <result property="ciphercode" column="ciphercode"/>
+        <result property="returnUrl" column="returnUrl"/>
+        <result property="noticeUrl" column="noticeUrl"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="sequence" column="sequence"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	ppid ,
+        	pname ,
+        	domainname ,
+        	platformkey ,
+        	ciphercode ,
+        	returnUrl ,
+        	noticeUrl ,
+        	status ,
+        	create_date ,
+        	update_date ,
+        	sequence 
+	    ]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="ppid">
+	             ppid = #ppid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="pname">
+	             pname = #pname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="domainname">
+	             domainname = #domainname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="platformkey">
+	             platformkey = #platformkey#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ciphercode">
+	             ciphercode = #ciphercode#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="returnUrl">
+	             returnUrl = #returnUrl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="noticeUrl">
+	             noticeUrl = #noticeUrl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+    
+    <select id="queryAll" resultMap="payPlatformResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_pay_platform 
+	    ]]>
+	    <include refid="dynamicWhere"/>
+	    <dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+	
+</sqlMap>

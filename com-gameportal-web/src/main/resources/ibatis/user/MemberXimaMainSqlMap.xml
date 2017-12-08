@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MemberXimaMain">
+
+    <typeAlias alias="memberXimaMain" type="com.gameportal.web.user.model.MemberXimaMain"/>
+    
+    <typeAlias alias="proxySet" type="com.gameportal.web.user.model.ProxySet"/>
+    
+    <typeAlias alias="userXimaSet" type="com.gameportal.web.user.model.UserXimaSet"/>
+    
+    <typeAlias alias="memberXimaSet" type="com.gameportal.web.user.model.MemberXimaSet"/>
+
+    <typeAlias alias="memberClearingFlag" type="com.gameportal.web.user.model.MemberClearingFlag"/>
+
+    <resultMap id="memberXimaMainResult" class="memberXimaMain">
+        <result property="mxmid" column="mxmid"/>
+        <result property="gpid" column="gpid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="account" column="account"/>
+        <result property="name" column="name"/>
+        <result property="total" column="total"/>
+        <result property="ymdstart" column="ymdstart"/>
+        <result property="ymdend" column="ymdend"/>
+        <result property="updatetime" column="updatetime"/>
+        <result property="locked" column="locked"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	mxmid ,
+        	gpid ,
+        	uiid ,
+        	account ,
+        	name ,
+        	total ,
+        	ymdstart ,
+        	ymdend ,
+        	updatetime ,
+        	locked
+	    ]]>
+	</sql>
+	
+	<!-- 查询条件 -->	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="mxmid">
+	             mxmid = #mxmid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="name">
+	             name = #name#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="total">
+	             total = #total#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ymdstart">
+	       	<![CDATA[
+	             updatetime >= #ymdstart#
+	           ]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ymdend">
+	       	<![CDATA[
+	             updatetime <= #ymdend#
+	           ]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updatetime">
+	             updatetime = #updatetime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="locked">
+	             locked = #locked#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+	<!--分页查询 -->
+    <select id="pageSelect" resultMap="memberXimaMainResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from c_member_xima_main
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <!--分页总计-->
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from c_member_xima_main m left join  a_game_platform g on m.gpid=g.gpid
+    ]]>
+	<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--代理设置字段-->
+    <sql id="proxySetColumns">
+		<![CDATA[
+			p.pyid,
+			p.uiid,
+			u.account,
+			u.uname,
+			p.returnscale,
+			p.ximascale,
+			p.isximaflag,
+			p.clearingtype,
+			p.status,
+			p.createtime,
+			p.uptime,
+			p.upuser,
+			p.upclientip
+		]]>
+	</sql>
+	
+	<!--代理洗码设置条件-->
+	<sql id="proxySetDynamicWhere">
+		<dynamic prepend="WHERE">
+			 <isNotEmpty prepend="AND" property="pyid">
+	            p.pyid = #pyid#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="uiid">
+	            p.uiid = #uiid#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="status">
+	            p.status = #status#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+	            u.account = #account#
+	      	 </isNotEmpty>
+		</dynamic>
+		
+	</sql>
+    
+    <!--代理洗码设置-->
+    <select id="selectProxySet" resultClass="proxySet">
+		select <include refid="proxySetColumns"/>
+	    <![CDATA[
+	        from a_game_proxyinfo p LEFT JOIN a_user_info u ON p.uiid = u.uiid
+	    ]]>
+	    <include refid="proxySetDynamicWhere"/>
+	</select>
+	
+	<sql id="userXimaSetColumns">
+			<![CDATA[
+				cs.xmid,
+				cs.uiid,
+				cs.proxyid,
+				cs.ximascale,
+				cs.status,
+				cs.settime,
+				u.account,
+				u.uname
+			]]>
+	</sql>
+	
+	<sql id="userXimaSetDynamicWhere">
+		<dynamic prepend="WHERE">
+				<isNotEmpty prepend="AND" property="xmid">
+		             cs.xmid = #xmid#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="uiid">
+		             cs.uiid = #uiid#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="proxyid">
+		             cs.proxyid = #proxyid#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="status">
+		             cs.status = #status#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="account">
+		             u.account = #account#
+		       	 </isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<!--用户单独洗码比例-->
+	<select id="selectUserXimaSet" resultClass="userXimaSet">
+			SELECT <include refid="userXimaSetColumns"/>
+			<![CDATA[
+	        	from c_user_xima_set cs LEFT JOIN a_user_info u ON cs.uiid = u.uiid 
+	    	]]>
+	    	<include refid="userXimaSetDynamicWhere"/>
+	</select>
+	
+	<!--会员洗码设置比例-->
+	<sql id="memberXimaSetColumns">
+	    <![CDATA[
+        	mxsid ,
+        	gpid ,
+        	grade ,
+        	scale ,
+        	updateuserid ,
+        	updatetime ,
+        	updateusername 
+	    ]]>
+	</sql>
+	
+	<sql id="memberXimaSetDynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="mxsid">
+	             mxsid = #mxsid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="grade">
+	             grade = #grade#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="scale">
+	             scale = #scale#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateuserid">
+	             updateuserid = #updateuserid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updatetime">
+	             updatetime = #updatetime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateusername">
+	             updateusername = #updateusername#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+	<!--会员洗码设置比例-->
+	  <select id="selectMemberXimaSet" resultClass="memberXimaSet">
+    	select <include refid="memberXimaSetColumns"/>
+	    <![CDATA[
+	        from c_member_xima_set 
+	    ]]>
+		<include refid="memberXimaSetDynamicWhere"/>
+    </select>
+    
+    <!--新增洗码总记录-->
+    <insert id="insert" parameterClass="memberXimaMain">
+    <![CDATA[
+        INSERT INTO
+        c_member_xima_main (
+        	mxmid ,
+        	gpid ,
+        	uiid ,
+        	account ,
+        	name ,
+        	total ,
+        	ymdstart ,
+        	ymdend ,
+        	updatetime ,
+        	locked 
+        ) VALUES (
+        	#mxmid# ,
+        	#gpid# ,
+        	#uiid# ,
+        	#account# ,
+        	#name# ,
+        	#total# ,
+        	#ymdstart# ,
+        	#ymdend# ,
+        	#updatetime# ,
+        	#locked# 
+        )
+    ]]>
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="mxmid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--修改洗码总记录-->
+    <update id="update" parameterClass="memberXimaMain">
+    <![CDATA[
+        UPDATE c_member_xima_main SET
+	        gpid = #gpid# ,
+	        uiid = #uiid# ,
+	        account = #account# ,
+	        name = #name# ,
+	        total = #total# ,
+	        ymdstart = #ymdstart# ,
+	        ymdend = #ymdend# ,
+	        updatetime = #updatetime# ,
+	        locked = #locked# 
+        WHERE 
+	        mxmid = #mxmid# 
+    ]]>
+    </update>
+    
+   	<!--添加洗码标记-->
+	<insert id="insertMemberClearingFlag" parameterClass="memberClearingFlag">
+		<![CDATA[
+			INSERT INTO 
+			a_user_clearing_flag (
+				flaguiid,
+				flagtime,
+				platname
+			) VALUES (
+				#flaguiid#,
+				#flagtime#,
+				#platname#
+			)
+		]]>
+	</insert>
+	
+	<!--查询戏码记录-->
+    <select id="userclearingFlagCount" resultClass="long">
+	    <![CDATA[
+	        select count(0) from a_user_clearing_flag where 1=1
+	    ]]>
+	 	<dynamic>
+	 		<isNotEmpty prepend="AND" property="flaguiid">
+	 			flaguiid = #flaguiid#
+	 		</isNotEmpty>
+	 		<isNotEmpty prepend="AND" property="flagtime">
+	 			flagtime = #flagtime#
+	 		</isNotEmpty>
+	 		<isNotEmpty prepend="AND" property="platname">
+	 			platname = #platname#
+	 		</isNotEmpty>
+	 	</dynamic>
+    </select>
+    
+     <select id="selectProxyDayClearing" resultClass="proxySet">
+   		select ximascale,uiid from a_game_proxyinfo WHERE clearingType=2 and isximaflag=1
+    </select>
+</sqlMap>

@@ -1,0 +1,239 @@
+.banner,
+.ad {
+    position: relative;
+    height: 380px;
+}
+
+.banner .img_container,
+.banner .imgContainer,
+.ad .img_container,
+.ad .imgContainer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 380px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #050d20;
+    z-index: 9;
+    cursor: pointer;
+}
+
+.banner .control_bar,
+.banner .controlBar,
+.ad .control_bar,
+.ad .controlBar {
+    position: absolute;
+    top: 355px;
+    left: 50%;
+    height: 4px;
+    z-index: 10;
+}
+
+.banner .control_bar li,
+.banner .controlBar li,
+.ad .control_bar li,
+.ad .controlBar li {
+    float: left;
+    width: 12px;
+    height: 12px;
+    margin: 0 5px;
+    background-color: #3d4d5c;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    cursor: pointer;
+}
+
+.banner .control_bar li.current,
+.banner .controlBar li.current,
+.ad .control_bar li.current,
+.ad .controlBar li.current {
+    background-color: #ff996c;
+}
+
+.ad,
+.ad .img_container,
+.ad .imgContainer {
+    height: 224px;
+}
+
+.ad .control_bar,
+.ad .controlBar {
+    top: 205px;
+}
+
+.ad .control_bar li,
+.ad .controlBar li {
+    width: 10px;
+    height: 10px;
+}
+
+.ui-contents .real-games,
+.ui-contents .realGames,
+.ui-contents .egames {
+    height: 304px;
+    margin: 0 -1px 12px -1px;
+    padding: 0 1px;
+    background: url(/static/images/index/bg-content.png) no-repeat center top;
+}
+
+.ui-contents h1 {
+    width: 200px;
+    height: 24px;
+    margin: 6px 16px 28px 16px;
+    padding: 0;
+    line-height: 24px;
+}
+
+.ui-contents h1 .icon {
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
+    background-image: url(/static/images/index/icon.png);
+    background-repeat: no-repeat;
+}
+
+.ui-contents .real-games .right h1 .icon,
+.ui-contents .realGames .right h1 .icon {
+    background-position: -25px 0;
+}
+
+.ui-contents .egames .left h1 .icon {
+    background-position: -50px 0;
+}
+
+.ui-contents .egames .right h1 .icon {
+    background-position: -75px 0;
+}
+
+.ui-contents .left {
+    width: 761px;
+    height: 300px;
+    overflow: hidden;
+}
+
+.ui-contents .right {
+    width: 238px;
+    height: 300px;
+    overflow: hidden;
+}
+
+.ui-contents .box {
+    border: 3px solid #ff996c;
+    border-radius: .2em;
+    -webkit-border-radius: .2em;
+    overflow: hidden;
+}
+
+.ui-contents .box .title {
+    z-index: 1000;
+}
+
+.ui-contents .box .ui-mask {
+    position: absolute;
+}
+
+.ui-contents .box .ui-mask,
+.ui-contents .box .go {
+    display: none;
+}
+
+.ui-contents .box:hover .ui-mask,
+.ui-contents .box:hover .go {
+    display: block;
+}
+
+.ui-contents .box .go {
+    left: 50%;
+    top: 50%;
+    width: 123px;
+    height: 37px;
+    margin: -18.5px 0 0 -61.5px;
+    line-height: 37px;
+    text-align: center;
+    background: url(/static/images/index/btn-start.png) no-repeat;
+    z-index: 1000;
+}
+
+.ui-contents .real-games .left ul,
+.ui-contents .realGames .left ul {
+    margin-left: 5px;
+}
+
+.ui-contents .real-games .left ul li,
+.ui-contents .realGames .left ul li {
+    float: left;
+    width: 239px;
+    height: 230px;
+    margin-left: 9px;
+}
+
+.ui-contents .real-games .left .box,
+.ui-contents .realGames .left .box {
+    width: 233px;
+    height: 170px;
+}
+
+.ui-contents .real-games .left .bottom,
+.ui-contents .realGames .left .bottom {
+    width: 241px;
+    height: 46px;
+    margin: 6px 0 0 -1px;
+    line-height: 46px;
+    text-align: center;
+    background: url(/static/images/index/bg-contentShort.png) no-repeat;
+}
+
+.ui-contents .real-games .right .box,
+.ui-contents .realGames .right .box {
+    width: 212px;
+    height: 224px;
+    margin: 0 10px;
+}
+
+.ui-contents .egames .left ul {
+    margin-left: 2px;
+}
+
+.ui-contents .egames .left ul li {
+    float: left;
+    width: 360px;
+    height: 230px;
+    margin-left: 13px;
+}
+
+.ui-contents .egames .left .box {
+    width: 354px;
+    height: 170px;
+}
+
+.ui-contents .egames .left .bottom {
+    width: 363px;
+    height: 45px;
+    margin: 6px 0 0 -1px;
+    line-height: 45px;
+    text-align: center;
+    background: url(/static/images/index/bg-contentLong.png) no-repeat;
+}
+
+.ui-contents .egames .right .scroll-up,
+.ui-contents .egames .right .scrollUp {
+    width: 212px;
+    height: 228px;
+    margin: 0 10px;
+    overflow: hidden;
+}
+
+.ui-contents .egames .right .scroll-up ul,
+.ui-contents .egames .right .scrollUp ul {
+    background: url(/static/images/index/split-bonus.png) no-repeat 0 -55px;
+}
+
+.ui-contents .egames .right .scroll-up li,
+.ui-contents .egames .right .scrollUp li {
+    height: 51px;
+    padding: 6px 0 0 46px;
+    line-height: 22px;
+    background: url(/static/images/index/split-bonus.png) no-repeat 0 bottom;
+}

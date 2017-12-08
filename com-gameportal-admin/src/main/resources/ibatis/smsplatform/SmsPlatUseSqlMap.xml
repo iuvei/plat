@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SmsPlatUse">
+
+    <typeAlias alias="smsPlatUse" type="com.gameportal.manage.smsplatform.model.SmsPlatUse"/>
+
+    <resultMap id="smsPlatUseResult" class="smsPlatUse">
+        <result property="spuid" column="spuid"/>
+        <result property="name" column="name"/>
+        <result property="content" column="content"/>
+        <result property="createtime" column="createtime"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	spuid ,
+        	name ,
+        	content ,
+        	createtime 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="smsPlatUse">
+    <![CDATA[
+        INSERT INTO
+        sms_plat_use (
+        	name ,
+        	content ,
+        	createtime 
+        ) VALUES (
+        	#name# ,
+        	#content# ,
+        	#createtime# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="spuid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="smsPlatUse">
+    <![CDATA[
+        UPDATE sms_plat_use SET
+	        name = #name# ,
+	        content = #content# ,
+	        createtime = #createtime# 
+        WHERE 
+	        spuid = #spuid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from sms_plat_use where
+        spuid = #spuid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="smsPlatUseResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from sms_plat_use 
+	        where 
+		        spuid = #spuid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="spuid">
+	             spuid = #spuid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="name">
+	             name = #name#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="content">
+	             content = #content#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createtime">
+	             createtime = #createtime#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(*) from sms_plat_use
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="smsPlatUseResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from sms_plat_use 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	
+</sqlMap>

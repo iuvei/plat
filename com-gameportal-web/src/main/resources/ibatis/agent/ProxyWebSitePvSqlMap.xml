@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProxyWebSitePv">
+
+	<typeAlias alias="proxyWebSitePv"
+		type="com.gameportal.web.agent.model.ProxyWebSitePv" />
+
+	<resultMap id="proxyWebSitePvResult" class="proxyWebSitePv">
+		<result property="staid" column="staid" />
+		<result property="proxyid" column="proxyid" />
+		<result property="proxydomain" column="proxydomain" />
+		<result property="createDate" column="createDate" />
+		<result property="number" column="number" />
+	</resultMap>
+
+	<insert id="insert" parameterClass="proxyWebSitePv">
+    <![CDATA[
+        INSERT INTO
+        a_website_pvsta (
+        	staid,
+        	proxyid,
+        	proxydomain,
+        	createDate,
+        	number
+        ) VALUES (
+        	#staid#,
+        	#proxyid#,
+        	#proxydomain#,
+        	#createDate#,
+        	#number#
+        )
+    ]]>
+		<selectKey resultClass="java.lang.Long" type="post" keyProperty="staid">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	staid,
+    	proxyid,
+    	proxydomain,
+    	createDate,
+    	number
+	  ]]>
+	</sql>
+
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="proxyid">
+				proxyid = #proxyid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="proxydomain">
+				proxydomain = #proxydomain#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="createDate">
+				createDate = #createDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="startDate">
+				<![CDATA[ createDate >= #startDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="endDate">
+				<![CDATA[ createDate <= #endDate#]]>
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<select id="count" resultClass="long">
+	 	<![CDATA[
+			select sum(number) from a_website_pvsta
+		]]>
+		<include refid="dyncmicWhere" />
+	</select>
+	
+	<select id="pageSelect" resultMap="proxyWebSitePvResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_website_pvsta 
+	    ]]>
+		<include refid="dyncmicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+	
+	
+	
+	<update id="update" parameterClass="proxyWebSitePv">
+    	<![CDATA[
+	        UPDATE a_website_pvsta SET proxyid = #proxyid# 
+	    ]]>
+	    <dynamic>  
+            <isNotEmpty property="number" prepend=",">  
+                <![CDATA[ 
+                    number = #number#
+                ]]>  
+            </isNotEmpty>
+	    </dynamic>
+        <![CDATA[
+        	WHERE proxyid = #proxyid# and createDate =#createDate#
+    	]]>
+    </update>
+
+</sqlMap>

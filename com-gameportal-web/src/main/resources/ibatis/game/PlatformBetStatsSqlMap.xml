@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PlatformBetStats">
+
+    <typeAlias alias="PlatformBetStats" type="com.gameportal.web.game.model.PlatformBetStats"/>
+
+    <resultMap id="PlatformBetStatsResult" class="PlatformBetStats">
+        <result property="id" column="id"/>
+        <result property="platform" column="platform"/>
+        <result property="createDate" column="create_date"/>
+        <result property="betTotal" column="bet_total"/>
+        <result property="betNum" column="bet_num"/>
+        <result property="validBetAmount" column="valid_bet_amount"/>
+        <result property="payoutAmount" column="payout_amount"/>
+        <result property="finalAmount" column="final_amount"/>
+    </resultMap>
+    
+    <insert id="insert" parameterClass="PlatformBetStats">
+        <![CDATA[
+        INSERT INTO
+        a_platform_bet_stats (
+        	platform ,
+        	create_date,
+        	bet_total,
+        	bet_num,
+        	valid_bet_amount,
+        	payout_amount ,
+        	final_amount
+        ) VALUES (
+        	#platform# ,
+        	#createDate#,
+        	#betTotal#,
+        	#betNum#,
+        	#validBetAmount#,
+        	#payoutAmount# ,
+        	#finalAmount#
+        )
+    ]]>
+    </insert>
+    
+    <!-- 根据时间从betlog中查询各个游戏平台的投注统计 -->
+	<select id="selectBetFromBetlogByDate" resultClass="PlatformBetStats">
+    	<![CDATA[
+			select platformcode as platform,sum(validBetAmount) as validBetAmount,
+			sum(betamount) as betTotal, sum(profitamount) as payoutAmount, 
+			sum(finalamount) as finalAmount, count(1) as betNum  
+			from a_game_betlog  
+			where DATE_FORMAT(betdate,'%Y-%m-%d')=DATE_FORMAT(#date#,'%Y-%m-%d') 
+			group by platformcode		
+		]]>
+    </select>
+    
+    <!-- 查询用户各个游戏平台的投注统计 -->
+	<select id="selectBetFromBetlogByUser" resultClass="PlatformBetStats">
+    	<![CDATA[
+			select platformcode as platform,sum(validBetAmount) as validBetAmount
+			from a_game_betlog 
+			]]>
+			<dynamic prepend="WHERE">
+				<isNotEmpty prepend="AND" property="account">
+	 				account =#account#
+	 			</isNotEmpty>
+				<isNotEmpty prepend="AND" property="startDateStr">
+	 				<![CDATA[betdate>= CONCAT(#startDateStr#,' 00:00:00') ]]>
+	 			</isNotEmpty>
+	 			<isNotEmpty prepend="AND" property="endDateStr">
+	 				<![CDATA[betdate<= CONCAT(#endDateStr#,' 23:59:59') ]]>
+	 			</isNotEmpty>
+ 			</dynamic>
+		group by platformcode		
+    </select>
+    
+    
+    
+</sqlMap>

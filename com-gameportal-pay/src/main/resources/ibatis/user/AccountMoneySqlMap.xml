@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AccountMoney">
+
+    <typeAlias alias="accountMoney" type="com.gameportal.web.user.model.AccountMoney"/>
+
+    <resultMap id="accountMoneyResult" class="accountMoney">
+        <result property="amid" column="amid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="totalamount" column="totalamount"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	amid ,
+        	uiid ,
+        	totalamount ,
+        	status ,
+        	create_date ,
+        	update_date 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="accountMoney">
+    <![CDATA[
+        INSERT INTO
+        a_account_money (
+        	amid ,
+        	uiid ,
+        	totalamount ,
+        	status ,
+        	create_date ,
+        	update_date 
+        ) VALUES (
+        	#amid# ,
+        	#uiid# ,
+        	#totalamount# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_account_money_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="amid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="accountMoney">
+    <![CDATA[
+        UPDATE a_account_money SET
+	        uiid = #uiid# ,
+	        totalamount = #totalamount# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        amid = #amid# 
+    ]]>
+    </update>
+    
+    <update id="updateRow" parameterClass="accountMoney">
+    <![CDATA[
+        UPDATE a_account_money SET
+	        totalamount = totalamount + #totalamount# ,
+	        update_date = now()
+        WHERE 
+	        uiid = #uiid#
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_account_money where
+        amid = #amid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="accountMoneyResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_account_money 
+	        where 
+		        amid = #amid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="amid">
+	             amid = #amid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="totalamount">
+	             totalamount = #totalamount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_account_money
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="accountMoneyResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_account_money 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	
+</sqlMap>

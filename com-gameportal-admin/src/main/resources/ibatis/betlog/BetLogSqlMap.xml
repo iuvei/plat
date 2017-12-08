@@ -1,0 +1,1168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BetLog">
+
+    <typeAlias alias="betLog" type="com.gameportal.manage.betlog.model.BetLog"/>
+    <typeAlias alias="betLogVo" type="com.gameportal.manage.betlog.model.BetLogVo"/>
+    <typeAlias alias="betLogTotal" type="com.gameportal.manage.betlog.model.BetLogTotal"/>
+    <typeAlias alias="betClearing" type="com.gameportal.manage.betlog.model.BetClearing"/>
+    <typeAlias alias="dailyReportDetail" type="com.gameportal.manage.member.model.DailyReportDetail"/>
+    
+    <resultMap id="betLogResult" class="betLog">
+         <result property="pdid" column="pdid"/>
+        <result property="account" column="account"/>
+        <result property="platformcode" column="platformcode"/>
+        <result property="gamecode" column="gamecode"/>
+        <result property="gamename" column="gamename"/>
+        <result property="gameCategory" column="gameCategory"/>
+        <result property="betdate" column="betdate"/>
+        <result property="betno" column="betno"/>
+        <result property="betamount" column="betamount"/>
+        <result property="profitamount" column="profitamount"/>
+        <result property="currency" column="currency"/>
+        <result property="tormbrate" column="tormbrate"/>
+        <result property="finalamount" column="finalamount"/>
+        <result property="origin" column="origin"/>
+        <result property="gameResult" column="gameResult"/>
+        <result property="result" column="result"/>
+        <result property="validBetAmount" column="validBetAmount"/>
+        <result property="flag" column="flag"/>
+        <result property="playType" column="playType"/>
+        <result property="tableCode" column="tableCode"/>
+        <result property="inningsCode" column="inningsCode"/>
+        <result property="loginIP" column="loginIP"/>
+        <result property="beforeCerdit" column="beforeCerdit"/>
+        <result property="recalcuTime" column="recalcuTime"/>
+        <result property="roundNo" column="roundNo"/>
+        <result property="round" column="round"/>
+    </resultMap>
+    
+     <resultMap id="dailyReportDetailResult" class="dailyReportDetail">
+        <result property="staId" column="staId"/>
+        <result property="reporttime" column="reporttime"/>
+        <result property="registerNumber" column="registerNumber"/>
+        <result property="firstPayNumber" column="firstPayNumber"/>
+        <result property="firstPayTotalMoney" column="firstPayTotalMoney"/>
+        <result property="loginCount" column="loginCount"/>
+        <result property="activeCount" column="activeCount"/>
+        <result property="realBetMoney" column="realBetMoney"/>
+        <result property="memberCoupon" column="memberCoupon"/>
+        <result property="proxyCoupon" column="proxyCoupon"/>
+        <result property="payOrderXimaMoney" column="payOrderXimaMoney"/>
+        <result property="proxyXimaMoney" column="proxyXimaMoney"/>
+        <result property="proxyClearMoney" column="proxyClearMoney"/>
+        <result property="payMoney" column="payMoney"/>
+        <result property="payMoneyPerson" column="payMoneyPerson"/>
+        <result property="payMoneyCount" column="payMoneyCount"/>
+        <result property="pickUpMoney" column="pickUpMoney"/>
+        <result property="pickUpMoneyPerson" column="pickUpMoneyPerson"/>
+        <result property="pickUpMoneyCount" column="pickUpMoneyCount"/>
+    </resultMap>
+    
+    <resultMap class="java.util.Map" id="sumMap">
+    	<result property="betamontSum" column="betamontSum"/>
+    	<result property="account" column="account"/>
+    	<result property="platformcode" column="platformcode"/>
+    	<result property="gamecode" column="gamecode"/>
+    	<result property="gamename" column="gamename"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	pdid ,
+        	account ,
+        	platformcode ,
+        	gamecode ,
+        	gamename ,
+        	gameCategory ,
+        	betdate ,
+        	betno ,
+        	betamount ,
+        	profitamount ,
+        	currency ,
+        	tormbrate ,
+        	finalamount ,
+        	origin ,
+        	gameResult ,
+        	result ,
+        	validBetAmount,
+        	flag,
+        	playType,
+        	tableCode,
+        	inningsCode,
+        	loginIP,
+        	beforeCerdit,
+        	recalcuTime,
+        	roundNo,
+        	round
+	    ]]>
+	</sql>
+	
+	<sql id="dailycommoncolumns">
+		<![CDATA[
+			staId,
+			reporttime ,
+        	registerNumber ,
+        	firstPayNumber ,
+        	firstPayTotalMoney ,
+        	loginCount ,
+        	activeCount ,
+        	realBetMoney ,
+        	memberCoupon ,
+        	proxyCoupon ,
+        	payOrderXimaMoney ,
+        	proxyXimaMoney ,
+        	proxyClearMoney ,
+        	payMoney ,
+        	payMoneyPerson,
+        	pickUpMoney,
+        	pickUpMoneyPerson,
+        	payMoneyCount,
+        	pickUpMoneyCount
+		]]>
+		
+	</sql>
+	
+    <insert id="insert" parameterClass="betLog">
+    <![CDATA[
+        INSERT INTO
+        a_game_betlog (
+        	account ,
+        	platformcode ,
+        	gamecode ,
+        	gamename ,
+        	gameCategory ,
+        	betdate ,
+        	betno ,
+        	betamount ,
+        	profitamount ,
+        	currency ,
+        	tormbrate ,
+        	finalamount ,
+        	origin ,
+        	gameResult ,
+        	result ,
+        	validBetAmount,
+        	flag,
+        	playType,
+        	tableCode,
+        	inningsCode,
+        	loginIP,
+        	beforeCerdit,
+        	round,
+        	recalcuTime,
+        	roundNo,
+        	commission
+        ) VALUES (
+        	#account# ,
+        	#platformcode# ,
+        	#gamecode# ,
+        	#gamename# ,
+        	#gameCategory# ,
+        	#betdate# ,
+        	#betno# ,
+        	#betamount# ,
+        	#profitamount# ,
+        	#currency# ,
+        	#tormbrate# ,
+        	#finalamount# ,
+        	#origin# ,
+        	#gameResult# ,
+        	#result# ,
+        	#validBetAmount#,
+        	#flag#,
+        	#playType#,
+        	#tableCode#,
+        	#inningsCode#,
+        	#loginIP#,
+        	#beforeCerdit#,
+        	#round#,
+        	#recalcuTime#,
+        	#roundNo#,
+        	#commission#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="pre" keyProperty="pdid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+    
+     <insert id="insertStatDailyReport" parameterClass="dailyReportDetail">
+    <![CDATA[
+       INSERT INTO a_daily_report_detail (
+        	reporttime ,
+        	registerNumber ,
+        	firstPayNumber ,
+        	firstPayTotalMoney ,
+        	loginCount ,
+        	activeCount ,
+        	realBetMoney ,
+        	memberCoupon ,
+        	proxyCoupon ,
+        	payOrderXimaMoney ,
+        	proxyXimaMoney ,
+        	proxyClearMoney ,
+        	payMoney ,
+        	payMoneyPerson,
+        	pickUpMoney,
+        	pickUpMoneyPerson,
+        	payMoneyCount,
+        	pickUpMoneyCount
+        ) VALUES (
+        	#reporttime# ,
+        	#registerNumber# ,
+        	#firstPayNumber# ,
+        	#firstPayTotalMoney# ,
+        	#loginCount# ,
+        	#activeCount# ,
+        	#realBetMoney# ,
+        	#memberCoupon# ,
+        	#proxyCoupon# ,
+        	#payOrderXimaMoney# ,
+        	#proxyXimaMoney# ,
+        	#proxyClearMoney# ,
+        	#payMoney# ,
+        	#payMoneyPerson#,
+        	#pickUpMoney#,
+        	#pickUpMoneyPerson#,
+        	#payMoneyCount#,
+        	#pickUpMoneyCount#
+        )
+    ]]>
+        <selectKey resultClass="java.lang.Long" type="pre" keyProperty="staId" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+    
+    
+     <select id="countStatDailyReport" resultClass="long">
+	    <![CDATA[
+	        select count(0) from a_daily_report_detail
+	    ]]>
+		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="startDate">
+	             <![CDATA[reporttime >= #startDate#]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="endDate">
+	             <![CDATA[reporttime <= #endDate#]]>
+	       </isNotEmpty>
+    	</dynamic>   
+    </select>
+    
+    <select id="pageDailyReportDetail" resultMap="dailyReportDetailResult">
+    	select <include refid="dailycommoncolumns"/>
+	    <![CDATA[
+	        from a_daily_report_detail 
+	    ]]>
+		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="startDate">
+	             <![CDATA[reporttime >= #startDate#]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="endDate">
+	             <![CDATA[reporttime <= #endDate#]]>
+	       </isNotEmpty>
+    	</dynamic>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+    <update id="update" parameterClass="betLog">
+    <![CDATA[
+       UPDATE a_game_betlog SET
+	        account = #account# ,
+	        platformcode = #platformcode# ,
+	        gamecode = #gamecode# ,
+	        gamename = #gamename# ,
+	        gameCategory = #gameCategory# ,
+	        betdate = #betdate# ,
+	        betno = #betno# ,
+	        betamount = #betamount# ,
+	        profitamount = #profitamount# ,
+	        currency = #currency# ,
+	        tormbrate = #tormbrate# ,
+	        finalamount = #finalamount# ,
+	        origin = #origin# ,
+	        gameResult = #gameResult# ,
+	        result = #result# ,
+	        validBetAmount = #validBetAmount#,
+        	flag = #flag#,
+        	playType = #playType#,
+        	tableCode = #tableCode#,
+        	inningsCode = #inningsCode#,
+        	loginIP = #loginIP#,
+        	beforeCerdit = #beforeCerdit#,
+        	round = #round#,
+        	recalcuTime = #recalcuTime#
+        WHERE 
+	        pdid = #pdid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_game_betlog where
+        pdid = #pdid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="betLogResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_betlog 
+	        where 
+		        pdid = #pdid# 
+	    ]]>
+    </select>
+    
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="pdid">
+	             pdid = #pdid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="platformcode">
+	       		<![CDATA[
+	              platformcode in $platformcode$
+	             ]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gamecode">
+	             gamecode = #gamecode#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gamename">
+	             gamename = #gamename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gameCategory">
+	             gameCategory = #gameCategory#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="betdate">
+	             betdate = #betdate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="startDate">
+	             betdate >= #startDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="endDate">
+	       		<![CDATA[
+	             betdate <= #endDate#
+	              ]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="betno">
+	             betno = #betno#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="betamount">
+	             betamount = #betamount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="profitamount">
+	             profitamount = #profitamount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="currency">
+	             currency = #currency#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="tormbrate">
+	             tormbrate = #tormbrate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="finalamount">
+	             finalamount = #finalamount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="origin">
+	             origin = #origin#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gameResult">
+	             gameResult = #gameResult#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="result">
+	             result = #result#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="effective">
+	             <![CDATA[ $effective$]]>
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_betlog
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    <select id="getMaxNo" resultClass="long">
+     <![CDATA[
+     	select max(cast(betno as signed)) from  a_game_betlog
+     ]]>
+     <dynamic prepend="WHERE">
+     	<isNotEmpty prepend="AND" property="platformcode">
+       		<![CDATA[
+              platformcode = #platformcode#
+             ]]>
+	    </isNotEmpty>
+     </dynamic>
+    </select>
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="betLogResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_betlog 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+	<select id="selectBetLog" resultClass="com.gameportal.manage.betlog.model.BetLogVo">
+		 <![CDATA[
+		  SELECT
+				a.*,
+				b.gamesName
+				FROM
+				a_game_betlog AS a
+				LEFT OUTER JOIN a_game_info AS b ON  a.gamecode = b.gamescode 
+				
+		  ]]>
+		 <dynamic prepend="WHERE">
+      		<isNotEmpty prepend="AND" property="gamecode">
+              a.gamecode = #gamecode#
+       	 	</isNotEmpty>
+       	 	<isNotEmpty prepend="AND" property="account">
+              a.account = #account#
+       	 	</isNotEmpty>
+       	 	<isNotEmpty prepend="AND" property="startDate">
+              a.betdate >= #startDate#
+       	 	</isNotEmpty>
+       	 	<isNotEmpty prepend="AND" property="endDate">
+              <![CDATA[ a.bet_date <= #endDate#]]>
+       	 	</isNotEmpty>
+       	 	<isNotEmpty prepend="AND" property="effective">
+	             <![CDATA[ $effective$]]>
+	       </isNotEmpty>
+		</dynamic>
+		 <![CDATA[
+		 	 order by a.betdate desc
+		 ]]>
+		
+		 
+	</select>
+	
+	<select id="selectBackAmount" resultClass="java.lang.Long">
+	    <![CDATA[
+	    	select floor(sum(ifnull(betamount,0)*ifnull(tormbrate,1)))
+	    	from a_game_betlog 
+	    ]]>
+	     <dynamic prepend="WHERE">
+      		<isNotEmpty prepend="AND" property="platformcode">
+              platformcode = #platformcode#
+       	 	</isNotEmpty>
+      		<isNotEmpty prepend="AND" property="account">
+              account = #account#
+       	 	</isNotEmpty>
+       	 	<isNotEmpty prepend="AND" property="ymdstart">
+              betdate >= #ymdstart#
+       	 	</isNotEmpty>
+       	 	<isNotEmpty prepend="AND" property="effective">
+	             <![CDATA[ $effective$]]>
+	       </isNotEmpty>
+       	 	<isNotEmpty prepend="AND" property="ymdend">
+       	 	  <![CDATA[
+              betdate < #ymdend#
+              ]]>
+       	 	</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <select id="selectSum" resultClass="java.util.HashMap">
+    	<![CDATA[
+    	SELECT SUM(IFNULL(validBetAmount,'0.00')) AS betamontSum,account,platformcode,gamecode,gamename from a_game_betlog 
+    	]]>
+    	
+    	WHERE flag = 1
+    	
+    	<isNotNull prepend="AND" property="account">
+              account = #account#
+       	 </isNotNull>
+       	 <isNotNull prepend="AND" property="ymdstart">
+              betdate >= #ymdstart#
+      	 </isNotNull>
+      	 <isNotNull prepend="AND" property="ymdend">
+      	 	  <![CDATA[
+             betdate <= #ymdend#
+             ]]>
+      	 </isNotNull>
+      	 <isNotNull prepend="AND" property="platformcodeparams">
+      	 	<![CDATA[
+      	 		platformcode IN $platformcodeparams$
+      	 	]]>
+      	 </isNotNull>
+      	 <isNotEmpty prepend="AND" property="effective">
+	             <![CDATA[ $effective$]]>
+	     </isNotEmpty>
+    	<![CDATA[
+    		
+		 	 GROUP BY gamecode
+		 ]]>
+    </select>
+    
+    
+    <!-- 统计下注数据 -->
+    <select id="selectBetTotal" resultClass="betLogTotal">
+    	<![CDATA[
+    		SELECT 
+    		COUNT(1) AS betTotel,
+    		bet.account as account,u.uname as uname,
+    		platformcode,SUM(betamount) AS betAmountTotal,
+    		SUM(profitamount) AS profitamountTotal,
+    		IFNULL(SUM(validBetAmount),'0.00') AS validBetAmountTotal,
+    		bet.gamecode as gamecode,
+    		bet.gamename as gamename,
+    		bet.betdate AS betdate,
+    		(SELECT COUNT(0) FROM a_user_clearing_flag f LEFT JOIN a_user_info ub ON f.flaguiid=ub.uiid WHERE f.flaguiid=u.uiid
+    		]]>
+    		<isNotEmpty prepend="AND" property="jstime">
+    			f.flagtime = #jstime#
+    		</isNotEmpty>
+    		<![CDATA[
+    		) AS clearingstatus 
+			FROM a_game_betlog bet LEFT JOIN a_user_info u ON bet.account = u.account 
+    	]]>
+    	<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="starttime">
+              bet.betdate >= #starttime#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="endtime">
+	      	 	  <![CDATA[
+	             bet.betdate <= #endtime#
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+              	u.account = #account#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="flag">
+              	bet.flag = #flag#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="platformcode">
+              	<![CDATA[
+	              platformcode in $platformcode$
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="effective">
+	             <![CDATA[ $effective$]]>
+	         </isNotEmpty>
+    	</dynamic>
+    	<dynamic prepend="GROUP BY">
+			<isNotEmpty property="groupColumns">$groupColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <select id="selectBetTotalCount" resultClass="long">
+    	<![CDATA[
+    	SELECT COUNT(DISTINCT bet.account,bet.platformcode,bet.gamecode)
+		FROM a_game_betlog bet LEFT JOIN a_user_info u ON bet.account = u.account 
+		]]>
+		<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="starttime">
+              bet.betdate >= #starttime#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="endtime">
+	      	 	  <![CDATA[
+	             bet.betdate <= #endtime#
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+              	u.account = #account#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="flag">
+              	bet.flag = #flag#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="effective">
+	             <![CDATA[ $effective$]]>
+	         </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="platformcode">
+              	<![CDATA[
+	              bet.platformcode in $platformcode$
+	             ]]>
+	      	 </isNotEmpty>
+    	</dynamic>
+    </select>
+    
+    <!-- 洗码统计下注数据 -->
+    <select id="selectXimaBetTotal" resultClass="betLogTotal">
+    	<![CDATA[
+    		SELECT 
+    		IFNULL(u.puiid,'0') AS puiid,
+    		COUNT(1) AS betTotel,
+    		bet.account as account,u.uname as uname,
+    		platformcode,SUM(betamount) AS betAmountTotal,
+    		SUM(profitamount) AS profitamountTotal,
+    		IFNULL(SUM(validBetAmount),'0.00') AS validBetAmountTotal,
+    		bet.gamecode as gamecode,
+    		bet.gamename as gamename,
+    		bet.betdate AS betdate,
+    		(SELECT COUNT(0) FROM a_user_clearing_flag f LEFT JOIN a_user_info ub ON f.flaguiid=ub.uiid WHERE f.flaguiid=u.uiid
+    		]]>
+    		<isNotEmpty prepend="AND" property="jstime">
+    			f.flagtime = #jstime#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="platname">
+    			f.platname = bet.platformcode
+    		</isNotEmpty>
+    		<![CDATA[
+    		) AS clearingstatus 
+			FROM a_game_betlog bet LEFT JOIN a_user_info u ON bet.account = u.account 
+    	]]>
+    	<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="flag">
+              bet.flag = #flag#
+	      	 </isNotEmpty>
+    		<isNotEmpty prepend="AND" property="starttime">
+              bet.betdate >= #starttime#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="endtime">
+	      	 	  <![CDATA[
+	             bet.betdate <= #endtime#
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+              	u.account = #account#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="platformcode">
+              	<![CDATA[
+	              platformcode in $platformcode$
+	             ]]>
+	      	 </isNotEmpty>
+    	</dynamic>
+    	<dynamic prepend="GROUP BY">
+			<isNotEmpty property="groupColumns">$groupColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <!-- 洗码数据统计分页 -->
+    <select id="selectXimaBetTotalCount" resultClass="long">
+    	<![CDATA[
+	    	SELECT COUNT(DISTINCT $groupColumns$) AS ximaBetTotalCount
+			FROM a_game_betlog bet LEFT JOIN a_user_info u ON  bet.account = u.account
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="flag">
+              bet.flag = #flag#
+	      	 </isNotEmpty>
+    		<isNotEmpty prepend="AND" property="starttime">
+              bet.betdate >= #starttime#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="endtime">
+	      	 	  <![CDATA[
+	             bet.betdate <= #endtime#
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+              	u.account = #account#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="platformcode">
+              	<![CDATA[
+	              platformcode in $platformcode$
+	             ]]>
+	      	 </isNotEmpty>
+    	</dynamic>
+    </select>
+    
+    
+    <!-- 查询代理下线 -->
+    <select id="selectProxyDownUser" resultClass="betLogTotal">
+    	<![CDATA[
+    	SELECT u.uiid,u.account,u.uname,u.phone,u.email,u.QQ AS qq,u.birthday,
+    	IFNULL(cx.ximascale,'0.00') AS ximascale,
+		(SELECT COUNT(1) FROM a_game_betlog g WHERE g.account=u.account
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+   		 	g.betdate >= #startDate#
+   		</isNotEmpty>
+   		<isNotEmpty prepend="AND" property="endDate">
+   			<![CDATA[g.betdate <= #endDate#]]>
+   		</isNotEmpty>
+   		<![CDATA[
+		) AS betTotel,
+		IFNULL(SUM(bet.betamount),'0.00') AS betAmountTotal,
+		IFNULL(SUM(bet.profitamount),'0.00') AS profitamountTotal,
+		IFNULL(-SUM(bet.finalamount),'0.00') AS finalamountTotal,
+		IFNULL(SUM(bet.validBetAmount),'0.00') AS validBetAmountTotal
+		FROM a_user_info u LEFT JOIN c_user_xima_set cx ON cx.uiid = u.uiid AND cx.proxyid = #uiid# LEFT JOIN a_game_betlog bet ON u.account = bet.account 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+    		 bet.betdate >= #startDate#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[bet.betdate <= #endDate#]]>
+    	</isNotEmpty> 
+		<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="uiid">
+    			u.puiid = #uiid#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="account">
+    			u.account = #account#
+    		</isNotEmpty>
+    	</dynamic>
+		GROUP BY u.account 
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <!-- 统计代理下线人数 -->
+    <select id="selectProxyDownUserCount" resultClass="long">
+    	<![CDATA[
+    		SELECT COUNT(1) FROM a_user_info u
+    	]]>
+    	<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="uiid">
+    			u.puiid = #uiid#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="account">
+    			u.account = #account#
+    		</isNotEmpty>
+    	</dynamic>
+    </select>
+    
+    <!-- tongji -->
+    <select id="selectProxyDownUserXimaCount" resultClass="long">
+    	<![CDATA[
+    	SELECT COUNT(DISTINCT(bet.account))
+		FROM a_game_betlog bet LEFT JOIN a_user_info u ON bet.account = u.account 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="uiid">
+    			u.puiid = #uiid#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="startDate">
+              bet.betdate >= #startDate#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="endDate">
+	      	 	  <![CDATA[
+	             bet.betdate <= #endDate#
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="flag">
+	   		 	bet.flag = #flag#
+	   		</isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+              	bet.account = #account#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="platformcode">
+              	<![CDATA[
+	              bet.platformcode in $platformcode$
+	             ]]>
+	      	 </isNotEmpty>
+    	</dynamic>
+    </select>
+    
+    <!-- 查询代理下线 洗码-->
+    <select id="selectProxyDownUserXima" resultClass="betLogTotal">
+    	<![CDATA[
+    	SELECT u.uiid,u.account,u.uname,
+    	IFNULL(cx.ximascale,'0.00') AS ximascale,
+		(SELECT COUNT(1) FROM a_game_betlog g WHERE g.account=u.account
+		]]>
+		<isNotEmpty prepend="AND" property="flag">
+   		 	g.flag = #flag#
+   		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="startDate">
+   		 	g.betdate >= #startDate#
+   		</isNotEmpty>
+   		<isNotEmpty prepend="AND" property="endDate">
+   			<![CDATA[g.betdate <= #endDate#]]>
+   		</isNotEmpty>
+   		<![CDATA[
+		) AS betTotel,
+		IFNULL(SUM(bet.betamount),'0.00') AS betAmountTotal,
+		IFNULL(SUM(bet.profitamount),'0.00') AS profitamountTotal,
+		IFNULL(-SUM(bet.finalamount),'0.00') AS finalamountTotal,
+		IFNULL(SUM(bet.validBetAmount),'0.00') AS validBetAmountTotal,
+		IFNULL((SELECT SUM(amount) FROM a_pay_order p WHERE p.uiid=u.uiid AND p.status=3 AND p.paytyple = 2
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+    		 p.deposittime >= #startDate#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[p.deposittime <= #endDate#]]>
+    	</isNotEmpty> 
+		<![CDATA[
+		AND p.ordertype >0 ),'0.00') AS preferentialTotal
+		FROM a_game_betlog bet LEFT JOIN a_user_info u ON u.account = bet.account 
+		]]>
+		<isNotEmpty prepend="AND" property="flag">
+   		 	bet.flag = #flag#
+   		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="startDate">
+    		 bet.betdate >= #startDate#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[bet.betdate <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		LEFT JOIN c_user_xima_set cx ON cx.uiid = u.uiid AND cx.proxyid = #uiid#
+		]]>
+		<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="uiid">
+    			u.puiid = #uiid#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="account">
+    			u.account = #account#
+    		</isNotEmpty>
+    	</dynamic>
+		GROUP BY u.account
+    </select>
+    
+    <!-- 根据代理ID统计盈亏 -->
+    <select id="getProxyLoss" resultClass="String">
+		<![CDATA[
+    		SELECT IFNULL((SELECT SUM(pay.amount) FROM a_pay_order pay 
+		WHERE pay.uiid=u.uiid AND pay.status=3 AND pay.paytyple=3 AND pay.ordertype=0
+    	]]>
+    	<isNotEmpty prepend="AND" property="startDate">
+			pay.deposittime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[pay.deposittime <= #endDate#]]>
+    	</isNotEmpty>
+    	<![CDATA[),'0.00')+
+    		IFNULL(-SUM(bet.finalamount),'0.00')+IFNULL((SELECT SUM(CONVERT(clog.realPL,DECIMAL(10,2))) FROM a_proxy_clearing_log clog WHERE clog.clearingStatus=2 
+    	]]>
+    	<isNotEmpty prepend="AND" property="uiid">
+    		clog.uiid=#uiid#
+    	</isNotEmpty>
+    	<![CDATA[),'0.00') AS finalamountTotal 
+			FROM a_game_betlog bet LEFT JOIN a_user_info u ON bet.account = u.account 
+    	]]>
+    	<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="uiid">
+    			u.puiid = #uiid#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="startDate">
+    		 	bet.betdate >= #startDate#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="endDate">
+    			<![CDATA[bet.betdate <= #endDate#]]>
+    		</isNotEmpty>
+    	</dynamic>
+    </select>
+    
+    <!-- 查询代理下线玩家所有优惠加洗码 -->
+    <select id="getProxyPreferential" resultClass="String">
+    	<![CDATA[
+    	SELECT 
+		(SUM(IFNULL((SELECT SUM(xm.total) FROM c_member_xima_main xm WHERE xm.uiid = u.uiid 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			xm.updatetime >= #startDate# 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    			<![CDATA[xm.updatetime <=#endDate#]]>
+    	</isNotEmpty>
+    	<![CDATA[
+		),'0.00'))+
+		SUM(IFNULL((SELECT SUM(ap.amount) FROM a_pay_order ap WHERE ap.uiid=u.uiid AND ap.paytyple=2 AND ap.status = 3 AND ap.ordertype != 0 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			ap.deposittime >= #startDate# 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    			<![CDATA[ap.deposittime <=#endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00'))+
+		IFNULL((SELECT SUM(pulog.ximamoney) FROM a_proxyuser_xima_log pulog WHERE pulog.puiid=#uiid#
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			pulog.ximatime >= #startDate# 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    			<![CDATA[pulog.ximatime <=#endDate#]]>
+    	</isNotEmpty>
+		),'0.00')) AS preferential
+		 FROM a_user_info u 
+		 <dynamic prepend="WHERE">
+		 	<isNotEmpty prepend="AND" property="uiid">
+    			u.puiid = #uiid#
+    		</isNotEmpty>
+		 </dynamic>
+    </select>
+    
+    <!-- 查询全部代理结算记录本月 -->
+    <select id="selectProxyClearing" resultClass="betClearing">
+    <![CDATA[
+    	SELECT * FROM (SELECT u.uiid,u.account,u.uname,
+		(SELECT COUNT(0) FROM a_user_info WHERE puiid=u.uiid) AS lowerUser,
+		(SELECT COUNT(1) FROM a_game_betlog gb LEFT JOIN a_user_info ub ON gb.account=ub.account
+		WHERE ub.puiid=p.uiid 
+		]]>
+		<isNotEmpty prepend="AND" property="flag">
+			gb.flag = #flag#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="startDate">
+			gb.betdate >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[gb.betdate <= #endDate#]]>
+    	</isNotEmpty>
+    	
+    	<![CDATA[
+		) AS betTotel,
+		SUM(
+		IFNULL((SELECT SUM(pay.amount) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid 
+		WHERE ub.puiid=p.uiid AND pay.status=3 AND pay.paytyple=3 AND pay.ordertype=0
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			pay.deposittime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[pay.deposittime <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00')+
+		IFNULL((SELECT -SUM(gb.finalamount) FROM a_game_betlog gb LEFT JOIN a_user_info ub ON gb.account=ub.account
+		WHERE ub.puiid=p.uiid 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			gb.betdate >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[gb.betdate <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00')+
+		IFNULL((SELECT SUM(CONVERT(clog.realPL,DECIMAL(10,2))) FROM a_proxy_clearing_log clog LEFT JOIN a_user_info ub ON clog.uiid=ub.uiid 
+		WHERE (clog.clearingStatus=2 or clog.clearingStatus=3) AND clog.uiid=p.uiid
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			clog.clearingTime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[clog.clearingTime <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00')) AS finalamountTotal,
+		]]>
+		<![CDATA[
+    	IFNULL(SUM((SELECT SUM(gb.validBetAmount) FROM a_game_betlog gb LEFT JOIN a_user_info ub ON gb.account=ub.account
+    	WHERE ub.puiid=p.uiid 
+    	]]>
+    	<isNotEmpty prepend="AND" property="flag">
+			gb.flag = #flag#
+		</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="startDate">
+			gb.betdate >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[gb.betdate <= #endDate#]]>
+    	</isNotEmpty>
+    	
+    	<![CDATA[
+    	)),'0.00') AS validBetAmountTotal,
+    	IFNULL(SUM((SELECT SUM(pay.amount) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid 
+    	WHERE ub.puiid=p.uiid AND pay.status=3 AND pay.paytyple=2 
+    	]]>
+    	<isNotEmpty prepend="AND" property="startDate">
+			pay.deposittime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[pay.deposittime <= #endDate#]]>
+    	</isNotEmpty>
+    	<![CDATA[
+    	AND pay.ordertype >0)),'0.00') AS preferentialTotal,
+		SUM(
+		IFNULL((SELECT SUM(pay.amount) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid 
+		WHERE ub.puiid=p.uiid AND pay.status=3 AND pay.paytyple=2 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			pay.cwopttime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[pay.cwopttime <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		AND pay.ordertype=3),'0.00')+
+		IFNULL((SELECT SUM(pulog.ximamoney) FROM a_proxyuser_xima_log pulog WHERE pulog.puiid=p.uiid AND pulog.status=1
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			pulog.ximatime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+			<![CDATA[pulog.ximatime <=#endDate#]]>
+		</isNotEmpty>
+		<![CDATA[
+		),'0.00')+
+		IFNULL((SELECT SUM(uxm.total) FROM c_member_xima_main uxm LEFT JOIN a_user_info ub ON uxm.uiid=ub.uiid 
+		WHERE ub.puiid=p.uiid AND uxm.locked=1 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			uxm.updatetime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[uxm.updatetime <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00')) AS ximaAmount,
+		(SELECT COUNT(0) FROM a_proxy_clearing_flag f LEFT JOIN a_user_info ub ON f.clearingflaguiid=ub.uiid WHERE f.clearingflaguiid=p.uiid 
+		]]>
+		<isNotEmpty prepend="AND" property="month">
+    		f.clearingflagmonth = #month#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="year">
+    		f.clearingflagyear = #year#
+    	</isNotEmpty>
+		<![CDATA[
+		) AS clearingstatus,
+		p.pyid,
+		IFNULL(p.returnscale,'0.00') AS returnscale,
+		IFNULL(p.ximascale,'0.00') AS ximascale,
+		IFNULL(p.clearingtype,'0') as clearingtype
+		FROM a_game_proxyinfo p LEFT JOIN a_user_info u ON p.uiid = u.uiid
+		WHERE u.accounttype > 0
+		]]>
+		<isNotEmpty prepend="AND" property="account">
+    		u.account = #account#
+    	</isNotEmpty>
+    	<![CDATA[GROUP BY u.account]]>) AS t
+    </select>
+    
+    <!-- 查询全部代理洗码 -->
+    <select id="selectProxyXima" resultClass="betClearing">
+    <![CDATA[
+    	SELECT u.uiid,u.account,u.uname,
+		(SELECT COUNT(0) FROM a_user_info WHERE puiid=u.uiid) AS lowerUser,
+		(SELECT COUNT(1) FROM a_game_betlog gb LEFT JOIN a_user_info ub ON gb.account=ub.account
+		WHERE ub.puiid=u.uiid 
+		]]>
+		<isNotEmpty prepend="AND" property="flag">
+			gb.flag = #flag#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="startDate">
+			gb.betdate >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[gb.betdate <= #endDate#]]>
+    	</isNotEmpty>
+    	
+    	<![CDATA[
+		) AS betTotel,
+		SUM(
+		IFNULL((SELECT -SUM(gb.finalamount) FROM a_game_betlog gb LEFT JOIN a_user_info ub ON gb.account=ub.account
+		WHERE ub.puiid=u.uiid 
+		]]>
+		<isNotEmpty prepend="AND" property="flag">
+			gb.flag = #flag#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="startDate">
+			gb.betdate >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[gb.betdate <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00')+
+		IFNULL((SELECT SUM(clog.finalamountTotal) FROM a_proxy_clearing_log clog LEFT JOIN a_user_info ub ON clog.uiid=ub.uiid 
+		WHERE (clog.clearingStatus=2 or clog.clearingStatus=3) AND clog.uiid=u.uiid
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			clog.clearingTime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[clog.clearingTime <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00')) AS finalamountTotal,
+    	IFNULL(SUM((SELECT SUM(gb.validBetAmount) FROM a_game_betlog gb LEFT JOIN a_user_info ub ON gb.account=ub.account
+    	WHERE ub.puiid=u.uiid 
+    	]]>
+    	<isNotEmpty prepend="AND" property="flag">
+			gb.flag = #flag#
+		</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="startDate">
+			gb.betdate >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[gb.betdate <= #endDate#]]>
+    	</isNotEmpty>
+    	
+    	<![CDATA[
+    	)),'0.00') AS validBetAmountTotal,
+    	IFNULL(SUM((SELECT SUM(pay.amount) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid 
+    	WHERE ub.puiid=u.uiid AND pay.status=3 AND pay.paytyple=2 
+    	]]>
+    	<isNotEmpty prepend="AND" property="startDate">
+			pay.cwopttime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[pay.cwopttime <= #endDate#]]>
+    	</isNotEmpty>
+    	<![CDATA[
+    	AND pay.ordertype >0)),'0.00') AS preferentialTotal,
+		SUM(
+		IFNULL((SELECT SUM(pay.amount) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid 
+		WHERE ub.puiid=u.uiid AND pay.status=3 AND pay.paytyple=2 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			pay.cwopttime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[pay.cwopttime <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		AND pay.ordertype=3),'0.00')+
+		IFNULL((SELECT SUM(uxm.total) FROM c_member_xima_main uxm LEFT JOIN a_user_info ub ON uxm.uiid=ub.uiid 
+		WHERE ub.puiid=u.uiid AND uxm.locked=1 
+		]]>
+		<isNotEmpty prepend="AND" property="startDate">
+			uxm.updatetime >= #startDate#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endDate">
+    		<![CDATA[uxm.updatetime <= #endDate#]]>
+    	</isNotEmpty>
+		<![CDATA[
+		),'0.00')) AS ximaAmount,
+		(SELECT COUNT(0) FROM a_proxy_xima_flag f LEFT JOIN a_user_info ub ON f.flaguiid=ub.uiid WHERE f.flaguiid= u.uiid
+		]]>
+		<isNotEmpty prepend="AND" property="jstime">
+	    	f.flagtime = #jstime#
+	    </isNotEmpty>
+		<![CDATA[
+		) AS clearingstatus,
+		p.pyid,
+		IFNULL(p.returnscale,'0.00') AS returnscale,
+		IFNULL(p.ximascale,'0.00') AS ximascale,
+		IFNULL(p.isximaflag,'0') AS isximaflag
+		FROM a_user_info u LEFT JOIN a_game_proxyinfo p ON u.uiid = p.uiid 
+		WHERE u.accounttype > 0 AND p.clearingtype=2
+		]]>
+		<isNotEmpty prepend="AND" property="account">
+    		u.account = #account#
+    	</isNotEmpty>
+    	<![CDATA[
+    	GROUP BY u.account
+    	]]>
+    </select>
+    
+</sqlMap>

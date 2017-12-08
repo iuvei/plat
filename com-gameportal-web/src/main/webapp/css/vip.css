@@ -1,0 +1,12 @@
+.vip_page {display: none;}
+.show {display: block;}
+.pref_list {padding:0px; height:auto;}
+.pref_list .s_outer {background-color:#666666; padding:5px; height:228px; position:relative;}
+.pref_list .s_inner {width:950px; height:228px; overflow:hidden; position:relative; z-index:10; cursor:pointer;}
+.pref_list .list {width:73px; height:228px; overflow:hidden; margin-right:1px; float:left; position:relative;}
+.pref_list .list_hover {width:653px;}
+.pref_list .list .handle {left:0px; top:0px; width:73px; height:228px; position:absolute;}
+.pref_list .list dl {left:98px; top:20px; font-size: 14px; position: absolute;}
+.pref_list .list dt {height:50px; color:#fac313; line-height:50px; font-size:30px; font-weight:bold;}
+.pref_list .list dd {color:#fff; line-height:20px;}
+.pref_list .list dd span {color:#ccc;}

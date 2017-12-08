@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SystemUserLoginLog">
+
+	<typeAlias alias="systemUserLoginLog" type="com.gameportal.manage.system.model.SystemUserLoginLog"/>
+	
+	<sql id="commonColumns">
+		<![CDATA[
+			logid,
+			loginaccount,
+			loginname,
+			loginrole,
+			loginip,
+			loginmac,
+			logintime,
+			loginsource
+		]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="logid">
+			 	logid = #logid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="loginaccount">
+				loginaccount = #loginaccount#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="loginname">
+				loginname = #loginname#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="startDate">
+				logintime >= #startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				<![CDATA[logintime <= #endDate#]]>
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<insert id="insert" parameterClass="systemUserLoginLog">
+		<![CDATA[
+			INSERT INTO 
+			system_user_login_log (
+				loginaccount,
+				loginname,
+				loginrole,
+				loginip,
+				loginmac,
+				logintime,
+				loginsource
+			) VALUES (
+				#loginaccount#,
+				#loginname#,
+				#loginrole#,
+				#loginip#,
+				#loginmac#,
+				#logintime#,
+				#loginsource#
+			)
+		]]>
+	</insert>
+	
+	<select id="count" resultClass="long">
+		<![CDATA[
+        	select count(0) from system_user_login_log
+    	]]>
+    	<include refid="dynamicWhere"/>
+	</select>
+	
+	<select id="pageSelect" resultClass="systemUserLoginLog">
+    	select <include refid="commonColumns"/>
+    	from system_user_login_log
+    	<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+		
+    </select>
+</sqlMap>

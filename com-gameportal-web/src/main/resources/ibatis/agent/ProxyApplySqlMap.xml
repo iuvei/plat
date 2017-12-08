@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProxyApply">
+
+	<typeAlias alias="proxyApply"
+		type="com.gameportal.web.agent.model.ProxyApply" />
+
+	<resultMap id="proxyApplyResult" class="proxyApply">
+		<result property="aid" column="aid" />
+		<result property="trueName" column="truename" />
+		<result property="telphone" column="telphone" />
+		<result property="qqskype" column="qqskype" />
+		<result property="aemail" column="aemail" />
+		<result property="spreadfs" column="spreadfs" />
+		<result property="applySource" column="applysource" />
+		<result property="applyTime" column="applytime" />
+		<result property="status" column="status" />
+		<result property="description" column="description" />
+	</resultMap>
+
+	<insert id="insert" parameterClass="proxyApply">
+    <![CDATA[
+        INSERT INTO
+        a_web_proxy_apply (
+        	aid,
+        	truename,
+        	telphone,
+        	qqskype,
+        	aemail,
+        	spreadfs,
+        	applysource,
+        	applytime
+        ) VALUES (
+        	#aid#,
+        	#trueName#,
+        	#telphone#,
+        	#qqskype#,
+        	#aemail#,
+        	#spreadfs#,
+        	#applySource#,
+        	#applyTime#
+        )
+    ]]>
+		<selectKey resultClass="java.lang.Long" type="post"
+			keyProperty="aid">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	aid,
+       	truename,
+       	telphone,
+       	qqskype,
+       	aemail,
+       	spreadfs,
+       	applysource,
+       	applytime,
+       	status,
+       	description
+	  ]]>
+	</sql>
+
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="truename">
+				truename = #trueName#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="spreadfs">
+				spreadfs = #spreadfs#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="status">
+				status = #status#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<select id="count" resultClass="long">
+	 	<![CDATA[
+			select count(1) from a_web_proxy_apply
+		]]>
+		<include refid="dyncmicWhere" />
+	</select>
+
+</sqlMap>

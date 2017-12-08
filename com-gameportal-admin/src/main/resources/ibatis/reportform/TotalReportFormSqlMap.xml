@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="TotalReportForm">
+
+	<typeAlias alias="registerReportForm" type="com.gameportal.manage.reportform.model.RegisterReportForm"/>
+	<typeAlias alias="betReportForm" type="com.gameportal.manage.reportform.model.BetReportForm"/>
+	<typeAlias alias="payReportForm" type="com.gameportal.manage.reportform.model.PayReportForm"/>
+	<typeAlias alias="withdrawalReportForm" type="com.gameportal.manage.reportform.model.WithdrawalReportForm"/>
+	<typeAlias alias="favorableReportForm" type="com.gameportal.manage.reportform.model.FavorableReportForm"/>
+	<typeAlias alias="platformReportForm" type="com.gameportal.manage.reportform.model.PlatformReportForm"/>
+	<typeAlias alias="hyMemberReportForm" type="com.gameportal.manage.reportform.model.HyMemberReportForm"/>
+	
+	<!-- 统计注册人数 -->
+	<select id="getRegister" resultClass="registerReportForm">
+		<![CDATA[
+			SELECT DATE_FORMAT(create_date,'%Y-%m-%d') AS times,COUNT(uiid) AS counts FROM a_user_info 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="starttime">
+				create_date >= #starttime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endtime">
+				<![CDATA[create_date <= #endtime#]]>
+			</isNotEmpty>
+		</dynamic>
+		 GROUP BY DATE_FORMAT(create_date,'%Y-%m-%d')
+	</select>
+	
+	<!-- 投注总额 -->
+	<select id="getTotalBetList" resultClass="betReportForm">
+		<![CDATA[
+			SELECT DATE_FORMAT(betdate,'%Y-%m-%d') AS times,SUM(validBetAmount) AS betmoney FROM a_game_betlog 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="starttime">
+				betdate >= #starttime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endtime">
+				<![CDATA[betdate <= #endtime#]]>
+			</isNotEmpty>
+		</dynamic>
+		GROUP BY DATE_FORMAT(betdate,'%Y-%m-%d')
+	</select>
+	
+	<select id="getPayReportList" resultClass="payReportForm">
+		<![CDATA[
+			SELECT DATE_FORMAT(deposittime,'%Y-%m-%d') AS times,SUM(amount) AS paymoney FROM a_pay_order 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="paytyple">
+				paytyple = #paytyple#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="starttime">
+				deposittime >= #starttime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endtime">
+				<![CDATA[deposittime <= #endtime#]]>
+			</isNotEmpty>
+		</dynamic>
+		GROUP BY DATE_FORMAT(deposittime,'%Y-%m-%d')
+	</select>
+	
+	<!-- 提款金额统计 -->
+	<select id="getWithdrawalReportList" resultClass="withdrawalReportForm">
+		<![CDATA[
+			SELECT DATE_FORMAT(deposittime,'%Y-%m-%d') AS times,SUM(amount) AS withdrawalTotal FROM a_pay_order 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="paytyple">
+				paytyple = #paytyple#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="starttime">
+				deposittime >= #starttime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endtime">
+				<![CDATA[deposittime <= #endtime#]]>
+			</isNotEmpty>
+		</dynamic>
+		GROUP BY DATE_FORMAT(deposittime,'%Y-%m-%d')
+	</select>
+	
+	<!-- 获取优惠金额报表 -->
+	<select id="getFavorableReportList" resultClass="favorableReportForm">
+		<![CDATA[
+			SELECT DATE_FORMAT(deposittime,'%Y-%m-%d') AS times,SUM(amount) AS favorabTotal FROM a_pay_order 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="paytyple">
+				paytyple = #paytyple#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="ordertype">
+				ordertype IN $ordertype$
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="starttime">
+				deposittime >= #starttime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endtime">
+				<![CDATA[deposittime <= #endtime#]]>
+			</isNotEmpty>
+		</dynamic>
+		GROUP BY DATE_FORMAT(deposittime,'%Y-%m-%d')
+	</select>
+	
+	<!-- 统计总洗码 -->
+	<select id="getXimaReportList" resultClass="favorableReportForm">
+		<![CDATA[
+			SELECT 
+			IFNULL((SELECT SUM(amount) FROM a_pay_order WHERE paytyple=2 AND `status`=3 AND ordertype = 3 AND deposittime >= #starttime# AND deposittime<=#endtime# GROUP BY DATE_FORMAT(deposittime,'%Y-%m-%d')),'0.00')+
+			IFNULL((SELECT SUM(total) FROM c_member_xima_main WHERE locked=1 AND updatetime >=#starttime# AND updatetime<=#endtime# GROUP BY DATE_FORMAT(updatetime,'%Y-%m-%d')),'0.00')+
+			IFNULL((SELECT SUM(ximamoney) FROM a_proxyuser_xima_log WHERE `status`=1 AND ximatime >=#starttime# AND ximatime<=#endtime# GROUP BY DATE_FORMAT(ximatime,'%Y-%m-%d')),'0.00')+
+			IFNULL((SELECT SUM(clearingAmount) FROM a_proxy_clearing_log WHERE clearingStatus=1 and clearingType=2 AND uptime >=#starttime# AND uptime<=#endtime# GROUP BY DATE_FORMAT(uptime,'%Y-%m-%d')),'0.00') AS favorabTotal
+		]]>
+	</select>
+	
+	<!-- 统计平台总余额 -->
+	<select id="getPlatformReport" resultClass="platformReportForm">
+		SELECT SUM(totalamount) AS totalMoney FROM a_account_money
+	</select>
+	
+	<!-- 获取活跃会员数据 -->
+	<select id="getHymember" resultClass="hyMemberReportForm">
+		<![CDATA[
+		SELECT 
+		(SELECT COUNT(DISTINCT account) FROM user_login_log
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="starttime">
+				logintime >= #starttime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endtime">
+				<![CDATA[logintime <= #endtime#]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[
+		) AS logincount,
+		(SELECT COUNT(DISTINCT uiid) FROM a_pay_order WHERE paytyple=0 AND status = 3
+		]]>
+		<isNotEmpty prepend="AND" property="starttime">
+			deposittime >= #starttime#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="endtime">
+			<![CDATA[deposittime <= #endtime#]]>
+		</isNotEmpty>
+		<![CDATA[
+		) AS paycount
+		]]>
+	</select>
+</sqlMap>

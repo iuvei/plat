@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.AccountMoneyMapper">
+
+	<resultMap type="AccountMoney" id="accountMoneyMap">
+         <result property="amid" column="amid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="totalamount" column="totalamount"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+		<result property="account" column="account"/>
+        <result property="accounttype" column="accounttype"/>
+        <result property="uname" column="uname"/>
+        <result property="identitycard" column="identitycard"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="qq" column="QQ"/>
+        <result property="birthday" column="birthday"/>
+        <result property="grade" column="grade"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="selectRow">
+	    <![CDATA[
+            amid ,
+        	uiid ,
+        	totalamount ,
+        	status ,
+        	create_date ,
+        	update_date 
+	    ]]>
+	</sql>
+	
+	<!-- 查询条件    -->
+	<sql id="selectWhere">
+		<if test="amid !=null and amid !=''">
+			and amid = #{amid}
+		</if>
+		<if test="uiid !=null and uiid !=''">
+			and uiid = #{uiid}
+		</if> 
+  		<if test="totalamount !=null and totalamount !=''">
+			and totalamount = #{totalamount}
+		</if>
+		<if test="status !=null and status !=''">
+			and status = #{status}
+		</if>
+		<if test="createDate !=null and createDate !=''">
+			and create_date = #{createDate}
+		</if>
+		<if test="updateDate !=null and updateDate !=''">
+			and update_date = #{updateDate}
+		</if>
+	</sql>
+	
+	<select id="getMoneyInfo" resultType="AccountMoney" parameterType="java.util.HashMap">
+    	select <include refid="selectRow"/>
+	    <![CDATA[
+	        from a_account_money where 1=1
+	    ]]>
+	    <include refid="selectWhere"/>
+	</select>
+	
+	<!-- 新增代理钱包记录 -->
+	<insert id="insertAccountMoney" parameterType="AccountMoney">
+		 <selectKey resultType="int" keyProperty="amid" order="AFTER">  
+       	 	SELECT LAST_INSERT_ID()  
+   		</selectKey>  
+		<![CDATA[
+			INSERT INTO a_account_money 
+			(
+	        	uiid ,
+	        	totalamount ,
+	        	status ,
+	        	create_date ,
+	        	update_date 
+			) VALUES (
+				#{uiid},
+	        	#{totalamount},
+	        	#{status},
+	        	#{createDate},
+	        	#{updateDate} 
+			)
+		]]>
+	</insert>
+	
+	<!--修改代理钱包余额-->
+	<update id="updateAccountMoney" parameterType="AccountMoney">
+		update a_account_money set totalamount = #{totalamount},update_date = #{updateDate} where uiid =#{uiid}
+	</update>
+</mapper>

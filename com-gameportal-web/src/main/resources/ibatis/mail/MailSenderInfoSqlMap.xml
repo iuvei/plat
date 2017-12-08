@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="MailSenderInfo">
+    <typeAlias alias="mailSenderInfo" type="com.gameportal.web.mail.model.MailSenderInfo"/>
+
+    <resultMap id="mailSenderInfoResult" class="mailSenderInfo">
+        <result property="mailid" column="mailid"/>
+        <result property="uuid" column="uuid"/>
+        <result property="mailServerHost" column="mailServerHost"/>
+        <result property="mailServerPort" column="mailServerPort"/>
+        <result property="fromAddress" column="fromAddress"/>
+        <result property="toAddress" column="toAddress"/>
+        <result property="subject" column="subject"/>
+        <result property="content" column="content"/>
+        <result property="createDate" column="createDate"/>
+        <result property="sendDate" column="sendDate"/>
+        <result property="validTime" column="validTime"/>
+        <result property="status" column="status"/>
+    </resultMap>
+	
+    <insert id="insert" parameterClass="mailSenderInfo">
+    <![CDATA[
+        INSERT INTO
+        c_sendmail_log (
+        	mailid,
+        	uuid,
+        	mailServerHost,
+        	mailServerPort,
+        	fromAddress,
+        	toAddress,
+        	subject,
+        	content,
+        	createDate
+        ) VALUES (
+        	#mailid# ,
+        	#uuid# ,
+        	#mailServerHost#,
+        	#mailServerPort#,
+        	#fromAddress#,
+        	#toAddress#,
+        	#subject#,
+        	#content#,
+        	#createDate#
+        )
+    ]]>
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="mailid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="mailSenderInfo">
+    <![CDATA[
+        UPDATE c_sendmail_log SET
+	        sendDate = #sendDate#,
+	        validTime = #validTime#,
+	        status = #status# 
+        WHERE 
+	        mailid = #mailid#
+    ]]>
+    </update>
+	
+	<select id="queryAll" resultClass="mailSenderInfo">
+	select * 
+    <![CDATA[
+        from c_sendmail_log 
+    ]]>
+	<dynamic prepend="where">
+		<isNotEmpty property="uuid" prepend="and">
+			uuid = #uuid#
+		</isNotEmpty>
+		<isNotEmpty property="status" prepend="and">
+			status = #status#
+		</isNotEmpty>
+		order by createDate desc
+	</dynamic>
+	</select>
+	
+</sqlMap>
+    

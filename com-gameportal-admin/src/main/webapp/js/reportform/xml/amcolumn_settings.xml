@@ -1,0 +1,89 @@
+<settings> 
+  <font>Tahoma</font>   
+  <text_size>12</text_size>
+  <decimals_separator>.</decimals_separator>
+  <add_time_stamp>true</add_time_stamp>
+  <column>
+    <width>85</width>     
+    <spacing>0</spacing> 
+    <grow_time>3</grow_time>
+    <sequenced_grow>true</sequenced_grow> 
+
+    <grow_effect>elastic</grow_effect>    
+    <balloon_text>                                                    
+      <![CDATA[{series}| {value}人]]>
+    </balloon_text>
+    <bullet_offset>16</bullet_offset>   
+    <hover_color>#EED600</hover_color>  
+     
+  </column>
+
+  <plot_area>
+    <margins>
+      <left>50</left>
+      <right>20</right>
+      <bottom>0</bottom>
+    </margins>
+  </plot_area>
+    
+  <grid>                 
+    <category>                                                                
+      <alpha>10</alpha>  
+      <dashed>false</dashed>
+
+    </category>
+    <value>                      
+      <alpha>10</alpha>    
+      <dashed>false</dashed>
+    </value>
+  </grid>
+  
+  <values>                 
+    <category>             
+      <color>FFFFFF</color>
+
+      <inside>true</inside>
+    </category>
+    <value>                    
+      <min>0</min>             
+    </value>
+  </values>
+  
+  <axes>                       
+    <category>                 
+      <color>E7E7E7</color>    
+      <width>1</width>
+
+      <tick_length>0</tick_length>         
+    </category>
+    <value>                    
+      <color>E7E7E7</color>       
+      <width>0</width>         
+    </value>
+  </axes>  
+  
+  <balloon>                    
+    <text_color>FFFFFF</text_color>
+  </balloon>
+
+    
+  <labels>                         
+    <label>
+      <x>0</x>
+      <y>7</y>
+      <text_color>000000</text_color>
+      <text_size>12</text_size>
+      <align>center</align>
+
+      <text>
+        <![CDATA[<b>同时在线人数峰值信息</b>]]>
+      </text>        
+    </label>
+  </labels>
+  
+  <legend>
+    <enabled>false</enabled>
+  </legend>
+          
+
+</settings>

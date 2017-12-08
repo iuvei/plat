@@ -1,0 +1,93 @@
+/* 登录头部样式 */
+.username{height:35px; line-height:35px; font-size:14px; text-align:center; color:#333333;}
+.username a:link {text-decoration:none; font-size:14px; color:#006d04;}
+.username a:visited {text-decoration:none; font-size:14px; color:#006d04;}
+.username a:hover {text-decoration:none; font-size:14px; color:#b18702;}
+.username a:active {text-decoration:none; font-size:14px; color:#b18702;}
+
+.usertext{height:35px; line-height:35px; font-size:14px; text-align:center; color:#b18702;}
+.usertext a:link {text-decoration:none; font-size:14px; color:#006d04;}
+.usertext a:visited {text-decoration:none; font-size:14px; color:#006d04;}
+.usertext a:hover {text-decoration:none; font-size:14px; color:#b18702;}
+.usertext a:active {text-decoration:none; font-size:14px; color:#b18702;}
+
+/* 菜单导航样式 */
+.menutitle{width:197px; background-color:#999999; border-bottom:solid 1px #666666; line-height:35px; height:35px; font-size:16px; color:#006d04; text-align:left; padding-left:60px; }
+.menutitle a:link {font-size:16px; color:#006d04; text-decoration: none;}
+.menutitle a:visited {font-size:16px; color:#006d04; text-decoration: none;}
+.menutitle a:hover {font-size:16px; color: #ffffdd; text-decoration: none;}
+.menutitle a:active {font-size:16px; color: #ffffdd; text-decoration: none;}
+
+.menutitle .menutext{font-size:14px; color:#333333; text-align:left; line-height:25px; height:25px; }
+.menutitle .menutext a:link {font-size:14px; text-decoration: none; color: #333333;}
+.menutitle .menutext a:visited {font-size:14px; text-decoration: none; color: #333333;}
+.menutitle .menutext a:hover {font-size:14px; text-decoration: none; color: #ffffdd;}
+.menutitle .menutext a:active {font-size:14px; text-decoration: none; color: #ffffdd;}
+
+.menutitleover{width:197px; background-color:#b18702; border-bottom:solid 1px #666666; line-height:35px; height:35px; font-size:16px; color:#ffffff;  text-align:left; padding-left:60px;}
+.menutitleover a:link {font-size:16px; text-decoration: none; color: #ffffff;}
+.menutitleover a:visited {font-size:16px; text-decoration: none; color: #ffffff;}
+.menutitleover a:hover {font-size:16px; text-decoration: none; color: #ffffdd;}
+.menutitleover a:active {font-size:16px; text-decoration: none; color: #ffffdd;}
+
+.menutitleover .menutext{font-size:14px; color:#fff0be; text-align:left; line-height:25px; height:25px;}
+.menutitleover .menutext a:link {font-size:14px; text-decoration: none; color: #fff0be;}
+.menutitleover .menutext a:visited {font-size:14px; text-decoration: none; color: #fff0be;}
+.menutitleover .menutext a:hover {font-size:14px; text-decoration: none; color: #ffffdd;}
+.menutitleover .menutext a:active {font-size:14px; text-decoration: none; color: #ffffdd;}
+
+/* 个人中心样式 */
+
+.usercenter {font-size:20px; color:#333333; line-height:40px; }
+.usercenter .yelclr {font-size:24px; color:#b18702; line-height:24px;}
+.usercenter .greenclr {color:#006d04; font-size:14px; line-height:24px;}
+
+.dltstitle {font-size:18px; color:#006d04; line-height:50px; height:50px; border-bottom:solid 1px #CCCCCC;}
+.dltstitle a:link {font-size:18px; text-decoration: none; color: #b18702;}
+.dltstitle a:visited {font-size:18px; text-decoration: none; color: #b18702;}
+.dltstitle a:hover {font-size:18px; text-decoration: none; color: #b18702;}
+.dltstitle a:active {font-size:18px; text-decoration: none; color: #b18702;}
+
+.dltstext {font-size:14px; color:#333333; line-height:40px; height:40px;}
+.dltstext .clr{color:#b18702;}
+
+.usertitle {text-align:center; line-height:40px; height:50px; font-size:20px; color:#006d04; background-color:#ada9aa; border-top:solid 3px #ada9aa;}
+.usertitle a:link {font-size:20px; text-decoration: none; color: #006d04;}
+.usertitle a:visited {font-size:20px; text-decoration: none; color: #006d04;}
+.usertitle a:hover {font-size:20px; text-decoration: none; color: #006d04;}
+.usertitle a:active {font-size:20px; text-decoration: none; color: #006d04;}
+
+.usertitleover {text-align:center; line-height:40px; height:50px; font-size:20px; color:#ffffdd; background-color:#b18702; border-top:solid 3px #b18702;}
+.usertitleover a:link {font-size:20px; text-decoration: none; color: #ffffdd;}
+.usertitleover a:visited {font-size:20px; text-decoration: none; color: #ffffdd;}
+.usertitleover a:hover {font-size:20px; text-decoration: none; color: #ffffdd;}
+.usertitleover a:active {font-size:20px; text-decoration: none; color: #ffffdd;}
+
+.submitbtn {float:left; width:100px; text-align:center; background-color:#b18702; line-height:50px; font-size:20px; color:#121212; cursor:pointer;}
+.submitbtn a:link {float:left; width:100px; text-align:center; background-color:#b18702; line-height:50px; font-size:20px;  color:#121212; text-decoration:none;}
+.submitbtn a:visited {float:left; width:100px; text-align:center; background-color:#b18702; line-height:50px; font-size:20px;  color:#121212; text-decoration:none;}
+.submitbtn a:hover {float:left; width:100px; text-align:center; background-color:#fac313; line-height:50px; font-size:20px;  color:#121212; text-decoration:none;}
+.submitbtn a:active {float:left; width:100px; text-align:center; background-color:#fac313; line-height:50px; font-size:20px; color:#121212; text-decoration:none;}
+
+.submitbtn2 {float:left; width:50px; text-align:center; background-color:#b18702; line-height:35px; font-size:15px; color:#121212; cursor:pointer;}
+.submitbtn2 a:link {float:left; width:50px; text-align:center; background-color:#b18702; line-height:35px; font-size:15px; color:#121212; text-decoration:none;}
+.submitbtn2 a:visited {float:left; width:50px; text-align:center; background-color:#b18702; line-height:35px; font-size:15px;  color:#121212; text-decoration:none;}
+.submitbtn2 a:hover {float:left; width:50px; text-align:center; background-color:#fac313; line-height:35px; font-size:15px;  color:#121212; text-decoration:none;}
+.submitbtn2 a:active {float:left; width:50px; text-align:center; background-color:#fac313; line-height:35px; font-size:15px; color:#121212; text-decoration:none;}
+
+.pagetext{height:35px; line-height:35px; font-size:14px; text-align:center; color:#333333;}
+.pagetext a:link {text-decoration:none; font-size:14px; color:#006d04;}
+.pagetext a:visited {text-decoration:none; font-size:14px; color:#006d04;}
+.pagetext a:hover {text-decoration:none; font-size:14px; color:#b18702;}
+.pagetext a:active {text-decoration:none; font-size:14px; color:#b18702;}
+
+.pagetext .yelclr{height:35px; line-height:35px; font-size:14px; text-align:center; color:#b18702;}
+
+.onlinePayment {background-image: url('../images/member/id1.png');width: 178px;color: #fff;height: 64px;line-height: 64px;float: left;text-align: center;font-size: 16px;font-weight: bold;margin-left: 15px;margin-bottom: 15px;}
+.onlinePayment:hover {background-image: url('../images/member/id1_01.png');}	
+.onlinePayment:link {color: #fff;}	
+
+
+.captcha {
+	vertical-align: bottom;
+}

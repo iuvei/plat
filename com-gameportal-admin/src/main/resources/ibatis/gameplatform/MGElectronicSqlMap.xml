@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MGElectronic">
+
+	<typeAlias alias="mgElectronic" type="com.gameportal.manage.gameplatform.model.MGElectronic"/>
+	
+	<sql id="commonColumns">
+		<![CDATA[
+			electronicid,
+			Category,
+			CategoryID,
+			GameEnName,
+			ImageFileName,
+			GameName,
+			GameNameCN,
+			Sequence,
+			status,
+			prizepool
+		]]>
+	</sql>
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="electronicid">
+				electronicid = #electronicid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="statustwo">
+				status != #statustwo#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<select id="count" resultClass="long">
+		<![CDATA[
+        select count(0) from mg_electronic
+    ]]>
+		<include refid="dynamicWhere"/>  
+	</select>
+	
+	<select id="pageSelect" resultClass="mgElectronic">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from mg_electronic 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+</sqlMap>

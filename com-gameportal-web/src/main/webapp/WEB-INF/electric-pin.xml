@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<electricpinList>
+	<electricpin>
+		<domain>nono.88dxy.com</domain>
+		<eid>71</eid>
+		<truename>nono</truename>
+	</electricpin>
+	<electricpin>
+		<domain>joker.88dxy.com</domain>
+		<eid>64</eid>
+		<truename>joker</truename>
+	</electricpin>
+	<electricpin>
+		<domain>miki.88dxy.com</domain>
+		<eid>72</eid>
+		<truename>miki</truename>
+	</electricpin>
+	
+</electricpinList>

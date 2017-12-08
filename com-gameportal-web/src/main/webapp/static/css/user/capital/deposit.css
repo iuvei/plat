@@ -1,0 +1,49 @@
+.main .user-layer .payWay {
+    margin: 12px 0 30px 89px;
+}
+
+.main .user-layer .payWay li {
+    width: 150px;
+    height: 17px;
+    padding: 6px;
+    margin-right: 20px;
+    line-height: 17px;
+}
+
+.main .user-layer .payWay li img {
+    margin: 0 10px;
+}
+
+.main .user-layer .QRCode {
+    width: 430px;
+    margin: 0 0 0 430px;
+}
+
+.main .user-layer .QRCode img {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.main .user-layer .bankCard .left {
+    width: 165px;
+    height: 200px;
+}
+
+.main .user-layer .bankCard .left img {
+    margin: 10px auto;
+}
+
+.main .user-layer .bankCard .right {
+    width: 470px;
+    height: 150px;
+    padding-top: 50px;
+}
+
+.main .user-layer .bankCard .right p {
+    margin-bottom: 10px;
+}
+
+.main .user-layer .alipay a {
+    width: 220px;
+}

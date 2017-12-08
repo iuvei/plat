@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PlatMoneyLog">
+	
+	<!-- 平台余额记录 -->
+	<typeAlias alias="platMoneyLog" type="com.gameportal.manage.reportform.model.PlatMoneyLog"/>
+	
+	<!-- 保存平台余额 -->
+	<insert id="insert" parameterClass="platMoneyLog">
+		INSERT INTO a_platmoney_log 
+		(
+			create_date,
+			totalmoney
+		) VALUES (
+			#create_date#,
+			#totalmoney#
+		)
+	</insert>
+	
+	<!-- 平台余额记录-->
+	<select id="selectPlatMoneyLog" resultClass="platMoneyLog">
+    	<![CDATA[
+	    	SELECT pmid,create_date,totalmoney from a_platmoney_log order by create_date desc
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <!-- 平台余额记录总计 -->
+    <select id="count" resultClass="long">
+    	<![CDATA[
+       	   SELECT count(0) from a_platmoney_log
+    	]]>
+    </select>
+</sqlMap>

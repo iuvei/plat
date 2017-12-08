@@ -1,0 +1,13 @@
+normal, white: #fff
+grayLight: #ddd
+gray: #676767
+dark: #494949
+red : #ff6565
+green: #0bb774
+brown: #8b2c16
+orange: #ff996c
+lightBlue: #2b5e93
+blue: #193a5d
+
+
+<a class="ui-btn ui-block size-normal ui-radius color-white bg-orange bg-brownHover ui-transition" href="javascript:;">了解详情</a>

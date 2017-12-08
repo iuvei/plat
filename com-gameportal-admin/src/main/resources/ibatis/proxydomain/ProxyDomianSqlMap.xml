@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ProxyDomian">
+
+	<typeAlias alias="proxyDomian" type="com.gameportal.manage.proxydomain.model.ProxyDomian"/>
+	<sql id="commonColumns">
+		<![CDATA[
+			d.urlid,
+			d.proxyurl,
+			d.proxyuid,
+			d.status,
+			u.account AS proxyaccount,
+			u.uname AS proxyname
+		]]>
+	</sql>
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="urlid">
+	             d.urlid = #urlid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="proxyurl">
+	             d.proxyurl = #proxyurl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="proxyuid">
+	             d.proxyuid = #proxyuid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             d.status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             u.account = #account#
+	       </isNotEmpty>
+	       <!-- 模糊查询URL参数 -->
+	       <isNotEmpty prepend="AND" property="blurryURL">
+	       		 d.proxyurl like '%$blurryURL$%'
+	       </isNotEmpty>
+	       
+	    </dynamic>
+	</sql>
+	
+	<insert id="insert" parameterClass="proxyDomian">
+		<![CDATA[
+			INSERT INTO
+	        a_proxy_url (
+	        	proxyurl,
+	        	proxyuid,
+	        	status
+	        ) VALUES (
+	        	#proxyurl#,
+	        	#proxyuid#,
+	        	#status#
+	        )
+        ]]>
+	</insert>
+	<delete id="delete" parameterClass="java.lang.Long">
+		<![CDATA[
+        delete from a_proxy_url where
+        urlid = #urlid# 
+    ]]>
+	</delete>
+	<update id="update" parameterClass="proxyDomian">
+		<![CDATA[
+	        UPDATE a_proxy_url SET
+		        proxyurl = #proxyurl# ,
+		        proxyuid = #proxyuid# ,
+		        status = #status#
+	        WHERE 
+		        urlid = #urlid# 
+	    ]]>
+	</update>
+	
+	<select id="getObject" resultClass="proxyDomian">
+		select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_proxy_url d LEFT JOIN a_user_info u ON d.proxyuid=u.uiid
+	    ]]>
+		<include refid="dynamicWhere"/>
+	</select>
+	
+	<select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_proxy_url d LEFT JOIN a_user_info u ON d.proxyuid=u.uiid
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <select id="pageSelect" resultClass="proxyDomian">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_proxy_url d LEFT JOIN a_user_info u ON d.proxyuid=u.uiid
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+</sqlMap>

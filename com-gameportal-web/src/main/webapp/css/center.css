@@ -1,0 +1,60 @@
+@charset "utf-8";
+/* CSS Document */
+.center_h{ font-size:22px; color:#0babff; padding:30px 0 15px;}
+.center_h i{ width:63px; height:32px; display:inline-block; vertical-align:middle; background:url(../images/icon_center.png) no-repeat; margin-right:10px;}
+.center_nav{ width:158px; float:left; background:#484860; border-left:solid 1px #666888; padding-bottom:20px;}
+.cnav_list h2{ background:#ff9900; padding-left:24px; color:#331f00; font-size:16px; height:40px; line-height:40px;}
+.cnav_list li a,.noticeiTunes a{ height:40px; line-height:40px; display:block; font-size:14px; color:#9c9baa; padding-left:40px;}
+.cnav_list li a.curr,.cnav_list li a:hover,.noticeiTunes a:hover,.noticeiTunes a.curr{ background:url(../images/icon_center.png) -69px 0 no-repeat; color:#ff9900;}
+.noticeiTunes{ border-top:solid 1px #56566e;}
+.noticeiTunes a{ height:50px; line-height:50px;}
+.center_con{ width:800px; float:left; border:solid 1px #666888; border-left:solid 1px #ff9900; min-height:549px; background:#232232;}
+.cenCon_h{ height:38px; line-height:38px; padding-left:15px; color:#ff9900; font-size:14px; background:#484860; border-bottom:solid 1px #666888;}
+
+.centerIfm{ padding:30px 0 0 100px;}
+.formli{ margin-bottom:20px;}
+.formli span.red{ font-weight:bold; vertical-align:middle;}
+.formli label{width:7em; text-align:right; color:#fff; font-size:12px; display:inline-block; vertical-align:middle;}
+.centerTip{margin-left:8px; line-height:20px; height:20px; overflow:hidden; color:#999; font-size:12px; vertical-align:middle;}
+
+.changeOpt{ padding:0 0 40px 140px;}
+.changeOpt_deposit{ padding:30px 0 0; text-align:center;}
+.changeOpt span{ display:inline-block;}
+.changeOpt span input{ opacity:0; filter:alpha(opacity=0); outline:none; display:none; *display:inline-block;}
+.changeOpt span label{ background:#484860; color:#7b7a8a; display:inline-block; width:120px; height:30px; line-height:30px; text-align:center; float:left; border-radius:30px 0 0 30px; font-size:14px; cursor:pointer;}
+.changeOpt span label.lab2{ border-radius:0 30px 30px 0;}
+.changeOpt span label.curr{ background:#ff9900; color:#331f00;}
+.reset{ color:#232232; background:#eee; margin-left:15px;}
+
+#bindBnak label,#depositATM label,#caseout label,#transfer label{ width:8em;}
+.bindTip{ padding-left:8.2em; color:#999; font-size:12px; margin-top:8px;}
+.bindTip2{ padding-left:20px;}
+.bindTip span{ color:#0babff;}
+
+.cenDetail_h{ font-size:14px; color:#0babff; padding:10px 0 15px 10px;}
+.balance{ margin:0 auto 20px; width:750px; border:solid 1px #666888;}
+.balance td,.balance th{ text-align:center; padding:7px 12px; border:solid 1px #666888; color:#fff; font-family:'宋体';}
+.balance th{ background:#39374f; color:#fe9302;}
+#transfer{ padding-top:10px;}
+
+.search{ width:750px; margin:0 auto; padding:25px 0 30px; color:#fff;}
+.search label{ color:#fff; font-size:14px; vertical-align:middle; margin-right:5px;}
+.marl{ margin-left:15px;}
+.page{ width:750px; margin:0 auto; text-align:right; color:#a3a3a3;}
+.page a{ color:#0babff; margin-left:8px; text-decoration:underline;}
+.page a:hover{ color:#fe9302;}
+
+#noticeTab .tdcon{ line-height:24px; text-align:left;}
+
+.otherpost{ padding-top:20px;}
+.otherpost .formli h2{ width:12.5em; text-align:right; color:#fff; font-size:12px; display:inline-block; vertical-align:middle;}
+.payList li{ float:left; width:160px; height:40px; border:solid 1px #fff; overflow:hidden; border-radius:4px; background:#fff; margin-right:10px;}
+.otherpost .payList li label{ width:160px; text-align:left; display:block;}
+.otherpost .formli h2{ padding-bottom:15px;}
+.payList{ padding-left:20px;}
+#depositOther_sub{ margin-left:20px;}
+
+.deposit_succ{ padding:40px 85px 0 40px;}
+.deposit_succ div.tc p{ font-size:14px; color:#fff; padding:30px 0;}
+.deposit_succ .bindTip{ padding-left:65px; }
+

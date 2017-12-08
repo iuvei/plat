@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProxyClearingEntity">
+	<typeAlias alias="proxyClearing" type="com.gameportal.manage.proxy.model.ProxyClearingEntity"/>
+	<sql id="commonColumns">
+		<![CDATA[
+		clearingflagid,
+		clearingflaguiid,
+		clearingflagyear,
+		clearingflagmonth,
+		clearingflagtype,
+		clearingflagtime
+		]]>
+	</sql>
+	
+	<insert id="insert" parameterClass="proxyClearing">
+		<![CDATA[
+			INSERT INTO a_proxy_clearing_flag
+			(
+			clearingflaguiid,
+			clearingflagyear,
+			clearingflagmonth,
+			clearingflagtype,
+			clearingflagtime
+			) VALUES (
+				#clearingflaguiid#,
+				#clearingflagyear#,
+				#clearingflagmonth#,
+				#clearingflagtype#,
+				#clearingflagtime#
+			)
+		]]>
+	</insert>
+	
+	 <update id="update" parameterClass="proxyClearing">
+	 	<![CDATA[
+	 		 UPDATE a_proxy_clearing_flag SET 
+	 		 clearingflaguiid = #clearingflaguiid#,
+	 		 clearingflagyear = #clearingflagyear#,
+			 clearingflagmonth = #clearingflagmonth#,
+			 clearingflagtype = #clearingflagtype#,
+			 clearingflagtime = #clearingflagtime#
+			 WHERE 
+	        	clearingflaguiid = #clearingflaguiid# 
+	 	]]>
+	 </update>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="clearingflagid">
+	             clearingflagid = #clearingflagid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="clearingflaguiid">
+	             clearingflaguiid = #clearingflaguiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="clearingflagyear">
+	       		 clearingflagyear = #clearingflagyear#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="clearingflagmonth">
+	             clearingflagmonth = #clearingflagmonth#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="clearingflagtype">
+	             clearingflagtype = #clearingflagtype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="clearingflagtime">
+	             clearingflagtime = #clearingflagtime#
+	       </isNotEmpty>
+	     </dynamic>
+	</sql>
+	
+	<select id="queryClearingFlag" resultClass="proxyClearing">
+		select <include refid="commonColumns"/>
+		<![CDATA[
+     	  from a_proxy_clearing_flag
+        ]]>
+		<include refid="dynamicWhere"/>
+	</select>
+</sqlMap>
+	

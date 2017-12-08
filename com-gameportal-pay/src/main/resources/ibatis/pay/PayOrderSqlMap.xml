@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PayOrder">
+
+	<typeAlias alias="payOrder" type="com.gameportal.pay.model.PayOrder" />
+	<typeAlias alias="userManager" type="com.gameportal.pay.model.UserManager" />
+	<typeAlias alias="payOrderLog" type="com.gameportal.pay.model.PayOrderLog" />
+
+	<resultMap id="payOrderResult" class="payOrder">
+		<result property="poid" column="poid" />
+		<result property="platformorders" column="platformorders" />
+		<result property="uiid" column="uiid" />
+		<result property="paytyple" column="paytyple" />
+		<result property="ppid" column="ppid" />
+		<result property="paymethods" column="paymethods" />
+		<result property="bankname" column="bankname" />
+		<result property="bankcard" column="bankcard" />
+		<result property="openname" column="openname" />
+		<result property="deposit" column="deposit" />
+		<result property="deposittime" column="deposittime" />
+		<result property="amount" column="amount" />
+		<result property="paystatus" column="paystatus" />
+		<result property="uaccount" column="uaccount" />
+		<result property="urealname" column="urealname" />
+		<result property="status" column="status" />
+		<result property="remarks" column="remarks" />
+		<result property="ordercontent" column="ordercontent" />
+		<result property="createDate" column="create_date" />
+		<result property="updateDate" column="update_date" />
+		<result property="hdnumber" column="hdnumber"/>
+		<result property="ordertype" column="ordertype"/>
+		<result property="proxyName" column="proxy_name"/>
+		<result property="kfremarks" column="kfremarks"/>
+		<result property="cwremarks" column="cwremarks"/>
+	</resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	uaccount,
+        	urealname,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date ,
+        	update_date ,
+        	hdnumber,
+        	ordertype,	
+        	beforebalance,
+        	laterbalance,
+        	proxy_name,
+        	kfremarks,
+        	cwremarks
+	    ]]>
+	</sql>
+
+	<insert id="insert" parameterClass="payOrder">
+    <![CDATA[
+        INSERT INTO
+        a_pay_order (
+        	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	uaccount,
+        	urealname,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date ,
+        	update_date ,
+        	hdnumber,
+        	kfremarks,
+        	cwremarks,
+        	ordertype,
+        	beforebalance,
+        	laterbalance,
+        	proxy_name
+        ) VALUES (
+        	#poid# ,
+        	#platformorders# ,
+        	#uiid# ,
+        	#paytyple# ,
+        	#ppid# ,
+        	#paymethods# ,
+        	#bankname# ,
+        	#bankcard# ,
+        	#openname# ,
+        	#deposit# ,
+        	#deposittime# ,
+        	#amount# ,
+        	#paystatus# ,
+        	#uaccount#,
+        	#urealname#,
+        	#status# ,
+        	#remarks# ,
+        	#ordercontent# ,
+        	#createDate# ,
+        	#updateDate# ,
+        	#hdnumber#,
+        	#kfremarks#,
+        	#cwremarks#,
+        	#ordertype#,
+        	#beforebalance#,
+        	#laterbalance#,
+        	#proxyName#
+        )
+    ]]>
+		<!-- mysql: type="post" SELECT select last_insert_id() sqlserver: type="post" 
+			SELECT @@identity AS ID oracle: type="pre" SELECT sequenceName.nextval AS 
+			ID FROM DUAL a_pay_order_SEQ.nextval AS ID FROM DUAL DB2: type="pre" values 
+			nextval for sequenceName <selectKey resultClass="java.lang.Long" type="post" 
+			keyProperty="poid" > SELECT last_insert_id() </selectKey> -->
+	</insert>
+	
+	<insert id="insertPayLog" parameterClass="payOrderLog">
+    <![CDATA[
+        INSERT INTO
+        a_pay_order_log (
+        	coid ,
+        	uiid ,
+        	orderid ,
+        	amount ,
+        	walletlog ,
+        	gamelog ,
+        	type,
+        	remark ,
+        	createtime 
+        ) VALUES (
+        	#coid# ,
+        	#uiid# ,
+        	#orderid# ,
+        	#amount# ,
+        	#walletlog# ,
+        	#gamelog# ,
+        	#type#,
+        	#remark# ,
+        	#createtime#
+        )
+    ]]>
+     <selectKey resultClass="java.lang.Long" type="post" keyProperty="coid" >
+           SELECT  last_insert_id()
+     </selectKey>
+    </insert>
+    
+	<select id="selectUManager" resultClass="userManager">
+		select uiid,belongid,payertype,remark,clienttype from user_manager where uiid = #uiid#
+	</select>
+	<update id="updateUManager" parameterClass="userManager">
+		<![CDATA[
+	        UPDATE user_manager SET
+		        clienttype = #clienttype#
+	        WHERE 
+		        uiid = #uiid# 
+	    ]]>
+	</update>
+	<update id="update" parameterClass="payOrder">
+    <![CDATA[
+        UPDATE a_pay_order SET
+	        platformorders = #platformorders# ,
+	        uiid = #uiid# ,
+	        paytyple = #paytyple# ,
+	        ppid = #ppid# ,
+	        paymethods = #paymethods# ,
+	        bankname = #bankname# ,
+	        bankcard = #bankcard# ,
+	        openname = #openname# ,
+	        deposit = #deposit# ,
+	        deposittime = #deposittime# ,
+	        amount = #amount# ,
+	        paystatus = #paystatus# ,
+	        status = #status# ,
+	        remarks = #remarks# ,
+	        ordercontent = #ordercontent# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# ,
+	        beforebalance = #beforebalance#,
+        	laterbalance = #laterbalance#,
+        	kfremarks =#kfremarks#,
+        	cwremarks =#cwremarks#,
+        	hdnumber = #hdnumber#
+        WHERE 
+	        poid = #poid# 
+    ]]>
+	</update>
+
+	<delete id="delete" parameterClass="java.lang.String">
+    <![CDATA[
+        delete from a_pay_order where
+        poid = #poid# 
+    ]]>
+	</delete>
+
+	<select id="getById" resultMap="payOrderResult">
+		select
+		<include refid="commonColumns" />
+	    <![CDATA[
+	        from a_pay_order 
+	        where 
+		        poid = #poid# 
+	    ]]>
+	</select>
+
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="poid">
+				poid = #poid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="platformorders">
+				platformorders = #platformorders#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="uiid">
+				uiid = #uiid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="paytyple">
+				paytyple = #paytyple#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="ppid">
+				ppid = #ppid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="paymethods">
+				paymethods = #paymethods#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="bankname">
+				bankname = #bankname#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="bankcard">
+				bankcard = #bankcard#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="openname">
+				openname = #openname#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="deposit">
+				deposit = #deposit#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="deposittime">
+				deposittime = #deposittime#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="amount">
+				amount = #amount#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="paystatus">
+				paystatus = #paystatus#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="remarks">
+				remarks = #remarks#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="ordercontent">
+				ordercontent = #ordercontent#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="createDate">
+				create_date = #createDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="updateDate">
+				update_date = #updateDate#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_pay_order
+    ]]>
+		<include refid="dynamicWhere" />
+	</select>
+
+	<!-- 分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页 因为分页查询将传 #offset#,#pageSize#,#lastRows# 
+		三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现 -->
+	<select id="pageSelect" resultMap="payOrderResult">
+		select
+		<include refid="commonColumns" />
+	    <![CDATA[
+	        from a_pay_order 
+	    ]]>
+		<include refid="dynamicWhere" />
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+	</select>
+
+</sqlMap>

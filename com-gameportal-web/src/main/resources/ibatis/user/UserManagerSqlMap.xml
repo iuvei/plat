@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="UserManager">
+	<typeAlias alias="userManager" type="com.gameportal.web.user.model.UserManager"/>
+	
+	<insert id="insert" parameterClass="userManager">
+		INSERT INTO user_manager 
+		(
+			uiid,
+			belongid,
+			payertype,
+			remark,
+			clienttype
+		) VALUES
+		(
+			#uiid#,
+			#belongid#,
+			#payertype#,
+			#remark#,
+			#clienttype#
+		)
+	</insert>
+</sqlMap>

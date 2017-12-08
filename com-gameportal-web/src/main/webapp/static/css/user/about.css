@@ -1,0 +1,137 @@
+.ui-contents {
+    height: 800px;
+}
+
+#insert-notices,
+.ui-notices {
+    margin-bottom: 0;
+}
+
+.ui-notices .detail {
+    width: 881px;
+}
+
+.main {
+    height: 710px;
+    margin-right: -2px;
+    overflow: hidden;
+    border-radius: .5em 0 0 .5em;
+    -webkit-border-radius: .5em 0 0 .5em;
+}
+
+.main .menu {
+    width: 200px;
+    height: 709px;
+    border-top: 1px solid #ff996c;
+    margin-left: -1px;
+    overflow: hidden;
+    border-radius: .5em;
+    -webkit-border-radius: .5em;
+}
+
+.main .menu li {
+    height: 57px;
+    border-bottom: 1px solid #193a5d;
+}
+
+.main .menu li:last-child {
+    border-bottom: none;
+}
+
+.main .menu li a {
+    display: block;
+    height: 57px;
+    border-left: 6px solid #2b5e93;
+    padding-left: 60px;
+    line-height: 57px;
+    background-color: #2b5e93;
+}
+
+.main .menu li a:hover,
+.main .menu li a.active {
+    border-left: 6px solid #ff996c;
+    background-color: #26486D;
+}
+
+.main .menu li a .badge {
+    min-width: 12px;
+    height: 18px;
+    padding: 0 3px;
+    margin: 20px 0 0 6px;
+    line-height: 18px;
+    border-radius: 9px;
+    font-size: 12px;
+    -webkit-border-radius: 9px;
+}
+
+.main .content .title {
+    height: 57px;
+    padding-left: 245px;
+    border-bottom: 2px solid #ccc;
+    line-height: 56px;
+    background-color: #eee;
+}
+
+.main .content .user-layer {
+    margin-left: 200px;
+    padding: 0 45px;
+}
+
+.main .content .mailList {
+    height: 34px;
+    padding-right: 60px;
+    border-top: 1px solid #eee;
+    margin-bottom: 1px;
+    background: #eee url(/static/images/user/bg-up.png) no-repeat 740px center;
+    overflow: hidden;
+}
+
+.main .content .mailList a {
+    width: 480px;
+    height: 20px;
+    padding-top: 9px;
+    line-height: 20px;
+}
+
+.main .content .mailList a img {
+    margin-right: 6px;
+}
+
+.main .content .mailList .time {
+    width: 190px;
+    height: 20px;
+    padding: 9px 15px 0 0;
+    line-height: 20px;
+}
+
+.main .content .mailList .text {
+    padding: 6px 0;
+    border-top: 1px solid #ddd;
+    margin-right: 20px;
+    cursor: default;
+}
+
+.main .content .pages {
+    margin-right: 30px;
+}
+
+.main .content h2.user-layer {
+    height: 22px;
+    line-height: 20px;
+    font-weight: normal;
+}
+
+.main .content p.user-layer,
+.main .content .user-layer li {
+    line-height: 26px;
+}
+
+.main .content p .logo {
+    height: 128px;
+    margin: 30px auto;
+}
+
+.main .content p .about {
+    width: 712;
+    height: 195px;
+}

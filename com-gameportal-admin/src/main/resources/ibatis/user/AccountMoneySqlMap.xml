@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AccountMoney">
+
+    <typeAlias alias="accountMoney" type="com.gameportal.manage.user.model.AccountMoney"/>
+
+    <resultMap id="accountMoneyResult" class="accountMoney">
+        <result property="amid" column="amid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="totalamount" column="totalamount"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="integral" column="integral"/>
+    </resultMap>
+    <resultMap id="accountMoneyResult2" class="accountMoney">
+        <result property="amid" column="amid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="totalamount" column="totalamount"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="integral" column="integral"/>
+         
+		<result property="account" column="account"/>
+        <result property="accounttype" column="accounttype"/>
+        <result property="uname" column="uname"/>
+        <result property="identitycard" column="identitycard"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="qq" column="QQ"/>
+        <result property="birthday" column="birthday"/>
+        <result property="grade" column="grade"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	amid ,
+        	uiid ,
+        	totalamount ,
+        	status ,
+        	create_date ,
+        	update_date ,
+        	integral
+	    ]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="amid">
+	             amid = #amid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="totalamount">
+	             totalamount = #totalamount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+    <insert id="insert" parameterClass="accountMoney">
+    <![CDATA[
+        INSERT INTO
+        a_account_money (
+        	amid ,
+        	uiid ,
+        	totalamount ,
+        	status ,
+        	create_date ,
+        	update_date 
+        ) VALUES (
+        	#amid# ,
+        	#uiid# ,
+        	#totalamount# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_account_money_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="amid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="accountMoney">
+    <![CDATA[
+        UPDATE a_account_money SET
+	        uiid = #uiid# ,
+	        totalamount = #totalamount# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        amid = #amid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_account_money where
+        amid = #amid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="accountMoneyResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_account_money 
+	        where 
+		        amid = #amid# 
+	    ]]>
+    </select>
+    
+    <select id="getMoneyInfo" resultMap="accountMoneyResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_account_money 
+	    ]]>
+	    <include refid="dynamicWhere"/>
+    </select>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_account_money
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="accountMoneyResult2">
+	    <![CDATA[
+	    	select
+		        am.amid, am.uiid, am.totalamount, am.status, am.create_date, am.update_date,am.integral
+		        ,ui.account ,ui.accounttype ,ui.uname ,ui.identitycard ,ui.phone ,ui.email ,ui.QQ ,ui.birthday ,ui.grade
+	        from a_account_money am 
+	        left join a_user_info ui on am.uiid=ui.uiid 
+	    ]]>
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="amid">
+	             am.amid = #amid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             am.uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="totalamount">
+	             am.totalamount = #totalamount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             am.status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             am.create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             am.update_date = #updateDate#
+	       </isNotEmpty>
+	       
+	       <isNotEmpty prepend="AND" property="account">
+	             ui.account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uname">
+	             ui.uname = #uname#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="phone">
+	             ui.phone = #phone#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="email">
+	             ui.email = #email#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="qq">
+	             ui.QQ = #qq#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="birthday">
+	             ui.birthday = #birthday#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="grade">
+	             ui.grade = #grade#
+	       </isNotEmpty>
+	    </dynamic>
+	    <isNotEmpty property="orderField">
+	    	order by $orderField$
+	    </isNotEmpty>
+	    <isEmpty property="orderField">
+		    <![CDATA[
+		    	ORDER BY ui.create_date DESC
+		    ]]>
+	    </isEmpty>
+	    <isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	<update id="updateTotalamount" parameterClass="accountMoney">
+    <![CDATA[
+        UPDATE a_account_money SET
+	        totalamount = totalamount + #totalamount# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        amid = #amid# and uiid = #uiid# and (totalamount + #totalamount#) >= 0  
+    ]]>
+    </update>
+    
+    <update id="updateStatus">
+    <![CDATA[
+        UPDATE a_account_money SET
+	        status = #status#
+        WHERE 
+	        amid = #amid#
+    ]]>
+    </update>
+    
+    
+     <select id="getByAccount" resultMap="accountMoneyResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_account_money 
+	        where 
+		        uiid = #uiid# 
+	    ]]>
+    </select>
+</sqlMap>

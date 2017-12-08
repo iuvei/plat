@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chart>
+    <series>
+		<value xid="0">2010-03-01</value>
+		<value xid="1">2010-03-02</value>
+		<value xid="2">2010-03-03</value>
+		<value xid="3">2010-03-04</value>
+		<value xid="4">2010-03-05</value>
+		<value xid="5">2010-03-06</value>
+		<value xid="6">2010-03-07</value>
+	</series>
+	<graphs>
+		<graph title="2010-03-01到2010-03-07注册人数信息" fill_alpha="60" line_width="2" bullet="round" color="#FF80C0">
+			<value xid="0">0</value>
+			<value xid="1">0</value>
+			<value xid="2">0</value>
+			<value xid="3">0</value>
+			<value xid="4">0</value>
+			<value xid="5">0</value>
+			<value xid="6">0</value>
+		</graph>
+	</graphs>
+</chart>

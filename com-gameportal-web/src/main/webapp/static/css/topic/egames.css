@@ -1,0 +1,180 @@
+#insert-notices,
+.ui-notices {
+    margin-bottom: 0;
+}
+
+.ui-notices .detail {
+    width: 881px;
+}
+
+.ui-contents {
+    height: 1059px;
+    background-image: url(/static/images/topic/egames/bg.jpg);
+}
+
+.main {
+    margin-right: -1px;
+    margin-bottom: 80px;
+    overflow: hidden;
+}
+
+.main .nav {
+    height: 68px;
+    margin-top: 19px;
+}
+
+.main .nav li {
+    float: left;
+    width: 146px;
+    height: 68px;
+    margin-right: 5px;
+    background-repeat: no-repeat;
+    background-image: url(/static/images/topic/egames/nav.png);
+    cursor: pointer;
+}
+
+.main .nav li.mg {
+    background-position: -150px 0;
+}
+
+.main .nav li.active {
+    cursor: default;
+}
+
+.main .nav li.pt:hover,
+.main .nav li.pt.active {
+    background-position: 0 -70px;
+}
+
+.main .nav li.mg:hover,
+.main .nav li.mg.active {
+    background-position: -150px -70px;
+}
+
+.main .subNav {
+    border-bottom: 1px solid #915840;
+}
+
+.main .subNav li {
+    float: left;
+    width: 142px;
+    height: 62px;
+    line-height: 62px;
+    background-color: #232323;
+    border-left: 1px solid #1d1d1d;
+    cursor: pointer;
+}
+
+.main .subNav li:first-child {
+    border-left: 1px solid #232323;
+}
+
+.main .subNav li:hover,
+.main .subNav li.active {
+    background-color: #915840;
+}
+
+.main .subNav li.active {
+    cursor: default;
+}
+
+.main .box {
+    height: 750px;
+    background-color: #1b1b1b;
+}
+
+.main .box {
+    padding: 40px 0 0 2px;
+}
+
+.main .box .items li {
+    float: left;
+    width: 208px;
+    height: 150px;
+    margin: 0 0 20px 33px;
+}
+
+.main .box .items li .item {
+    width: 200px;
+    height: 100px;
+    border: 4px solid #232323;
+}
+
+.main .box .items li .item img {
+    width: 200px;
+    height: 100px;
+}
+
+.main .box .items li .item.mg .clip {
+    width: 107px;
+    height: 100px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.main .box .items li .item.mg .clip img {
+    width: 214px;
+    height: 100px;
+}
+
+.main .box .items li .item .ui-mask {
+    display: none;
+    position: absolute;
+    z-index: 800;
+}
+
+.main .box .items li .item a {
+    display: none;
+    width: 110px;
+    height: 33px;
+    border: 1px solid #ff996c;
+    margin: 12px 43px;
+    line-height: 33px;
+    background-color: #111;
+    background-color: rgba(0, 0, 0, .8);
+    z-index: 801;
+}
+
+.main .box .items li .item a.try {
+    margin-top: 54px;
+}
+
+.main .box .items li .item.mg a.play {
+    margin-top: 32px;
+}
+
+.main .box .items li .item:hover {
+    border: 4px solid #915840;
+}
+
+.main .box .items li .item:hover .ui-mask,
+.main .box .items li .item:hover a {
+    display: block;
+}
+
+.main .box .items li .item.mg:hover .clip img {
+    margin-left: -107px;
+}
+
+.main .box .items li .item a:hover {
+    border: 1px solid #8b2c16;
+    background-color: #8b2c16;
+}
+
+.main .box .items li h1 {
+    margin-top: 20px;
+    font-weight: normal;
+}
+
+.main .box .ui-paging {
+    margin-top: 10px;
+}
+
+.main .box .ui-paging li {
+    background-color: #915840;
+}
+
+.main .box .ui-paging li:hover,
+.main .box .ui-paging li.current {
+    background-color: #ff996c;
+}

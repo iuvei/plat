@@ -1,0 +1,260 @@
+#insert-notices,
+.ui-notices {
+    margin-bottom: 0;
+}
+
+.ui-notices .detail {
+    width: 881px;
+}
+
+.ui-contents {
+    height: auto;
+}
+
+.main {
+    margin-right: -2px;
+    margin-bottom: 80px;
+    overflow: hidden;
+}
+
+.main .nav {
+    height: 110px;
+    border-bottom: 2px solid #ccc;
+    background-color: #eee;
+}
+
+.main .nav li {
+    float: left;
+    width: 200px;
+    height: 40px;
+    padding-top: 70px;
+    line-height: 30px;
+    background-repeat: no-repeat;
+    background-position: center 15px;
+}
+
+.main .nav li.others {
+    width: 202px;
+}
+
+.main .nav li.pc {
+    background-image: url(/static/images/topic/client/pc-blue.png);
+}
+
+.main .nav li.iphone {
+    background-image: url(/static/images/topic/client/iphone-blue.png);
+}
+
+.main .nav li.ipad {
+    background-image: url(/static/images/topic/client/ipad-blue.png);
+}
+
+.main .nav li.android {
+    background-image: url(/static/images/topic/client/android-blue.png);
+}
+
+.main .nav li.others {
+    background-image: url(/static/images/topic/client/others-blue.png);
+}
+
+.main .nav li.pc.active {
+    background-image: url(/static/images/topic/client/pc-white.png);
+}
+
+.main .nav li.iphone.active {
+    background-image: url(/static/images/topic/client/iphone-white.png);
+}
+
+.main .nav li.ipad.active {
+    background-image: url(/static/images/topic/client/ipad-white.png);
+}
+
+.main .nav li.android.active {
+    background-image: url(/static/images/topic/client/android-white.png);
+}
+
+.main .nav li.others.active {
+    background-image: url(/static/images/topic/client/others-white.png);
+}
+
+.main .nav li.active {
+    border-bottom: 2px solid #e58961;
+    color: #fff;
+    background-color: #ff996c;
+}
+
+.main .box {
+    height: 470px;
+    padding-top: 55px;
+    border-bottom: 1px solid #ff996c;
+}
+
+.main .box.android {
+    height: 1020px;
+}
+
+.main .box.others {
+    height: 520px;
+}
+
+.main .box.pc {
+    background: url(/static/images/topic/client/img-pc.png) no-repeat 53px 53px;
+}
+
+.main .box.iphone {
+    background: url(/static/images/topic/client/img-iphone.png) no-repeat 53px 53px;
+}
+
+.main .box.ipad {
+    background: url(/static/images/topic/client/img-ipad.png) no-repeat 53px 53px;
+}
+
+.main .box.android {
+    background: url(/static/images/topic/client/img-android.png) no-repeat 53px 183px;
+}
+
+.main .box .intro {
+    width: 340px;
+    height: 469px;
+    margin-left: 200px;
+    border-top: 1px solid #ff996c;
+    border-left: 1px solid #ff996c;
+}
+
+.main .box .intro.pt {
+    height: 549px;
+}
+
+.main .box .intro h2 {
+    padding: 60px 0 20px 0;
+    font-size: 24px;
+}
+
+.main .box.iphone .intro h2,
+.main .box.ipad .intro h2,
+.main .box.android .intro h2 {
+    padding-top: 35px;
+}
+
+.main .box .intro p {
+    line-height: 24px;
+}
+
+.main .box .intro p label {
+    display: inline-block;
+    width: 150px;
+    padding-right: 5px;
+}
+
+.main .box .intro .QRcode {
+    width: 117px;
+    height: 117px;
+    margin: 10px auto;
+}
+
+.main .box .intro .ui-btn {
+    width: 130px;
+    height: 34px;
+    margin: 22px auto 12px auto;
+    line-height: 34px;
+}
+
+.main .others ul.down {
+    padding-top: 50px;
+    border-top: 1px solid #ff996c;
+    margin-top: 34px;
+}
+
+.main .others ul li {
+    float: left;
+    width: 150px;
+    padding-top: 96px;
+    margin-left: 80px;
+    background-repeat: no-repeat;
+    background-position: center 10px;
+}
+
+.main .others ul li.gg {
+    background-image: url(/static/images/topic/client/gg.png);
+}
+
+.main .others ul li.ff {
+    background-image: url(/static/images/topic/client/ff.png);
+}
+
+.main .others ul li.ie {
+    background-image: url(/static/images/topic/client/ie.png);
+}
+
+.main .others ul li.flash {
+    background-image: url(/static/images/topic/client/flash.png);
+}
+
+.main .others ul li.qq {
+    background-image: url(/static/images/topic/client/qq.png);
+}
+
+.main .others ul li.wx {
+    background-image: url(/static/images/topic/client/wx.png);
+}
+
+.main .others ul li.tv {
+    background-image: url(/static/images/topic/client/tv.png);
+}
+
+.main .others ul li.cc {
+    background-image: url(/static/images/topic/client/cc.png);
+}
+
+.main .others ul li h2 {
+    height: 26px;
+    font-weight: normal;
+}
+
+.main .others ul li p {
+    height: 30px;
+    line-height: 24px;
+}
+
+.main .others ul li .ui-btn {
+    height: 26px;
+    margin: 10px 30px;
+    line-height: 26px;
+}
+
+.main .features {
+    height: 240px;
+}
+
+.main .features li {
+    float: left;
+    width: 168px;
+    height: 140px;
+    padding: 100px 41px 0 41px;
+    background-position: center 30px;
+    background-repeat: no-repeat;
+}
+
+.main .features li.one {
+    background-image: url(/static/images/topic/client/icon0.png);
+}
+
+.main .features li.two {
+    background-image: url(/static/images/topic/client/icon1.png);
+}
+
+.main .features li.three {
+    background-image: url(/static/images/topic/client/icon2.png);
+}
+
+.main .features li.four {
+    background-image: url(/static/images/topic/client/icon3.png);
+}
+
+.main .features li h2 {
+    height: 35px;
+}
+
+.main .features li p {
+    line-height: 24px;
+}

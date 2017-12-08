@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Bulletin">
+
+	<typeAlias alias="bulletin"
+		type="com.gameportal.web.adver.model.Bulletin" />
+
+	<resultMap id="bulletinResult" class="bulletin">
+		<result property="id" column="bid" />
+		<result property="title" column="btitle" />
+		<result property="content" column="bcontext" />
+		<result property="status" column="status" />
+		<result property="location" column="blocation" />
+		<result property="editTime" column="edittime" />
+	</resultMap>
+
+	<insert id="insert" parameterClass="bulletin">
+    <![CDATA[
+        INSERT INTO
+        a_web_bulletin (
+        	bid,
+        	btitle,
+        	status,
+        	bcontext,
+        	blocation,
+        	edittime
+        ) VALUES (
+        	#id#,
+        	#title#,
+        	#status#,
+        	#content#,
+        	#location#,
+        	#editTime#
+        	
+        )
+    ]]>
+		<selectKey resultClass="java.lang.Long" type="post"
+			keyProperty="id">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+	
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	bid,
+       	btitle,
+       	bcontext,
+       	status,
+       	blocation,
+       	edittime
+	  ]]>
+	</sql>
+	
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="id">
+				bid = #id#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="blocation">
+				blocation = #blocation#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="btitle">
+				btitle = #btitle#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<select id="queryAll" resultMap="bulletinResult">
+	  select <include refid="commonColumns"/>
+	  <![CDATA[
+	    from a_web_bulletin
+	  ]]>
+	  <include refid="dyncmicWhere"/>
+	  	order by edittime desc
+	  <dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+	  </dynamic>
+	</select>
+	
+	<update id="update" parameterClass="bulletin">
+    <![CDATA[
+        UPDATE a_web_bulletin SET
+        	btitle=#title#,
+        	bcontext=#content#,
+        	status=#status#,
+        	edittime=#editTime#
+        WHERE 
+	        bid = #id#
+    ]]>
+    </update>
+	
+</sqlMap>

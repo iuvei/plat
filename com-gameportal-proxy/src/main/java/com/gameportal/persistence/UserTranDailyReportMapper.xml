@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.UserTranDailyReportMapper">
+	<!-- 插入报表数据 -->
+	<insert id="insertTransDailyStat" parameterType="UserTranDailyReport"  useGeneratedKeys="true" keyProperty="stId">   
+    	insert into a_user_report (uiid,createDate,puid,account,realName,deposit,withdrawal,preferential,washCode,finalAmount)   
+    	values (#{uiid},#{createDate},#{puid},#{account},#{realName},#{deposit},#{withdrawal},#{preferential},#{washCode},#{finalAmount})   
+	</insert>
+	
+	<!-- 批量添加注单数据 -->
+	<insert id="insertTransDailyStatList" parameterType="java.util.List">
+		<selectKey resultType="long" keyProperty="stId" order="AFTER">  
+        SELECT LAST_INSERT_ID()  
+    	</selectKey>  
+		insert into a_user_report (uiid,createDate,puid,account,realName,deposit,withdrawal,preferential,washCode,finalAmount) VALUES 
+		<foreach collection="list" item="item" index="index" separator=",">
+	    (#{item.uiid},#{item.createDate},#{item.puid},#{item.account},#{item.realName},#{item.deposit},#{item.withdrawal},#{item.preferential},#{item.washCode},#{item.finalAmount})  
+		</foreach>
+	</insert>
+</mapper>

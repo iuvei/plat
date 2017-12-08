@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Activity">
+	<typeAlias alias="activityEntity" type="com.gameportal.pay.model.Activity"/>
+	
+	<typeAlias alias="activityFlag" type="com.gameportal.pay.model.ActivityFlag" />
+
+	<resultMap id="activityFlagResult" class="activityFlag">
+		<result property="flagid" column="flagid" />
+		<result property="type" column="type" />
+		<result property="numbers" column="numbers" />
+		<result property="flagtime" column="flagtime" />
+		<result property="hms" column="hms" />
+		<result property="uiid" column="uiid" />
+		<result property="acid" column="acid" />
+		<result property="acgroup" column="acgroup" />
+	</resultMap>
+	
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	aid,
+        hdtype,
+        hdnumber,
+        hdtext,
+        hdscale,
+        multiple,
+        isxima,
+        notecontext,
+        status,
+        uptime,
+        maxmoney,
+        minmoney,
+        hdrule,
+        acgroup,
+        rewmoney
+	  ]]>
+	</sql>
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hdnumber">
+				hdnumber = #hdnumber#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hdtype">
+				hdtype = #hdtype#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<select id="getList" resultClass="activityEntity">
+		select <include refid="commonColumns"/>
+	  <![CDATA[
+	    from a_activity
+	  ]]>
+	  <include refid="dyncmicWhere"/>
+	</select>
+	
+	<!--添加活动标示-->
+	<insert id="insertActivityFlag" parameterClass="activityFlag">
+		<![CDATA[
+		INSERT INTO a_activity_flag
+		(
+       		type,
+        	numbers,
+       	 	flagtime,
+        	hms,
+        	uiid,
+        	acid,
+        	acgroup
+		) 
+		VALUES 
+		(
+			#type#,
+			#numbers#,
+			#flagtime#,
+			#hms#,
+			#uiid#,
+			#acid#,
+			#acgroup#
+		)
+		]]>
+		<selectKey resultClass="java.lang.Long" type="post" keyProperty="flagid" >
+           SELECT  last_insert_id()
+        </selectKey>
+	</insert>
+	
+	<!--查询活动标识-->
+	<select id="queryActivityFlag" resultMap="activityFlagResult">
+	 	 select flagid,type,numbers,flagtime,hms,uiid,acid,acgroup
+	 	 <![CDATA[
+	 	   from a_activity_flag
+		 ]]>
+	 	 <dynamic prepend="where">
+			<isNotEmpty prepend="and" property="type">
+				type = #type#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="flagtime">
+				flagtime =#flagtime#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hms">
+				hms = #hms#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="uiid">
+				uiid = #uiid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acid">
+				acid = #acid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acgroup">
+				acgroup = #acgroup#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acids">
+				acid in  ($acids$)
+			</isNotEmpty>
+		</dynamic>
+	</select>
+</sqlMap>

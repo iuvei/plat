@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GameAccount">
+
+    <typeAlias alias="gameAccount" type="com.gameportal.web.game.model.GameAccount"/>
+
+    <resultMap id="gameAccountResult" class="gameAccount">
+        <result property="gaid" column="gaid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="gpid" column="gpid"/>
+        <result property="uname" column="uname"/>
+        <result property="money" column="money"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	gaid ,
+        	uiid ,
+        	gpid ,
+        	uname ,
+        	money ,
+        	status ,
+        	create_date ,
+        	update_date 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="gameAccount">
+    <![CDATA[
+        INSERT INTO
+        a_game_account (
+        	gaid ,
+        	uiid ,
+        	gpid ,
+        	uname ,
+        	money ,
+        	status ,
+        	create_date ,
+        	update_date 
+        ) VALUES (
+        	#gaid# ,
+        	#uiid# ,
+        	#gpid# ,
+        	#uname# ,
+        	#money# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_game_account_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="gaid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="gameAccount">
+    <![CDATA[
+        UPDATE a_game_account SET
+	        uiid = #uiid# ,
+	        gpid = #gpid# ,
+	        uname = #uname# ,
+	        money = #money# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        gaid = #gaid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_game_account where
+        gaid = #gaid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="gameAccountResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_account 
+	        where 
+		        gaid = #gaid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="gaid">
+	             gaid = #gaid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uname">
+	             uname = #uname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="money">
+	             money = #money#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_account
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="gameAccountResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_account 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	
+</sqlMap>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SmsSendLog">
+
+	<typeAlias alias="smsSendLog"
+		type="com.gameportal.web.sms.model.SmsSendLog" />
+
+	<resultMap id="smsSendLogResult" class="smsSendLog">
+		<result property="spsid" column="spsid" />
+		<result property="spaid" column="spaid" />
+		<result property="username" column="username" />
+		<result property="mobile" column="mobile" />
+		<result property="content" column="content" />
+		<result property="sendtime" column="sendtime" />
+		<result property="type" column="type" />
+	</resultMap>
+	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="username">
+	             username = #username#
+	       	</isNotEmpty>
+	       	<isNotEmpty prepend="AND" property="startTime">
+	       		<![CDATA[sendtime >=#startTime#]]>
+	       	</isNotEmpty>
+	       	<isNotEmpty prepend="AND" property="endTime">
+	       		<![CDATA[sendtime <=#endTime#]]>
+	       	</isNotEmpty>
+	       	<isNotEmpty prepend="AND" property="type">
+	       		type =#type#
+	       	</isNotEmpty>
+	    </dynamic>
+    </sql>
+
+	<insert id="insert" parameterClass="smsSendLog">
+    <![CDATA[
+        INSERT INTO
+        sms_plat_sendlog (
+        	spsid,
+        	spaid,
+        	username,
+        	mobile,
+        	content,
+        	sendtime,
+        	type
+        ) VALUES (
+        	#spsid#,
+        	#spaid#,
+        	#username#,
+        	#mobile#,
+        	#content#,
+        	#sendtime#,
+        	#type#
+        )
+    ]]>
+		<selectKey resultClass="java.lang.Long" type="post"
+			keyProperty="spsid">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+	
+	<!-- 统计短信发送条数 -->
+	<select id="selectSmsLogCount" resultClass="long">
+		 <![CDATA[
+        select count(0) from sms_plat_sendlog
+    ]]>
+		<include refid="dynamicWhere"/>    
+	</select>
+
+</sqlMap>

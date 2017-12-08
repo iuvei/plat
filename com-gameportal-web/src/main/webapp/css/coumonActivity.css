@@ -1,0 +1,15 @@
+@charset "utf-8";
+/* CSS Document */
+.actWrap{ width:960px; margin:0 auto;}
+.notice{ color:#fff; font-size:16px; padding:18px 0;}
+.actBanner{ border:solid 1px #666888; overflow:hidden; font-size:0; display:block; margin-bottom:20px;}
+.act_h{ color:#0babff; font-size:22px; background:url(../images/icon_activity.png) 0 19px no-repeat; padding:20px 0 20px 80px;}
+.act_h2{ background-position:0 -32px;}
+.actTab{ width:100%; border:solid 1px #666888; background:#232232; margin-bottom:20px;}
+.actTab td{ text-align:center; border:solid 1px #666888; color:#ccc; padding:12px 6px; font-size:14px;}
+.actTab .line1 td{ font-size:0; padding:0;}
+.actTab .line2 td{ background:#312f44; color:#fe9302; font-size:16px;}
+.actTab .line3 td{ background:#39374f; color:#fe9302;}
+.actTab td.cyw{ color:#fe9302;}
+.act_rule{ padding-bottom:40px;}
+.act_rule_con{ border:solid 1px #666888; padding:15px 20px; color:#ccc; line-height:24px; background:url(../images/mask.png);}

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SmsPlatInfo">
+
+    <typeAlias alias="smsPlatInfo" type="com.gameportal.manage.smsplatform.model.SmsPlatInfo"/>
+
+    <resultMap id="smsPlatInfoResult" class="smsPlatInfo">
+        <result property="spiid" column="spiid"/>
+        <result property="name" column="name"/>
+        <result property="status" column="status"/>
+        <result property="createtime" column="createtime"/>
+        <result property="createuserid" column="createuserid"/>
+        <result property="createusername" column="createusername"/>
+        <result property="updatetime" column="updatetime"/>
+        <result property="updateuserid" column="updateuserid"/>
+        <result property="updateusername" column="updateusername"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	spiid ,
+        	name ,
+        	status ,
+        	createtime ,
+        	createuserid ,
+        	createusername ,
+        	updatetime ,
+        	updateuserid ,
+        	updateusername 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="smsPlatInfo">
+    <![CDATA[
+        INSERT INTO
+        sms_plat_info (
+        	spiid ,
+        	name ,
+        	status ,
+        	createtime ,
+        	createuserid ,
+        	createusername ,
+        	updatetime ,
+        	updateuserid ,
+        	updateusername 
+        ) VALUES (
+        	#spiid# ,
+        	#name# ,
+        	#status# ,
+        	#createtime# ,
+        	#createuserid# ,
+        	#createusername# ,
+        	#updatetime# ,
+        	#updateuserid# ,
+        	#updateusername# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="spiid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="smsPlatInfo">
+    <![CDATA[
+        UPDATE sms_plat_info SET
+	        name = #name# ,
+	        status = #status# ,
+	        createtime = #createtime# ,
+	        createuserid = #createuserid# ,
+	        createusername = #createusername# ,
+	        updatetime = #updatetime# ,
+	        updateuserid = #updateuserid# ,
+	        updateusername = #updateusername# 
+        WHERE 
+	        spiid = #spiid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from sms_plat_info where
+        spiid = #spiid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="smsPlatInfoResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from sms_plat_info 
+	        where 
+		        spiid = #spiid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="spiid">
+	             spiid = #spiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="name">
+	             name = #name#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createtime">
+	             createtime = #createtime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createuserid">
+	             createuserid = #createuserid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createusername">
+	             createusername = #createusername#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updatetime">
+	             updatetime = #updatetime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateuserid">
+	             updateuserid = #updateuserid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateusername">
+	             updateusername = #updateusername#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(*) from sms_plat_info
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="smsPlatInfoResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from sms_plat_info 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>	
+    </select>
+
+	<select id="selectSmsPlatInfos" resultClass="java.util.HashMap">
+	    <![CDATA[
+	        select a.spiid  as i, a.name as n from sms_plat_info a where a.status = 1 order by a.spiid asc
+	    ]]>
+	</select>
+</sqlMap>

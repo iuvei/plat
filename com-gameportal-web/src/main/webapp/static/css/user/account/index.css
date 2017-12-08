@@ -1,0 +1,175 @@
+.main .user-info {
+    height: 145px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.main .user-info .safe-level {
+    width: 120px;
+    height: 145px;
+}
+
+.main .user-info .safe-level .HC {
+    width: 120px;
+    height: 120px;
+    margin-top: 20px;
+}
+
+.main .user-info .safe-level .note {
+    width: 68px;
+    margin: 50px 0 0 26px;
+}
+
+.main .user-info .right {
+    width: 740px;
+    height: 150px;
+}
+
+.main .user-info .right h1 {
+    margin-top: 23px;
+    font-weight: normal;
+}
+
+.main .user-info .right h1 span {
+    margin-right: 30px;
+}
+
+.main .user-info .right ul {
+    margin-top: 25px;
+}
+
+.main .user-info .right li {
+    float: left;
+    width: 200px;
+    height: 17px;
+    line-height: 17px;
+    padding-bottom: 20px;
+}
+
+.main .user-info .right li .icon,
+.main .account-info li .icon {
+    float: left;
+    width: 17px;
+    height: 17px;
+    margin-right: 8px;
+}
+
+.main .user-info .right li .icon0 {
+    background: url(/static/images/public/icon-personOrange.png);
+}
+
+.main .user-info .right li .icon1 {
+    background: url(/static/images/user/account/add.png);
+}
+
+.main .user-info .right li .icon2 {
+    background: url(/static/images/public/icon-trophyCupOrange.png);
+}
+
+.main .user-info .right li .icon3 {
+    background: url(/static/images/user/account/timer.png);
+}
+
+.main .account-info {
+    height: 195px;
+    border-bottom: 1px solid #ccc;
+}
+
+.main .account-info ul {
+    width: 740px;
+    margin-top: 25px;
+}
+
+.main .account-info li {
+    height: 17px;
+    line-height: 17px;
+    margin-bottom: 25px;
+}
+
+.main .account-info li .icon0 {
+    background: url(/static/images/user/account/refund.png);
+}
+
+.main .account-info li .icon1 {
+    background: url(/static/images/user/account/phone.png);
+}
+
+.main .account-info li .icon2 {
+    background: url(/static/images/user/account/email.png);
+}
+
+.main .account-info li .icon3 {
+    background: url(/static/images/user/account/ip.png);
+}
+
+.main .more-info {
+    height: 90px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.main .more-info ul {
+    margin-top: 15px;
+}
+
+.main .more-info li {
+    height: 17px;
+    line-height: 17px;
+    margin-bottom: 20px;
+}
+
+.main .auth-info {
+    height: 180px;
+    background-color: #eee;
+}
+
+.main .auth-info ul {
+    padding-top: 25px;
+}
+
+.main .auth-info li {
+    height: 30px;
+    margin-bottom: 15px;
+    line-height: 30px;
+}
+
+.main .auth-info li label {
+    display: inline-block;
+    width: 100px;
+}
+
+.main .auth-info li input {
+    height: 18px;
+    padding: 3px;
+    border: 1px solid #a4aeb9;
+    line-height: 18px;
+}
+
+.main .auth-info li input.phone {
+    width: 150px;
+}
+
+.main .auth-info li input.v-code {
+    width: 90px;
+    margin-left: 11px;
+}
+
+.main .auth-info li input.email {
+    width: 263px;
+}
+
+.main .auth-info li .btn-phone,
+.main .auth-info li .btn-email {
+    display: inline-block;
+    width: 140px;
+    height: 26px;
+    margin: 0 10px;
+    line-height: 26px;
+}
+
+.main .auth-info li .total {
+    margin: 0 10px;
+    font-size: 24px;
+}

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings> 
+  <font>Tahoma</font>   
+  <text_size>12</text_size>
+  <decimals_separator>.</decimals_separator>
+  <add_time_stamp>true</add_time_stamp>
+  <column>
+    <width>85</width>     
+    <spacing>0</spacing> 
+    <grow_time>3</grow_time>
+    <sequenced_grow>true</sequenced_grow> 
+    <balloon_text>                                                    
+      <![CDATA[{series}&nbsp;|&nbsp;{value}元]]>
+    </balloon_text>
+    <bullet_offset>16</bullet_offset>  
+    <hover_color>#EED600</hover_color>  
+  </column>
+
+  <grid>                                                      <!-- GRID -->
+    <category>                                                <!-- category axis grid -->                                                     
+      <color></color>                                         <!-- [#000000] (hex color code) -->
+      <alpha>5</alpha>                                        <!-- [15] (0 - 100) -->
+      <dashed></dashed>                                       <!-- [false](true / false) -->
+      <dash_length></dash_length>                             <!-- [5] (Number) -->
+    </category>
+    <value>                                                   <!-- value axis grid -->      
+      <color></color>                                         <!-- [#000000] (hex color code) -->
+      <alpha>0</alpha>                                        <!-- [15] (0 - 100) -->
+      <dashed></dashed>                                       <!-- [false] (true / false) -->
+      <dash_length></dash_length>                             <!-- [5] (Number) -->
+      <approx_count></approx_count>                           <!-- [10] (Number) approximate number of gridlines -->
+      <fill_color>000000</fill_color>                         <!-- [#FFFFFF] (hex color code) every second area between gridlines will be filled with this color (you will need to set fill_alpha > 0) -->
+      <fill_alpha>5</fill_alpha>                              <!-- [0] (0 - 100) opacity of fill -->
+    </value>
+  </grid>
+    
+  <grid>                 
+    <category>                                                                
+      <alpha>5</alpha>  
+      <dashed>false</dashed>
+
+    </category>
+    <value>                      
+      <alpha>10</alpha>    
+      <dashed>false</dashed>
+    </value>
+  </grid>
+  
+  <values>                                                    <!-- VALUES -->
+    <category>                                                <!-- category axis -->
+      <enabled>true</enabled>                                     <!-- [true] (true / false) -->
+      <frequency>3</frequency>                                <!-- [1] (Number) how often values should be placed -->
+      <start_from></start_from>                               <!-- [1] (Number) you can set series from which category values will be displayed -->
+      <rotate>45</rotate>                                     <!-- [0] (0 - 90) angle of rotation. If you want to rotate by degree from 1 to 89, you must have font.swf file in fonts folder -->      
+      <color></color>                                         <!-- [text_color] (hex color code) -->
+      <text_size></text_size>                                 <!-- [text_size] (Number) -->    
+      <inside></inside>                                       <!-- [false] (true / false) if set to true, axis values will be displayed inside plot area. This setting will not work for values rotated by 1-89 degrees (0 and 90 only) -->      
+    </category>
+    <value>                                                   <!-- value axis -->
+      <enabled>true</enabled>                                 <!-- [true] (true / false) -->
+      <reverse></reverse>                                     <!-- [false] (true / false) whether to reverse this axis values or not. If set to true, values will start from biggest number and will end with a smallest number -->    
+      <min>0</min>                                            <!-- [] (Number) minimum value of this axis. If empty, this value will be calculated automatically. -->
+      <max></max>                                             <!-- [] (Number) maximum value of this axis. If empty, this value will be calculated automatically -->
+      <strict_min_max></strict_min_max>                       <!-- [false] (true / false) by default, if your values are bigger then defined max (or smaller then defined min), max and min is changed so that all the chart would fit to chart area. If you don't want this, set this option to true. -->
+      <frequency></frequency>                                 <!-- [1] (Number) how often values should be placed, 1 - near every gridline, 2 - near every second gridline... -->
+      <rotate></rotate>                                       <!-- [0] (0 - 90) angle of rotation. If you want to rotate by degree from 1 to 89, you must have font.swf file in fonts folder -->
+      <skip_first></skip_first>                               <!-- [true] (true / false) to skip or not first value -->
+      <skip_last></skip_last>                                 <!-- [false] (true / false) to skip or not last value -->
+      <color></color>                                         <!-- [text_color] (hex color code) --> 
+      <text_size></text_size>                                 <!-- [text_size] (Number) -->
+      <unit></unit>                                           <!-- [] (text) -->
+      <unit_position></unit_position>                         <!-- [right] (right / left) -->
+      <integers_only></integers_only>                         <!-- [false] (true / false) if set to true, values with decimals will be omitted -->
+      <inside></inside>                                       <!-- [false] (true / false) if set to true, axis values will be displayed inside plot area. This setting will not work for values rotated by 1-89 degrees (0 and 90 only) -->
+      <duration></duration>                                   <!-- [] (ss/mm/hh/DD) In case you want your axis to display formatted durations instead of numbers, you have to set the unit of the duration in your data file. For example, if your values in data file represents seconds, set "ss" here.-->                   
+    </value>
+  </values>
+  
+  <axes>                       
+    <category>                 
+      <color>E7E7E7</color>    
+      <width>1</width>
+
+      <tick_length>0</tick_length>         
+    </category>
+    <value>                    
+      <color>E7E7E7</color>       
+      <width>0</width>         
+    </value>
+  </axes>  
+  
+  <balloon>                    
+    <text_color>FFFFFF</text_color>
+  </balloon>
+
+    
+  <labels>                         
+    <label lid="0">
+      <x>0</x>
+      <y>7</y>
+      <text_color>000000</text_color>
+      <text_size>12</text_size>
+      <align>center</align>
+
+      <text>
+        <![CDATA[<b>有效投注峰值信息</b>]]>
+      </text>        
+    </label>
+    <label lid="1">
+      <x>0</x> 
+      <y>380</y>
+      <width></width> 
+      <align>right</align>  
+      <text_color></text_color>
+      <text_size>11</text_size>  
+      <text>                   
+        <![CDATA[]]>
+      </text>        
+    </label>
+  </labels>
+  
+  <legend>
+    <enabled>false</enabled>
+  </legend>
+          
+
+</settings>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="UserXimaSet">
+	
+		<typeAlias alias="userXimaSet" type="com.gameportal.manage.member.model.UserXimaSet"/>
+		
+		<sql id="commonColumns">
+			<![CDATA[
+				cs.xmid,
+				cs.uiid,
+				cs.proxyid,
+				cs.ximascale,
+				cs.status,
+				cs.settime,
+				u.account,
+				u.uname
+				]]>
+		</sql>
+		
+		<sql id="dynamicWhere">
+			<dynamic prepend="WHERE">
+				 <isNotEmpty prepend="AND" property="xmid">
+		             cs.xmid = #xmid#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="uiid">
+		             cs.uiid = #uiid#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="proxyid">
+		             cs.proxyid = #proxyid#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="status">
+		             cs.status = #status#
+		       	 </isNotEmpty>
+		       	 <isNotEmpty prepend="AND" property="account">
+		             u.account = #account#
+		       	 </isNotEmpty>
+		       	 
+			</dynamic>
+		</sql>
+		
+		<insert id="insert" parameterClass="userXimaSet">
+		<![CDATA[
+			INSERT INTO c_user_xima_set (
+				xmid,
+				uiid,
+				proxyid,
+				ximascale,
+				status,
+				settime
+			) VALUES (
+				#xmid#,
+				#uiid#,
+				#proxyid#,
+				#ximascale#,
+				#status#,
+				#settime#
+			)
+			]]>
+		</insert>
+		
+		<delete id="delete" parameterClass="java.lang.Long">
+			<![CDATA[
+	        delete from c_user_xima_set where
+	        xmid = #xmid#
+	    	]]>
+		</delete>
+		
+		<update id="update" parameterClass="userXimaSet">
+			<![CDATA[
+				UPDATE c_user_xima_set SET
+					ximascale = #ximascale#,
+					status = #status#,
+					settime = #settime#
+				WHERE
+					xmid = #xmid#
+			]]>
+		</update>
+		
+		<select id="count" resultClass="long">
+			<![CDATA[
+			SELECT count(0) from c_user_xima_set cs LEFT JOIN a_user_info u ON cs.uiid = u.uiid 
+			]]>
+			<include refid="dynamicWhere"/>
+		</select>
+		
+		<select id="pageSelect" resultClass="userXimaSet">
+			SELECT <include refid="commonColumns"/>
+			<![CDATA[
+	        	from c_user_xima_set cs LEFT JOIN a_user_info u ON cs.uiid = u.uiid 
+	    	]]>
+	    	<include refid="dynamicWhere"/>
+			<dynamic prepend="ORDER BY">
+				<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+			</dynamic>
+			<isNotEmpty property="limit">
+				limit $thisPage$, $pageSize$
+			</isNotEmpty>
+		</select>
+		
+		
+</sqlMap>

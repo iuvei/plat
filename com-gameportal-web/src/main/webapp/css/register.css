@@ -1,0 +1,161 @@
+@charset "utf-8";
+/* CSS Document */
+.registerwrap{ width:960px; margin:0 auto; background:#fff; border-left:solid 1px #000; border-right:solid 1px #000; padding-top:55px; background:url(../images/register_bg.jpg);}
+.reg_h{ color:#0babff; font-size:22px; padding-left:76px; margin:0  0 30px; background:url(../images/icon_register.png) no-repeat;}
+.reg_h2{ margin-top:55px; background-position:left -48px;}
+.formli{ padding-left:70px; margin-bottom:18px;}
+.formli span.red{ font-weight:bold; vertical-align:middle;}
+.formli label{width:5em; text-align:right; color:#fff; font-size:14px; display:inline-block; vertical-align:middle; margin-right:10px;}
+.tip{ color:#a3a3a3; vertical-align:middle;}
+.ifmLeft{ float:left; width:490px;}
+.ifmRight{ float:right; width:460px;}
+.ifmRight .formli{ padding:0;}
+.getCode{ margin-left:6px; width:118px; height:30px; font-size:0; border:solid 1px #dbdbdb; overflow:hidden; display:inline-block; vertical-align:middle;}
+.getCode img{ width:118px;}
+.registerOpt{ padding-top:40px; text-align:center;}
+.registerOpt label{ vertical-align:middle; color:#fff;}
+.deal{ color:#0babff; text-decoration:underline; vertical-align:middle;}
+.regSubmit,.regMask{ width:160px; height:40px; text-align:center; line-height:40px; color:#fff; font-size:20px; background:#0babff; margin:20px 0 30px; display:inline-block; border:none; font-family:'微软雅黑'; cursor:pointer;}
+.regMask{ background:#ccc; color:#999; cursor:default;}
+.none{ display:none;}
+.remark{ width:360px; margin:0 auto; padding-bottom:50px;}
+.remark h2{ font-size:12px; color:#a3a3a3; font-weight:bold; margin-bottom:6px;}
+.remark p{ color:#a3a3a3; line-height:24px;}
+.remark p span{ color:#ff0000; font-weight:bold; vertical-align:middle;}
+
+#dealBox{ width:962px;}
+#dealBox .box_con{ padding:20px 20px 0;}
+#dealBox .box_con h2{ font-size:24px; margin-bottom:15px; color:#000;}
+#dealBox .box_con p{ color:#63666e; font-size:14px; line-height:22px; margin-bottom:10px; background:url(../images/point.jpg) left 8px no-repeat; padding-left:15px;}
+#dealBox .box_btn{ text-align:center;}
+
+
+/* 注册
+=======*/
+.header{
+    padding-top: 6px;
+    padding-bottom: 16px;
+    background-color: #fff;
+}
+.header .link-login{
+    margin-top: 30px;
+}
+.reg-wp{
+    padding-top: 56px;
+    background: url("../images/banner/reg.jpg") center top;
+    padding-bottom: 90px;
+    /* margin-bottom: 60px; */
+}
+.reg-wp .reg-pic{
+    position: absolute;
+    right: 22px;
+    top: 77px;
+}
+.reg-inner-wp{
+    width: 1180px;
+    position: relative;
+    background: #fff;
+    padding-bottom: 90px;
+    /* margin-bottom: 30px; */
+}
+
+.light-off .line{
+    border-left: 1px solid #fff;
+    height: 200px;
+    margin-left:26px;
+}
+.light-off .icon-hexagon{
+    color: #fff;
+}
+.light-off .icon-hexagon:before{
+    vertical-align: middle;
+    color: #ffd800;
+    font-size: 54px;
+    margin-right: -42px;
+}
+.form-reg{
+    position: relative;
+}
+.form-reg,
+.form-reg .reg-tit{
+    color: #787878;
+    border: none;
+}
+.form-reg .reg-tit{
+    font-size: 18px;
+    height: 68px;
+    line-height: 68px;
+    padding-left: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e4e4e4;
+    display: block;
+}
+.form-reg .ipt-group{
+    margin-bottom: 18px;
+}
+.form-reg .label{
+    text-align: right;
+    font-weight: normal;
+    display: inline-block;
+    width: 120px;
+    padding-right: 10px;
+}
+.form-reg .ipt-txt{
+    width: 340px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    padding: 0 4px;
+    height: 36px;
+    line-height: 36px;
+    color: #666;
+}
+.form-reg .btn-reg{
+    font-size: 18px;
+    width: 350px;
+    height: 40px;
+    cursor: pointer;
+    background-color: #4d8df9;
+    color: #fff;
+}
+.form-reg .ipt-tip{
+    padding-left: 1em;
+    padding-top: .6em;
+    display:none;
+}
+.form-reg .ipt-group.error .ipt-tip{
+    position:absolute;
+    float:left;
+    display: inline-block!important;
+    color: #e20505;
+}
+.form-reg .pl{
+    padding-left: 136px;
+}
+.form-reg .reback{
+    margin-left: 10px;
+}
+.form-reg .ipt-group label.error-tip{
+    left: 586px;
+    top: 0;
+}
+.form-reg .ipt-group.error .ipt-txt,
+.form-reg .ipt-group.error .ipt-txt:focus{
+    outline: rgba(255, 0, 0, .6);
+    box-shadow: 0 0 6px rgba(255, 0, 0, .6);
+    border: 1px solid #fc4949;
+}
+
+.footer-wp-2{
+    position: relative;
+    /* box-shadow: 0 -4px 6px rgba(0,0,0,.3); */
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+}
+
+.error{
+	color:#e20505;
+}
+.pass{
+	color:#0bb774;
+}

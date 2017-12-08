@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MemberDetailReport">
+	
+	<!-- 存款/取款/优惠 -->
+	<typeAlias alias="payOrder" type="com.gameportal.manage.pay.model.PayOrder"/>
+	<!-- 转账记录 -->
+	<typeAlias alias="gameTransfer" type="com.gameportal.manage.member.model.GameTransfer"/>
+	<!-- 会员洗码 -->
+	<typeAlias alias="memberXimaMain" type="com.gameportal.manage.xima.model.MemberXimaMain"/>
+	
+	
+	<!-- 用于select查询支付订单抽取的列 -->
+	<sql id="payOrderColumns">
+	    <![CDATA[
+        	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ordertype,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date ,
+        	update_date ,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	kfopttime ,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	cwopttime,
+        	beforebalance,
+        	laterbalance 
+	    ]]>
+	</sql>
+	
+	<!-- 用于select查询转账公用抽取的列 -->
+	<sql id="gameTransferColumns">
+	    <![CDATA[
+        	t.gtid ,
+        	t.uuid ,
+        	t.gpid ,
+        	t.gamename ,
+        	t.togpid ,
+        	t.togamename ,
+        	t.amount ,
+        	t.remark ,
+        	t.status ,
+        	t.create_date ,
+        	t.update_date as updateDate,
+        	u.account,
+        	u.uname as truename
+	    ]]>
+	</sql>
+	
+	<!-- 用于select查询会员洗码公用抽取的列 -->
+	<sql id="memberXimaColumns">
+	    <![CDATA[
+        	xm.mxmid ,
+        	xm.gpid ,
+        	xm.uiid ,
+        	xm.account ,
+        	xm.name ,
+        	xm.total ,
+        	xm.ymdstart ,
+        	xm.ymdend ,
+        	xm.updatetime ,
+        	xm.locked
+	    ]]>
+	</sql>
+	
+	<!-- 钱包余额 -->
+	<select id="selectAccountMoney" resultClass="java.util.HashMap">
+  		select m.totalamount as totalamount from a_user_info u LEFT JOIN a_account_money m ON m.uiid=u.uiid where u.account=#account#     
+    </select>
+    
+    
+    <!-- 存款/取款/优惠列表集合 -->
+	<select id="selectPayMoneyList" resultClass="payOrder">
+		select <include refid="payOrderColumns"/>
+	   	<![CDATA[
+	   		from a_pay_order
+	    ]]>
+		where paytyple =#paytype#
+		<isNotEmpty property="account">
+			 <![CDATA[
+				 and uaccount=#account# 
+			 ]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and deposittime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and deposittime<=#endDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderstate">
+			<![CDATA[
+	   			and status=#orderstate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="poid">
+			<![CDATA[
+	   			and poid=#poid#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="ordertype">
+			<![CDATA[
+	   			and ordertype=#ordertype#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="coupon">
+			and ordertype >0
+		</isNotEmpty>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 存款/取款/优惠总计 -->
+	<select id="selectPayMoneyCount" resultClass="long">
+		select count(1)
+	   	<![CDATA[
+	      	from a_pay_order
+	    ]]>
+		where paytyple =#paytype#
+		<isNotEmpty property="account">
+			 <![CDATA[
+				 and uaccount=#account# 
+			 ]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and deposittime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and deposittime<=#endDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderstate">
+			<![CDATA[
+	   			and status=#orderstate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="poid">
+			<![CDATA[
+	   			and poid=#poid#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="ordertype">
+			<![CDATA[
+	   			and ordertype=#ordertype#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="coupon">
+			and ordertype >0
+		</isNotEmpty>
+    </select>
+    
+    
+    <!-- 转账记录 -->
+	<select id="selectTransferList" resultClass="gameTransfer">
+		select <include refid="gameTransferColumns"/>
+	   	<![CDATA[
+	       from a_user_info u INNER JOIN a_game_transfer t ON u.uiid=t.uuid
+	    ]]>
+		where t.status=1
+		<isNotEmpty property="account">
+		   	<![CDATA[
+	   			and u.account =#account# 
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and t.update_date>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and t.update_date<=#endDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 转账记录总数 -->
+	<select id="selectTransferCount" resultClass="long">
+		select count(1)
+	   	<![CDATA[
+	       from a_user_info u INNER JOIN a_game_transfer gt ON u.uiid=gt.uuid
+	    ]]>
+		where  gt.status=1
+		<isNotEmpty property="account">
+		   	<![CDATA[
+	   			and u.account =#account#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and gt.update_date>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and gt.update_date<=#endDate#
+	    	]]>
+		</isNotEmpty>
+   </select>
+   
+   
+    <!-- 洗码记录 -->
+	<select id="selectMemberXimaList" resultClass="memberXimaMain">
+		select <include refid="memberXimaColumns"/>
+	   	<![CDATA[
+	       from a_user_info u INNER JOIN c_member_xima_main xm ON u.uiid=xm.uiid
+	    ]]>
+		where 1=1
+		<isNotEmpty property="account">
+		   	<![CDATA[
+	   			and u.account =#account#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and xm.updatetime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and xm.updatetime<=#endDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 洗码总数 -->
+	<select id="selectMemberXimaCount" resultClass="long">
+		select count(1)
+	   	<![CDATA[
+	      	from a_user_info u INNER JOIN c_member_xima_main xm ON u.uiid=xm.uiid
+	    ]]>
+		where 1=1
+		<isNotEmpty property="account">
+		   	<![CDATA[
+	   			and u.account =#account#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and updatetime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and updatetime<=#startDate#
+	    	]]>
+		</isNotEmpty>
+   </select>
+</sqlMap>

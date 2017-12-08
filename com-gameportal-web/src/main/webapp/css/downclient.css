@@ -1,0 +1,111 @@
+.left {float: left;}
+.right{float: right;}
+.app .wp{width:995px;margin:0 auto;}
+.app .tc{text-align:center;}
+.app-bg{background-color:#f7ecbf;}
+.app-top{height:50px;border-bottom:2px solid #b29515;background:#cab03d;overflow:hidden;}
+.app-top h1{padding-top:5px;}
+.app-top div{font-family:'Microsoft YaHei';font-size:20px;line-height:50px;}
+.app-top div a{margin-left:35px;}
+.app-top div a:hover{text-decoration:underline;}
+.app-menu{
+	width:995px;
+	height:112px;
+	overflow:hidden;
+	margin: 0 auto 0 auto;
+	background:#eddea5;
+	border-bottom:1px solid #d9c886;
+}
+.app-menu ul{color:#77640d;font-size:24px;font-family:'Microsoft YaHei';text-align:center;font-weight:bold;}
+.app-menu ul li{
+	float:left;
+	width:198px;
+	height:112px;
+	overflow:hidden;
+	border-right:1px solid #d9c886;
+}
+.app-menu ul li a{display:block;}
+.app-menu ul li:hover,.app-menu ul li.on{
+	background:#fbf2c9;
+	border-bottom:5px solid #cab03d;
+	height:107px;
+}
+.app-menu ul li span{
+	display:block;
+	width:100%;
+	height:113px;
+	margin:0 auto;
+	background:url("/images/download-menu.png") no-repeat;
+}
+.app-main{height:100%;overflow:hidden;border-bottom:1px solid #e2d18a;/** background:url("/images/app-bg.jpg") no-repeat center top;*/}
+.app-main .pic{margin-top:52px;}
+.app-main .con{margin-top:76px;width:386px;padding:35px 0 30px;background:#fff;border:1px solid #EFE9D4;}
+.app-main .con h3{text-align:center;color:#c10000;font-size:30px;font-family:'Microsoft YaHei';}
+.app-main .con .text{padding:20px 45px 5px;line-height:26px;font-size:14px;}
+.app-main .con .text span{color:#666666;}
+.app-main .con .btn a{display:block;width:243px;height:72px;margin:0 auto;background:url("/images/app-icon.png") no-repeat 0 -160px;}
+.app-main .con .link{text-align:center;margin-top:12px;font-size:14px;}
+.app-main .con .link a{color:#0070be;}
+.app-main .con .link a:hover{text-decoration:underline;}
+.app-main .con-pcwin{display:block;}
+.app-main .con-pcwin .con{padding-bottom:80px;}
+.app-main .con-pcwin .text{padding-bottom:20px;}
+.app-main .con-iphone{display:none;}
+.app-main .con-iphone .pic{margin-top:30px;}
+.app-main .con-iphone .con{margin-top:38px;}
+.app-main .con-ipad{display:none;}
+.app-main .con-ipad .pic{margin-top:113px;}
+.app-main .con-ipad .con{margin-top:38px;}
+.app-main .con-android{display:none;}
+.app-main .con-android .pic{margin-top:33px;}
+.app-main .con-android .con{margin-top:38px;}
+.app-main .con-others{
+	margin:  27px 0 0 0 ;
+}
+.app-main .con-others ul{
+	background-color: #fff5c8 ;
+	position: relative;
+	width: 992px;
+	height: 240px;
+	margin: 0 auto 30px auto;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border:  2px solid #d9c886;
+	border-radius: 10px;
+	behavior: url(/PIE.htc); 
+}
+.app-main .con-others li{
+	position: relative;
+	width: 248px;
+	height: 100%;
+	float: left;
+	background-image: url("/images/download-others.png");
+}
+.app-main .con-others a{
+	display: block;
+	text-align: center;
+	line-height: 2;
+	color: #fff;
+	width: 100px;
+	height: 33px;
+	background: url("/images/button.png") no-repeat center;
+	position: absolute;
+	top: 186px;
+	left: 74px;
+	font-size: 14px;
+	line-height: 32px;
+	letter-spacing: 2px;
+}
+.app-main .con-others a:hover{
+	background: url("/images/button_mouse_over.jpg") no-repeat center;
+}
+.app-bottom .wp{width:960px;padding:20px 0 68px;}
+.app-bottom .mt92{margin-left:92px;}
+.app-bottom ul li{width:170px;float:left;}
+.app-bottom ul li span{display:block;width:85px;height:63px;background:url("/images/app-icon.png") no-repeat;}
+.app-bottom ul li div{color:#333;font-size:20px;font-family:'Microsoft YaHei';font-weight:bold;margin:5px 0 10px;}
+.app-bottom ul li  p{color:#7f7c72;font-size:14px;line-height:24px;}
+.app-bottom ul li.item-1 span{background-position:0 -83px;margin-left:18px;}
+.app-bottom ul li.item-2 span{background-position:-99px -83px;margin-left:28px;width:75px;}
+.app-bottom ul li.item-3 span{background-position:-192px -83px;margin-left:23px;width: 75px;}
+.app-bottom ul li.item-4 span{background-position:-269px -83px;margin-left:39px;width: 75px;}

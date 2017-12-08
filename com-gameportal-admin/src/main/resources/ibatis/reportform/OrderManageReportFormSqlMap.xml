@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="OrderManageReportForm">
+	
+	<!-- 订单管理 -->
+	<typeAlias alias="orderManage" type="com.gameportal.manage.reportform.model.OrderManageReportForm"/>
+	
+	<!-- 会员洗码记录 -->
+	<typeAlias alias="memberXimaMain" type="com.gameportal.manage.xima.model.MemberXimaMain"/>
+	
+	<!-- 代理用户洗码 -->
+	<typeAlias alias="proxyUserXimaLog" type="com.gameportal.manage.proxy.model.ProxyUserXimaLog"/>
+	
+	<!-- 用于select查询订单管理抽取的列 -->
+	<sql id="orderManageColumns">
+	    <![CDATA[
+        	poid ,
+        	paytyple ,
+        	ordertype,
+        	paymethods ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	kfopttime ,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	cwopttime,
+        	beforebalance,
+        	laterbalance 
+	    ]]>
+	</sql>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="memberXimaMainColumns">
+	    <![CDATA[
+        	mxmid ,
+        	gpid ,
+        	uiid ,
+        	account ,
+        	name ,
+        	total ,
+        	ymdstart ,
+        	ymdend ,
+        	updatetime ,
+        	locked 
+	    ]]>
+	</sql>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="proxyUserXimaLogColumns">
+		<![CDATA[
+			xm.logid,
+			xm.uiid,
+			xm.account,
+			xm.uname,
+			xm.puiid,
+			xm.ximascale,
+			xm.ximamoney,
+			xm.yhmoney,
+			xm.validmoney,
+			xm.jsstarttime,
+			xm.jsendtime,
+			xm.ximatime,
+			xm.status,
+			u.account AS proxyaccount,
+			u.uname AS proxyuname
+		]]>
+	</sql>
+	
+	<!-- 钱包余额 -->
+	<select id="selectAccountMoney" resultClass="java.util.HashMap">
+  		select m.totalamount as totalamount from a_user_info u LEFT JOIN a_account_money m ON m.uiid=u.uiid where u.account=#account#     
+    </select>
+    
+    
+    <!-- 订单管理集合 -->
+	<select id="selectOrderList" resultClass="orderManage">
+		select 
+		<![CDATA[
+			poid,uaccount,urealname,platformorders,paytyple,ordertype,paymethods,deposittime,amount,paystatus,status,kfremarks,kfid,kfname,kfopttime,cwremarks,cwid,cwname,cwopttime,beforebalance,laterbalance,
+		]]>
+		IFNULL((select SUM(xm.total) from c_member_xima_main xm where xm.locked=1 and xm.account=uaccount
+		<isNotEmpty property="startDate">
+			<![CDATA[
+	   			and xm.updatetime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and xm.updatetime<=#endDate#
+	    ]]>
+		</isNotEmpty>
+		),'0.00') as memberximaMoney,
+		IFNULL((select SUM(pc.clearingAmount) from a_proxy_clearing_log pc LEFT JOIN a_user_info u ON u.uiid=pc.uiid where  pc.clearingStatus=1 and u.account=uaccount
+		<isNotEmpty property="startDate">
+			<![CDATA[
+	   			and pc.clearingTime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and pc.clearingTime<=#endDate#
+	    	]]>
+		</isNotEmpty>	
+		),'0.00') as proxyclearMoney,
+		IFNULL((select SUM(xm.ximamoney) from a_proxyuser_xima_log xm LEFT JOIN a_user_info u ON xm.puiid = u.uiid  where xm.status=1 and u.account=uaccount
+		<isNotEmpty property="startDate">
+			<![CDATA[
+	   			and xm.ximatime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and xm.ximatime<=#endDate#
+	    	]]>
+		</isNotEmpty>	
+		),'0.00') as proxyuserximaMoney
+	   	<![CDATA[
+	   		from a_pay_order
+	    ]]>
+		where 1=1
+		<isNotEmpty property="account">
+			 <![CDATA[
+				 and uaccount=#account# 
+			 ]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and deposittime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and deposittime<=#endDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="status">
+			<![CDATA[
+	   			and status in $status$
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="paytype">
+			 <![CDATA[
+				 and paytyple in $paytype$
+			 ]]>
+		</isNotEmpty>
+		<isNotEmpty property="ordertype">
+			<![CDATA[
+	   			and ordertype in $ordertype$
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="paymethods">
+			<![CDATA[
+	   			and paymethods in $paymethods$
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="poid">
+			<![CDATA[
+	   			and poid=#poid#
+	    	]]>
+		</isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 订单管理统计 -->
+	<select id="selectOrderCount" resultClass="long">
+		select count(1)
+	   	<![CDATA[
+	      	from a_pay_order
+	    ]]>
+		where 1=1
+		<isNotEmpty property="account">
+			 <![CDATA[
+				 and uaccount=#account# 
+			 ]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		   	<![CDATA[
+	   			and deposittime>=#startDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+			<![CDATA[
+	   			and deposittime<=#endDate#
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderstate">
+			<![CDATA[
+	   			and status in $orderstate$
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="paytype">
+			 <![CDATA[
+				 and paytyple in $paytype$
+			 ]]>
+		</isNotEmpty>
+		<isNotEmpty property="ordertype">
+			<![CDATA[
+	   			and ordertype in $ordertype$
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="paymethods">
+			<![CDATA[
+	   			and paymethods in $paymethods$
+	    	]]>
+		</isNotEmpty>
+		<isNotEmpty property="poid">
+			<![CDATA[
+	   			and poid=#poid#
+	    	]]>
+		</isNotEmpty>
+    </select>
+    
+ 	<!-- 会员洗码金额 -->
+    <select id="selectMemberXimaMainMoney" resultClass="string">
+			select sum(total)
+			<![CDATA[
+			 	from c_member_xima_main where  locked=1 
+			]]>
+			<isNotEmpty property="account">
+				<![CDATA[
+	   				and account=#account#
+	    		]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate">
+				<![CDATA[
+	   				and updatetime>=#startDate#
+	    		]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate">
+				<![CDATA[
+	   				and updatetime<=#endDate#
+	    		]]>
+			</isNotEmpty>		
+ 	</select>
+ 	
+ 	<!-- 代理洗码金额 -->
+    <select id="selectProxyClearLogMoney" resultClass="string">
+			select sum(clearingAmount)
+			<![CDATA[
+			 	from a_proxy_clearing_log pc LEFT JOIN a_user_info u ON u.uiid=pc.uiid where  pc.clearingStatus=1 
+			]]>
+			<isNotEmpty property="account">
+				<![CDATA[
+	   				and u.account=#account#
+	    		]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate">
+				<![CDATA[
+	   				and pc.clearingTime>=#startDate#
+	    		]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate">
+				<![CDATA[
+	   				and pc.clearingTime<=#endDate#
+	    		]]>
+			</isNotEmpty>		
+ 	</select>
+ 	
+ 	
+ 	<!-- 代理给下线会员洗码记录 -->
+    <select id="selectProxyUserXimaLogMoney" resultClass="string">
+			select sum(ximamoney)
+			<![CDATA[
+			 	FROM a_proxyuser_xima_log xm LEFT JOIN a_user_info u ON xm.puiid = u.uiid  where xm.status=1
+			]]>
+			<isNotEmpty property="account">
+				<![CDATA[
+	   				and u.account=#account#
+	    		]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate">
+				<![CDATA[
+	   				and xm.ximatime>=#startDate#
+	    		]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate">
+				<![CDATA[
+	   				and xm.ximatime<=#endDate#
+	    		]]>
+			</isNotEmpty>			
+ 	</select>
+  
+</sqlMap>

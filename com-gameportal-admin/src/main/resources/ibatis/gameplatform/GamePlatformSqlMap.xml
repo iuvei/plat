@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GamePlatform">
+
+    <typeAlias alias="gamePlatform" type="com.gameportal.manage.gameplatform.model.GamePlatform"/>
+
+    <resultMap id="gamePlatformResult" class="gamePlatform">
+        <result property="gpid" column="gpid"/>
+        <result property="gpname" column="gpname"/>
+        <result property="domainname" column="domainname"/>
+        <result property="domainip" column="domainip"/>
+        <result property="deskey" column="deskey"/>
+        <result property="apiaccount" column="apiaccount"/>
+        <result property="ciphercode" column="ciphercode"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="fullname" column="fullname"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	gpid ,
+        	gpname ,
+        	domainname ,
+        	domainip ,
+        	deskey ,
+        	apiaccount ,
+        	ciphercode ,
+        	status ,
+        	create_date ,
+        	update_date,
+        	fullname
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="gamePlatform">
+    <![CDATA[
+        INSERT INTO
+        a_game_platform (
+        	gpid ,
+        	gpname ,
+        	domainname ,
+        	domainip ,
+        	deskey ,
+        	apiaccount ,
+        	ciphercode ,
+        	status ,
+        	create_date ,
+        	update_date,
+        	fullname
+        ) VALUES (
+        	#gpid# ,
+        	#gpname# ,
+        	#domainname# ,
+        	#domainip# ,
+        	#deskey# ,
+        	#apiaccount# ,
+        	#ciphercode# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate#,
+        	#fullname#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="gpid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="gamePlatform">
+    	<![CDATA[
+			UPDATE a_game_platform SET gpid = #gpid#
+		]]>
+	      <dynamic>  
+	        <isNotEmpty property="gpname" prepend=",">  
+	            <![CDATA[ 
+	                gpname = #gpname#
+	            ]]>  
+	        </isNotEmpty>
+	        <isNotEmpty property="domainname" prepend=",">  
+	            <![CDATA[ 
+	                  domainname = #domainname#
+	            ]]>  
+	        </isNotEmpty>
+	        <isNotEmpty property="domainip" prepend=",">  
+	            <![CDATA[ 
+	                 domainip = #domainip#
+	            ]]>  
+	        </isNotEmpty>
+	        <isNotEmpty property="deskey" prepend=",">  
+	            <![CDATA[ 
+	                deskey = #deskey#
+	            ]]>  
+	        </isNotEmpty>
+	        <isNotEmpty property="ciphercode" prepend=",">  
+	            <![CDATA[ 
+	                ciphercode = #ciphercode#
+	            ]]>  
+	        </isNotEmpty>
+	        <isNotEmpty property="status" prepend=",">  
+	            <![CDATA[ 
+	                 status = #status#
+	            ]]>  
+	        </isNotEmpty>
+	        <isNotEmpty property="updateDate" prepend=",">  
+	            <![CDATA[ 
+	                update_date = #updateDate#
+	            ]]>  
+	        </isNotEmpty>
+	        <isNotEmpty property="gpname" prepend=",">  
+	            <![CDATA[ 
+	                fullname = #fullname#
+	            ]]>  
+	        </isNotEmpty>
+	      </dynamic>
+		<![CDATA[
+	        WHERE gpid = #gpid# 
+	    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_game_platform where
+        gpid = #gpid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="gamePlatformResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_platform 
+	        where 
+		        gpname = #gpname# and status =1
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpname">
+	             gpname = #gpname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="domainname">
+	             domainname = #domainname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="domainip">
+	             domainip = #domainip#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deskey">
+	             deskey = #deskey#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="apiaccount">
+	             apiaccount = #apiaccount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ciphercode">
+	             ciphercode = #ciphercode#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_platform
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="gamePlatformResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_platform 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	
+</sqlMap>

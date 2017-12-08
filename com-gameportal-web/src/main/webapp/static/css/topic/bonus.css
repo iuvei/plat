@@ -1,0 +1,457 @@
+#insert-notices,
+.ui-notices {
+    margin-bottom: 0;
+}
+
+.ui-contents {
+    height: 1680px;
+    background: #01050c url(/static/images/topic/bonus/bg.jpg) no-repeat center top;
+}
+
+.ui-notices .detail {
+    width: 881px;
+}
+
+.main .border-bonus {
+    border: 1px solid #ac3127;
+}
+
+.main .game {
+    width: 600px;
+    height: 600px;
+    margin: 400px 0 0 50px;
+}
+
+.main .game .items li {
+    position: absolute;
+    width: 97px;
+    height: 52px;
+    padding: 22px 0;
+    background: url(/static/images/topic/bonus/img.png) no-repeat 0 0;
+}
+
+.main .game .items li.clone {
+    z-index: 1;
+    opacity: 1;
+    transform: rotate(0);
+    -webkit-transform: rotate(0);
+    transition: 1s;
+    -webkit-transition: 1s;
+}
+
+.main .game .items li.clone.run {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 636px 0 0 160px;
+    font-size: 12px;
+    line-height: 12px;
+    opacity: 0.3;
+    overflow: hidden;
+    transform: rotate(3600deg);
+    -webkit-transform: rotate(3600deg);
+}
+
+.main .game .items li.active {
+    background-position: -99px 0;
+}
+
+.main .game .items li.item0 {
+    margin: 0;
+}
+
+.main .game .items li.item1 {
+    margin: 0 0 0 97px;
+}
+
+.main .game .items li.item2 {
+    margin: 0 0 0 194px;
+}
+
+.main .game .items li.item3 {
+    margin: 0 0 0 291px;
+}
+
+.main .game .items li.item4 {
+    margin: 0 0 0 388px;
+}
+
+.main .game .items li.item5 {
+    margin: 0 0 0 485px;
+}
+
+.main .game .items li.item6 {
+    margin: 96px 0 0 485px;
+}
+
+.main .game .items li.item7 {
+    margin: 192px 0 0 485px;
+}
+
+.main .game .items li.item8 {
+    margin: 288px 0 0 485px;
+}
+
+.main .game .items li.item9 {
+    margin: 384px 0 0 485px;
+}
+
+.main .game .items li.item10 {
+    margin: 480px 0 0 485px;
+}
+
+.main .game .items li.item11 {
+    margin: 480px 0 0 388px;
+}
+
+.main .game .items li.item12 {
+    margin: 480px 0 0 291px;
+}
+
+.main .game .items li.item13 {
+    margin: 480px 0 0 194px;
+}
+
+.main .game .items li.item14 {
+    margin: 480px 0 0 97px;
+}
+
+.main .game .items li.item15 {
+    margin: 480px 0 0 0;
+}
+
+.main .game .items li.item16 {
+    margin: 384px 0 0 0;
+}
+
+.main .game .items li.item17 {
+    margin: 288px 0 0 0;
+}
+
+.main .game .items li.item18 {
+    margin: 192px 0 0 0;
+}
+
+.main .game .items li.item19 {
+    margin: 96px 0 0 0;
+}
+
+.main .game .message {
+    width: 336px;
+    height: 66px;
+    line-height: 66px;
+    margin: 110px 0 0 123px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat -350px 0;
+}
+
+.main .game .platform {
+    width: 336px;
+    height: 210px;
+    margin: 10px 0 0 123px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat -350px -69px;
+}
+
+.main .game .platform .foo0 {
+    height: 88px;
+    padding: 30px 0 20px 0;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 44px;
+}
+
+.main .game .platform .foo1 label {
+    display: inline-block;
+    width: 210px;
+    text-align: right;
+}
+
+.main .game .platform .lights li {
+    position: absolute;
+    width: 23px;
+    height: 23px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat -282px -34px;
+}
+
+.main .game .platform .lights li.active {
+    background-position: -316px -35px;
+}
+
+.main .game .platform .lights li.light0 {
+    margin: -6px 0 0 -6px;
+}
+
+.main .game .platform .lights li.light1 {
+    margin: -6px 0 0 59px;
+}
+
+.main .game .platform .lights li.light2 {
+    margin: -6px 0 0 123px;
+}
+
+.main .game .platform .lights li.light3 {
+    margin: -6px 0 0 187px;
+}
+
+.main .game .platform .lights li.light4 {
+    margin: -6px 0 0 252px;
+}
+
+.main .game .platform .lights li.light5 {
+    margin: -6px 0 0 317px;
+}
+
+.main .game .platform .lights li.light6 {
+    margin: 34px 0 0 317px;
+}
+
+.main .game .platform .lights li.light7 {
+    margin: 74px 0 0 317px;
+}
+
+.main .game .platform .lights li.light8 {
+    margin: 114px 0 0 317px;
+}
+
+.main .game .platform .lights li.light9 {
+    margin: 154px 0 0 317px;
+}
+
+.main .game .platform .lights li.light10 {
+    margin: 194px 0 0 317px;
+}
+
+.main .game .platform .lights li.light11 {
+    margin: 194px 0 0 252px;
+}
+
+.main .game .platform .lights li.light12 {
+    margin: 194px 0 0 187px;
+}
+
+.main .game .platform .lights li.light13 {
+    margin: 194px 0 0 123px;
+}
+
+.main .game .platform .lights li.light14 {
+    margin: 194px 0 0 59px;
+}
+
+.main .game .platform .lights li.light15 {
+    margin: 194px 0 0 -6px;
+}
+
+.main .game .platform .lights li.light16 {
+    margin: 154px 0 0 -6px;
+}
+
+.main .game .platform .lights li.light17 {
+    margin: 114px 0 0 -6px;
+}
+
+.main .game .platform .lights li.light18 {
+    margin: 74px 0 0 -6px;
+}
+
+.main .game .platform .lights li.light19 {
+    margin: 34px 0 0 -6px;
+}
+
+.main .game .btn-bonus,
+.main .game .btn-get,
+.main .rules .foo4 .btn-get {
+    display: block;
+    width: 332px;
+    height: 66px;
+    margin: 10px 0 0 124px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat 0 -204px;
+}
+
+.main .game .btn-get,
+.main .rules .foo4 .btn-get {
+    background-position: 0 -378px;
+}
+
+.main .game .btn-bonus.disabled {
+    position: relative;
+    top: 1px;
+    left: 1px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat 0 -274px;
+    cursor: not-allowed;
+}
+
+.main .game .finish{
+    display: block;
+    width: 332px;
+    height: 66px;
+    margin: 10px 0 0 124px;
+    font-size: 30px;
+    line-height: 60px;
+}
+
+.main .game .btn-bonus:hover {
+    position: relative;
+    top: 1px;
+    left: 1px;
+}
+
+.main .bonus-info {
+    width: 259px;
+    height: 570px;
+    padding: 2px 3px;
+    margin: 400px 0 0 681px;
+}
+
+.main .bonus-info h1 {
+    width: 259px;
+    height: 59px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat 0 -99px;
+}
+
+.main .bonus-info .bonus-news {
+    height: 472px;
+    overflow: hidden;
+}
+
+.main .bonus-info .bonus-news li {
+    height: 58px;
+    padding: 0 10px;
+    border-bottom: 1px solid #581b1b;
+}
+
+.main .bonus-info .bonus-news li .text {
+    display: block;
+    height: 34px;
+    line-height: 42px;
+}
+
+.main .bonus-info .bonus-news li .time {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    line-height: 20px;
+    color: #eee;
+}
+
+.main .bonus-info .bottom {
+    width: 259px;
+    height: 39px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat 0 -161px;
+}
+
+.main .my-coupon {
+    width: 896px;
+    height: 130px;
+    margin: 1020px 0 0 50px;
+}
+
+.main .my-coupon h1 {
+    width: 135px;
+    margin: 40px 0 3px 8px;
+}
+
+.main .my-coupon a {
+    display: block;
+    width: 135px;
+    height: 55px;
+    margin-left: 8px;
+    line-height: 55px;
+    font-weight: bold;
+    color: #333;
+    background: url(/static/images/topic/bonus/img.png) no-repeat -551px -316px;
+}
+
+.main .my-coupon a:hover {
+    position: relative;
+    top: 1px;
+    left: 1px;
+}
+
+.main .my-coupon ul {
+    margin: 13px 0 0 150px;
+}
+
+.main .my-coupon li {
+    float: left;
+    width: 71px;
+    margin-left: 10px;
+}
+
+.main .my-coupon li p {
+    width: 71px;
+    height: 39px;
+    padding: 17px 0;
+    text-align: center;
+    background: url(/static/images/topic/bonus/img.png) no-repeat -198px 0;
+}
+
+.main .my-coupon li p.title {
+    line-height: 39px;
+}
+
+.main .my-coupon li span {
+    display: block;
+    width: 71px;
+    height: 27px;
+    margin-top: 5px;
+    line-height: 27px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat -271px 0;
+}
+
+.main .rules {
+    width: 896px;
+    height: 360px;
+    margin: 1200px 0 0 50px;
+}
+
+.main .rules h1 {
+    margin: 15px 0 0 15px;
+}
+
+.main .rules .foo0 {
+    width: 196px;
+    height: 105px;
+    padding: 2px;
+    margin: 10px 0 0 15px;
+}
+
+.main .rules .foo0 .bottom {
+    width: 196px;
+    height: 31px;
+    margin-top: 20px;
+    line-height: 31px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat -489px -281px;
+}
+
+.main .rules .foo1 {
+    width: 196px;
+    height: 105px;
+    padding: 2px;
+    margin: 10px 0 0 255px;
+}
+
+.main .rules .foo2 {
+    width: 380px;
+    height: 105px;
+    padding: 2px;
+    margin: 10px 0 0 496px;
+}
+
+.main .rules .foo2 .bottom {
+    width: 380px;
+    height: 31px;
+    margin-top: 7px;
+    line-height: 31px;
+    background: url(/static/images/topic/bonus/img.png) no-repeat 0 -342px;
+}
+
+.main .rules .foo3 {
+    margin: 140px 0 10px 20px;
+}
+
+.main .rules .foo4 {
+    margin: 250px 0 10px 20px;
+}
+
+.main .rules .foo4 .btn-get {
+    margin: -8px 0 0 530px;
+}

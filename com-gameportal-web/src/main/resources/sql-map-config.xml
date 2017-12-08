@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" lazyLoadingEnabled="true"
+		enhancementEnabled="true" maxSessions="64" maxTransactions="20"
+		maxRequests="128" useStatementNamespaces="true" />
+	<!-- 用户中心 -->
+	<sqlMap resource="ibatis/user/UserInfoSqlMap.xml" />
+	<sqlMap resource="ibatis/user/AccountMoneySqlMap.xml" />
+	<sqlMap resource="ibatis/user/CardPackageSqlMap.xml" />
+	<sqlMap resource="ibatis/user/PayOrderSqlMap.xml" />
+	<sqlMap resource="ibatis/user/UserPropertySqlMap.xml" />
+	<sqlMap resource="ibatis/user/UserManagerSqlMap.xml" />
+	<sqlMap resource="ibatis/user/PayPlatformSqlMap.xml" />
+	<sqlMap resource="ibatis/user/XimaFlagSqlMap.xml" />
+	
+	<!--游戏API -->
+	<sqlMap resource="ibatis/game/GameAccountSqlMap.xml" />
+	<sqlMap resource="ibatis/game/GamePlatformSqlMap.xml" />
+	<sqlMap resource="ibatis/game/GameTransferSqlMap.xml" />
+	<sqlMap resource="ibatis/game/PlatformBetStatsSqlMap.xml" />
+	
+	<!-- 存提款订单 -->
+	<sqlMap resource="ibatis/order/CompanyCardSqlMap.xml" />
+	<sqlMap resource="ibatis/order/CCGroupSqlMap.xml" />
+	<sqlMap resource="ibatis/order/CCAndGroupSqlMap.xml" />
+	<sqlMap resource="ibatis/order/CCGroupxAndUserSqlMap.xml" />
+	
+	<!-- 代理申请-->
+	<sqlMap resource="ibatis/agent/ProxyApplySqlMap.xml" />
+	
+	<!-- 域名访问统计-->
+	<sqlMap resource="ibatis/agent/ProxyWebSitePvSqlMap.xml" />
+	
+	<!-- 广告+公告 -->
+	<sqlMap resource="ibatis/adver/AdverSqlMap.xml"/>
+	<sqlMap resource="ibatis/adver/BulletinSqlMap.xml"/>
+	<sqlMap resource="ibatis/adver/UserBulletinMap.xml"/>
+	
+	<!-- 短信 -->
+	<sqlMap resource="ibatis/sms/SmsPlatAccountSqlMap.xml"/>
+	<sqlMap resource="ibatis/sms/SmsSendLogSqlMap.xml"/>
+	
+	<!-- 邮件发送 -->
+	<sqlMap resource="ibatis/mail/MailSenderInfoSqlMap.xml"/>
+	
+	<!-- 活动相关 -->
+	<sqlMap resource="ibatis/activity/ActivityFlagSqlMap.xml"/>
+	<sqlMap resource="ibatis/activity/ActivitySqlMap.xml"/>
+
+	<!--自助中心-->
+	<sqlMap resource="ibatis/user/MemberXimaMainSqlMap.xml"/>
+	<sqlMap resource="ibatis/user/MemberXimaDetailSqlMap.xml"/>
+	<sqlMap resource="ibatis/user/BetLogSqlMap.xml"/>
+
+</sqlMapConfig>

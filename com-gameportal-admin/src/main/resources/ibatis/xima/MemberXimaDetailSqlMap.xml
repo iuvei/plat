@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MemberXimaDetail">
+
+    <typeAlias alias="memberXimaDetail" type="com.gameportal.manage.xima.model.MemberXimaDetail"/>
+
+    <resultMap id="memberXimaDetailResult" class="memberXimaDetail">
+        <result property="mxdid" column="mxdid"/>
+        <result property="gpid" column="gpid"/>
+        <result property="uiid" column="uiid"/>
+        <result property="amount" column="amount"/>
+        <result property="ymdstart" column="ymdstart"/>
+        <result property="ymdend" column="ymdend"/>
+        <result property="optuiid" column="optuiid"/>
+        <result property="optusername" column="optusername"/>
+        <result property="opttype" column="opttype"/>
+        <result property="opttime" column="opttime"/>
+        <result property="paramlog" column="paramlog"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	mxdid ,
+        	gpid ,
+        	uiid ,
+        	amount ,
+        	ymdstart ,
+        	ymdend ,
+        	optuiid ,
+        	optusername ,
+        	opttype ,
+        	opttime ,
+        	paramlog 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="memberXimaDetail">
+    <![CDATA[
+        INSERT INTO
+        c_member_xima_detail (
+        	mxdid ,
+        	gpid ,
+        	uiid ,
+        	amount ,
+        	ymdstart ,
+        	ymdend ,
+        	optuiid ,
+        	optusername ,
+        	opttype ,
+        	opttime ,
+        	paramlog 
+        ) VALUES (
+        	#mxdid# ,
+        	#gpid# ,
+        	#uiid# ,
+        	#amount# ,
+        	#ymdstart# ,
+        	#ymdend# ,
+        	#optuiid# ,
+        	#optusername# ,
+        	#opttype# ,
+        	#opttime# ,
+        	#paramlog# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="mxdid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="memberXimaDetail">
+    <![CDATA[
+        UPDATE c_member_xima_detail SET
+	        gpid = #gpid# ,
+	        uiid = #uiid# ,
+	        amount = #amount# ,
+	        ymdstart = #ymdstart# ,
+	        ymdend = #ymdend# ,
+	        optuiid = #optuiid# ,
+	        optusername = #optusername# ,
+	        opttype = #opttype# ,
+	        opttime = #opttime# ,
+	        paramlog = #paramlog# 
+        WHERE 
+	        mxdid = #mxdid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from c_member_xima_detail where
+        mxdid = #mxdid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="memberXimaDetailResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from c_member_xima_detail 
+	        where 
+		        mxdid = #mxdid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="mxdid">
+	             mxdid = #mxdid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ymdstart">
+	             ymdstart = #ymdstart#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ymdend">
+	             ymdend = #ymdend#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="optuiid">
+	             optuiid = #optuiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="optusername">
+	             optusername = #optusername#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="opttype">
+	             opttype = #opttype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="opttime">
+	             opttime = #opttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paramlog">
+	             paramlog = #paramlog#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from c_member_xima_detail
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="memberXimaDetailResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from c_member_xima_detail 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <select id="selectGpids" resultClass="java.lang.String">
+    	SELECT gpid <![CDATA[
+    	FROM c_member_xima_detail 
+    	]]>
+    	<dynamic prepend="WHERE">
+    		<isNotNull prepend="AND" property="uiid">
+              	uiid = #uiid#
+      	 	</isNotNull>
+    		<isNotNull prepend="AND" property="ymdstart">
+              	ymdstart = #ymdstart#
+      	 	</isNotNull>
+      	 	<isNotNull prepend="AND" property="ymdend">
+      	 	  	<![CDATA[
+             		ymdend = #ymdend#
+             	]]>
+      	 	</isNotNull>
+    	</dynamic>
+    </select>
+</sqlMap>

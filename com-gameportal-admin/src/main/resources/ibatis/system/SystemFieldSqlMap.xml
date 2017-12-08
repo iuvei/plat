@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SystemField">
+
+    <typeAlias alias="systemField" type="com.gameportal.manage.system.model.SystemField"/>
+
+    <resultMap id="systemFieldResult" class="systemField">
+        <result property="fieldId" column="field_id"/>
+        <result property="field" column="field"/>
+        <result property="fieldName" column="field_name"/>
+        <result property="valueField" column="value_field"/>
+        <result property="displayField" column="display_field"/>
+        <result property="enabled" column="enabled"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	field_id ,
+        	field ,
+        	field_name ,
+        	value_field ,
+        	display_field ,
+        	enabled ,
+        	sort 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="systemField">
+    <![CDATA[
+        INSERT INTO
+        system_fields (
+        	field_id ,
+        	field ,
+        	field_name ,
+        	value_field ,
+        	display_field ,
+        	enabled ,
+        	sort 
+        ) VALUES (
+        	#fieldId# ,
+        	#field# ,
+        	#fieldName# ,
+        	#valueField# ,
+        	#displayField# ,
+        	#enabled# ,
+        	#sort# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL system_fields_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="fieldId" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="systemField">
+    <![CDATA[
+        UPDATE system_fields SET
+	        field = #field# ,
+	        field_name = #fieldName# ,
+	        value_field = #valueField# ,
+	        display_field = #displayField# ,
+	        enabled = #enabled# ,
+	        sort = #sort# 
+        WHERE 
+	        field_id = #fieldId# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from system_fields where
+        field_id = #fieldId# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="systemFieldResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_fields 
+	        where 
+		        field_id = #fieldId# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="fieldId">
+	             field_id = #fieldId#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="field">
+	             field = #field#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="fieldName">
+	             field_name = #fieldName#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="valueField">
+	             value_field = #valueField#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="displayField">
+	             display_field = #displayField#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="enabled">
+	             enabled = #enabled#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="sort">
+	             sort = #sort#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from system_fields
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="systemFieldResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_fields 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	
+</sqlMap>

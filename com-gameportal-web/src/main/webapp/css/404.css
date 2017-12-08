@@ -1,0 +1,25 @@
+body{
+    background-color: #fff;
+    overflow-y:hidden;
+}
+.header{
+    padding-top: 30px;
+    /* padding-bottom: 50px; */
+    background-color: #255bbe;
+    height: 95px;
+}
+.header-inner{
+    width: 1000px;
+    margin: 0 auto;
+}
+.cnt-box{
+    padding: 50px 0 160px;
+}
+.cnt-box h1{
+    font-size: 56px;
+    margin-bottom: 16px;
+}
+.cnt-box p{
+    margin-bottom: 14px;
+    line-height: 1.6;
+}

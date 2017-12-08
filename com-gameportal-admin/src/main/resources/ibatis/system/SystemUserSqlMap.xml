@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SystemUser">
+
+    <typeAlias alias="systemUser" type="com.gameportal.manage.system.model.SystemUser"/>
+
+    <resultMap id="systemUserResult" class="systemUser">
+        <result property="userId" column="user_id"/>
+        <result property="account" column="account"/>
+        <result property="password" column="password"/>
+        <result property="truename" column="truename"/>
+        <result property="realName" column="real_name"/>
+        <result property="sex" column="sex"/>
+        <result property="email" column="email"/>
+        <result property="mobile" column="mobile"/>
+        <result property="officePhone" column="office_phone"/>
+        <result property="errorCount" column="error_count"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="lastLoginIp" column="last_login_ip"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="clientmac" column="clientmac"/>
+        <result property="clientip" column="clientip"/>
+        <result property="bindstatus" column="bindstatus"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	user_id ,
+        	account ,
+        	password ,
+        	truename,
+        	real_name ,
+        	sex ,
+        	email ,
+        	mobile ,
+        	office_phone ,
+        	error_count ,
+        	last_login_time ,
+        	last_login_ip ,
+        	remark ,
+        	status ,
+        	create_date ,
+        	update_date,
+        	clientmac,
+        	clientip,
+        	bindstatus
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="systemUser">
+    <![CDATA[
+        INSERT INTO
+        system_users (
+        	user_id ,
+        	account ,
+        	password ,
+        	truename,
+        	real_name ,
+        	sex ,
+        	email ,
+        	mobile ,
+        	office_phone ,
+        	error_count ,
+        	last_login_time ,
+        	last_login_ip ,
+        	remark ,
+        	status ,
+        	create_date ,
+        	update_date ,
+        	clientmac,
+        	clientip,
+        	bindstatus
+        ) VALUES (
+        	#userId# ,
+        	#account# ,
+        	#password# ,
+        	#truename#,
+        	#realName# ,
+        	#sex# ,
+        	#email# ,
+        	#mobile# ,
+        	#officePhone# ,
+        	#errorCount# ,
+        	#lastLoginTime# ,
+        	#lastLoginIp# ,
+        	#remark# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# ,
+        	#clientmac#,
+        	#clientip#,
+        	#bindstatus#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL system_users_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="userId" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="systemUser">
+        <![CDATA[
+         	UPDATE system_users SET user_id = #userId#
+	    ]]>
+	    <dynamic>
+	    	 <isNotEmpty property="account" prepend=",">  
+                <![CDATA[ 
+                   account = #account#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="password" prepend=",">  
+                <![CDATA[ 
+	        		password = #password#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="truename" prepend=",">  
+                <![CDATA[ 
+	        		truename = #truename#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="realName" prepend=",">  
+                <![CDATA[ 
+	        		  real_name = #realName#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="sex" prepend=",">  
+                <![CDATA[ 
+	        		sex = #sex#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="email" prepend=",">  
+                <![CDATA[ 
+	        		email = #email#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="mobile" prepend=",">  
+                <![CDATA[ 
+	        		 mobile = #mobile#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="officePhone" prepend=",">  
+                <![CDATA[ 
+	        		office_phone = #officePhone#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="errorCount" prepend=",">  
+                <![CDATA[ 
+	        		error_count = #errorCount#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="lastLoginTime" prepend=",">  
+                <![CDATA[ 
+	        		 last_login_time = #lastLoginTime#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="lastLoginIp" prepend=",">  
+                <![CDATA[ 
+	        		last_login_ip = #lastLoginIp#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="remark" prepend=",">  
+                <![CDATA[ 
+	        		remark = #remark#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="status" prepend=",">  
+                <![CDATA[ 
+	        		 status = #status#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="createDate" prepend=",">  
+                <![CDATA[ 
+	        		 create_date = #createDate#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="updateDate" prepend=",">  
+                <![CDATA[ 
+	        		 update_date = #updateDate#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="clientmac" prepend=",">  
+                <![CDATA[ 
+	        		 clientmac = #clientmac#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="clientip" prepend=",">  
+                <![CDATA[ 
+	        		 clientip = #clientip#
+                ]]>  
+            </isNotEmpty>
+            <isNotEmpty property="bindstatus" prepend=",">  
+                <![CDATA[ 
+	        		 bindstatus = #bindstatus#
+                ]]>  
+            </isNotEmpty>
+	    </dynamic>
+	    <![CDATA[
+	     	WHERE user_id = #userId# 
+	    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from system_users where
+        user_id = #userId# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="systemUserResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_users 
+	        where 
+		        user_id = #userId# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="userId">
+	             user_id = #userId#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="password">
+	             password = #password#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="realName">
+	             real_name = #realName#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="sex">
+	             sex = #sex#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="email">
+	             email = #email#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="mobile">
+	             mobile = #mobile#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="officePhone">
+	             office_phone = #officePhone#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="errorCount">
+	             error_count = #errorCount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="lastLoginTime">
+	             last_login_time = #lastLoginTime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="lastLoginIp">
+	             last_login_ip = #lastLoginIp#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remark">
+	             remark = #remark#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from system_users
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="systemUserResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_users 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	
+</sqlMap>

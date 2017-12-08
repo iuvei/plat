@@ -1,0 +1,104 @@
+.pd-20 {
+    padding: 8px;
+}
+* {
+    word-wrap: break-word;
+}
+body {
+    min-height: 100%;
+    position: relative;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+}
+body, th, td, button, input, select, textarea {
+    font-family: "Microsoft Yahei","Hiragino Sans GB","Helvetica Neue",Helvetica,tahoma,arial,"WenQuanYi Micro Hei",Verdana,sans-serif,"\5B8B\4F53";
+    font-size: 12px;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.table-bg thead th {
+    background-color: #f5fafe;
+}
+.table th, .table td {
+    line-height: 5px;
+}
+.table-bordered th, .table-bordered td {
+    border: 1px solid #ddd;
+}
+.table th, .table td {
+    padding: 8px;
+    line-height: 5px;
+}
+.table th {
+    font-weight: bold;
+}
+.green {
+    color: green;
+}
+table th {
+    text-align: left;
+    font-weight: 400;
+}
+
+address, caption, cite, code, dfn, em, th, var {
+    font-style: normal;
+    font-weight: 400;
+}
+.mt-5 {
+    margin-top: 5px;
+}
+
+Inherited from table.table.table-border.table-bordered.table-bg.mt-5
+.table-bordered {
+    border: 1px solid #ddd;
+    border-collapse: separate;
+    border-left: 0;
+}
+
+table {
+    width: 100%;
+    empty-cells: show;
+    background-color: transparent;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.table .text-c th, .table .text-c td {
+    text-align: center;
+}
+.table th.text-l, .table td.text-l {
+    text-align: left!important;
+}
+.tabBar span.current {
+    background-color: #222;
+    color: #fff;
+}
+.tabBar span {
+    background-color: #e8e8e8;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 15px;
+}
+.cl, .clearfix {
+    zoom: 1;
+}
+.bg-1 {
+    background-color: #f5fafe;
+}
+.bk-gray {
+    border: solid 1px #eee;
+}
+u, ins {
+    text-decoration: underline;
+}
+a:hover, a:focus, .maincolor, .maincolor a {
+    color: #06c;
+}
+.red{color:red;}
+.green{color:green;}

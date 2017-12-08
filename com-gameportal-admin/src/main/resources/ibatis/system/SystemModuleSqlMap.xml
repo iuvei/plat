@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SystemModule">
+
+    <typeAlias alias="systemModule" type="com.gameportal.manage.system.model.SystemModule"/>
+
+    <resultMap id="systemModuleResult" class="systemModule">
+        <result property="moduleId" column="module_id"/>
+        <result property="moduleName" column="module_name"/>
+        <result property="moduleUrl" column="module_url"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="leaf" column="leaf"/>
+        <result property="expanded" column="expanded"/>
+        <result property="displayIndex" column="display_index"/>
+        <result property="isDisplay" column="is_display"/>
+        <result property="enModuleName" column="en_module_name"/>
+        <result property="iconCss" column="icon_css"/>
+        <result property="information" column="information"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	module_id ,
+        	module_name ,
+        	module_url ,
+        	parent_id ,
+        	leaf ,
+        	expanded ,
+        	display_index ,
+        	is_display ,
+        	en_module_name ,
+        	icon_css ,
+        	information ,
+        	status ,
+        	create_date ,
+        	update_date 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="systemModule">
+    <![CDATA[
+        INSERT INTO
+        system_modules (
+        	module_id ,
+        	module_name ,
+        	module_url ,
+        	parent_id ,
+        	leaf ,
+        	expanded ,
+        	display_index ,
+        	is_display ,
+        	en_module_name ,
+        	icon_css ,
+        	information ,
+        	status ,
+        	create_date ,
+        	update_date 
+        ) VALUES (
+        	#moduleId# ,
+        	#moduleName# ,
+        	#moduleUrl# ,
+        	#parentId# ,
+        	#leaf# ,
+        	#expanded# ,
+        	#displayIndex# ,
+        	#isDisplay# ,
+        	#enModuleName# ,
+        	#iconCss# ,
+        	#information# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL system_modules_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="moduleId" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="systemModule">
+    <![CDATA[
+        UPDATE system_modules SET
+	        module_name = #moduleName# ,
+	        module_url = #moduleUrl# ,
+	        parent_id = #parentId# ,
+	        leaf = #leaf# ,
+	        expanded = #expanded# ,
+	        display_index = #displayIndex# ,
+	        is_display = #isDisplay# ,
+	        en_module_name = #enModuleName# ,
+	        icon_css = #iconCss# ,
+	        information = #information# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        module_id = #moduleId# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from system_modules where
+        module_id = #moduleId# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="systemModuleResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_modules 
+	        where 
+		        module_id = #moduleId# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="moduleId">
+	             module_id = #moduleId#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="moduleName">
+	             module_name = #moduleName#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="moduleUrl">
+	             module_url = #moduleUrl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="parentId">
+	             parent_id = #parentId#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="leaf">
+	             leaf = #leaf#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="expanded">
+	             expanded = #expanded#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="displayIndex">
+	             display_index = #displayIndex#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="isDisplay">
+	             is_display = #isDisplay#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="enModuleName">
+	             en_module_name = #enModuleName#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="iconCss">
+	             icon_css = #iconCss#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="information">
+	             information = #information#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from system_modules
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="systemModuleResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_modules 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <select id="treeMenuSelect" resultMap="systemModuleResult">
+	    <![CDATA[
+	        select m.* from system_modules m join system_role_module rm on rm.module_id = m.module_id 
+	        join system_user_role ur on ur.role_id = rm.role_id where m.is_display = #isDisplay# and ur.user_id = #userId# 
+	        order by m.display_index asc,m.module_id asc
+	    ]]>
+	</select>
+
+	<select id="selectModules" resultClass="java.util.HashMap">
+	    <![CDATA[
+	        select a.module_id  as i, a.module_name as n from system_modules a where  a.leaf = 0 order by a.module_id asc
+	    ]]>
+	</select>
+	
+	<select id="selectModulesByRoleId" resultMap="systemModuleResult">
+	    <![CDATA[
+	        select m.* from system_modules m join system_role_module rm on rm.module_id = m.module_id where m.status = 1 and rm.role_id = #roleId# order by m.display_index asc
+	    ]]>
+	</select>
+	
+</sqlMap>

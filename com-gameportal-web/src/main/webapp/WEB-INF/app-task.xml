@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+        http://www.springframework.org/schema/fex   
+        http://www.springframework.org/schema/fex/spring-fex-1.5.xsd   
+        http://www.springframework.org/schema/task    
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd    
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<!-- 刷新MG TOKEN-->
+	<bean id="collectRefreshMgToken" class="com.gameportal.web.task.JobTask" /> 	
+	<task:scheduler id="myRefreshMgToken" pool-size="3"/>	 
+	 <task:scheduled-tasks scheduler="myRefreshMgToken">
+		<task:scheduled ref="collectRefreshMgToken" method="refreshMgToken" cron="0 0/45 * * * ?"/>
+	</task:scheduled-tasks>
+	
+	<!-- 每日16:00-18:00会员洗码 -->
+	<bean id="memberXima" class="com.gameportal.web.task.ClearingMemberXimaTask" /> 	
+	<task:scheduler id="memberXimaTask" pool-size="3"/>	 
+	<task:scheduled-tasks scheduler="memberXimaTask">
+		<task:scheduled ref="memberXima" method="run" cron="0 0 16 * * ?"/>
+	</task:scheduled-tasks>
+	
+	<!-- 每周一下午14:10派发代理按天洗码-->
+	<bean id="proxyDayMemberXima" class="com.gameportal.web.task.ProxyDayClearingMemberXimaTask" /> 	
+	<task:scheduler id="proxyDayMemberXimaTask" pool-size="3"/>	 
+	<task:scheduled-tasks scheduler="proxyDayMemberXimaTask">
+		<task:scheduled ref="proxyDayMemberXima" method="run" cron="0 10 14 * * ?"/>
+	</task:scheduled-tasks>
+	
+	<!-- 每日凌晨零点过10分统计昨日的投注 -->
+	<bean id="betStatsJob" class="com.gameportal.web.task.PlatformBetStatsJob" /> 	
+	<task:scheduler id="betStatsScheduler" pool-size="3" />	 
+	<task:scheduled-tasks scheduler="betStatsScheduler">
+		<task:scheduled ref="betStatsJob" method="statsPlatformBet" cron="0 10 0 * * ?"/>
+	</task:scheduled-tasks>
+</beans> 

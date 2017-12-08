@@ -1,0 +1,844 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MemberInfo">
+
+    <typeAlias alias="memberInfo" type="com.gameportal.manage.member.model.MemberInfo"/>
+    <typeAlias alias="memberClearingFlag" type="com.gameportal.manage.member.model.MemberClearingFlag"/>
+	<typeAlias alias="proxyXimaFlag" type="com.gameportal.manage.member.model.ProxyXimaFlag"/>
+	<typeAlias alias="userLoginLog" type="com.gameportal.manage.member.model.UserLoginLog"/>
+	
+    <resultMap id="memberInfoResult" class="memberInfo">
+        <result property="uiid" column="uiid"/>
+        <result property="account" column="account"/>
+        <result property="passwd" column="passwd"/>
+        <result property="accounttype" column="accounttype"/>
+        <result property="uname" column="uname"/>
+        <result property="atmpasswd" column="atmpasswd"/>
+        <result property="identitycard" column="identitycard"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="qq" column="QQ"/>
+        <result property="birthday" column="birthday"/>
+        <result property="grade" column="grade"/>
+        <result property="puiid" column="puiid"/>
+        <result property="status" column="status"/>
+        <result property="url" column="url"/>
+        <result property="ulabel" column="ulabel"/>
+        <result property="remark" column="remark"/>
+        <result property="regip" column="regip"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="typeflag" column="typeflag"/>
+        <result property="phonevalid" column="phonevalid"/>
+        <result property="emailvalid" column="emailvalid"/>
+        <result property="relaflag" column="relaflag"/>
+        <result property="relaaccount" column="relaaccount"/>
+        <result property="iparea" column="iparea"/>
+        <result property="phonearea" column="phonearea"/>
+        <result property="logincount" column="logincount"/>
+        <result property="regdevice" column="regdevice"/>
+        <result property="weekrake" column="weekrake"/>
+        <result property="withdrawlFlag" column="withdrawl_flag"/>
+        <result property="mgId" column="mgId"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	uiid ,
+        	account ,
+        	passwd ,
+        	accounttype ,
+        	uname ,
+        	atmpasswd ,
+        	identitycard ,
+        	phone ,
+        	email ,
+        	QQ ,
+        	birthday ,
+        	grade ,
+        	puiid ,
+        	status ,
+        	url ,
+        	regip ,
+        	ulabel,
+        	remark,
+        	create_date,
+        	update_date,
+        	typeflag,
+        	phonevalid,
+        	emailvalid,
+        	relaflag,
+        	relaaccount,
+        	iparea,
+        	logincount,
+        	phonearea,
+        	regdevice,
+        	weekrake,
+        	withdrawl_flag,
+        	mgId
+	    ]]>
+	</sql>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumnsVo">
+	    <![CDATA[
+        	a.uiid ,
+        	a.account ,
+        	a.passwd ,
+        	a.accounttype ,
+        	a.uname ,
+        	a.atmpasswd ,
+        	a.identitycard ,
+        	a.phone ,
+        	a.email ,
+        	a.QQ ,
+        	a.birthday ,
+        	a.grade ,
+        	a.puiid ,
+        	a.status ,
+        	a.url ,
+        	a.ulabel,
+        	a.remark,
+        	a.regip ,
+        	a.create_date ,
+        	a.update_date ,
+        	a.typeflag,
+        	a.phonevalid,
+        	a.emailvalid,
+        	a.relaflag,
+        	a.relaaccount,
+        	a.iparea,
+        	a.phonearea,
+        	a.weekrake,
+        	a.withdrawl_flag as withdrawlFlag,
+        	a.mgId
+	    ]]>
+	</sql>
+	
+	<!-- 查询今天生日人数 -->
+	<select id="selectBirthDayCount" resultClass="long">
+		  select count(0)
+		  <![CDATA[
+	        from a_user_info 
+	        where 
+		       month(birthday)=month(#today#) and day(birthday)=day(#today#) and grade>=4
+	      ]]>
+	</select>
+	
+	<!-- 查询今天会员生日列表 -->
+	<select id="selectBirthDayResult" resultMap="memberInfoResult">
+		  select <include refid="commonColumns"/>
+		  <![CDATA[
+	        from a_user_info 
+	        where 
+		       month(birthday)=month(#today#) and day(birthday)=day(#today#) and grade>=4
+	      ]]>
+	    	<isNotEmpty property="limit">
+				limit $thisPage$, $pageSize$
+			</isNotEmpty>
+	</select>
+	
+	<insert id="insertMemberClearingFlag" parameterClass="memberClearingFlag">
+		<![CDATA[
+			INSERT INTO 
+			a_user_clearing_flag (
+				flaguiid,
+				flagtime,
+				platname
+			) VALUES (
+				#flaguiid#,
+				#flagtime#,
+				#platname#
+			)
+		]]>
+	</insert>
+	
+	<insert id="insertProxyXimaFlag" parameterClass="proxyXimaFlag">
+		<![CDATA[
+			INSERT INTO 
+			a_proxy_xima_flag (
+				flaguiid,
+				flagtime
+			) VALUES (
+				#flaguiid#,
+				#flagtime#
+			)
+		]]>
+	</insert>
+	
+	<select id="selectProxyXimaFlag" resultClass="proxyXimaFlag">
+		<![CDATA[
+			select flagid,flaguiid,flagtime from a_proxy_xima_flag 
+		]]>
+		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="flagid">
+	             flagid = #flagid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="flaguiid">
+	             flaguiid = #flaguiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="flagtime">
+	             flagtime = #flagtime#
+	       </isNotEmpty>
+	    </dynamic>
+	</select>
+    <insert id="insert" parameterClass="memberInfo">
+    <![CDATA[
+        INSERT INTO
+        a_user_info (
+        	uiid ,
+        	account ,
+        	passwd ,
+        	accounttype ,
+        	uname ,
+        	atmpasswd ,
+        	identitycard ,
+        	phone ,
+        	email ,
+        	QQ ,
+        	birthday ,
+        	grade ,
+        	puiid ,
+        	status ,
+        	url ,
+        	regip ,
+        	create_date ,
+        	apipassword,
+        	update_date,
+        	typeflag
+        ) VALUES (
+        	#uiid# ,
+        	#account# ,
+        	#passwd# ,
+        	#accounttype# ,
+        	#uname# ,
+        	#atmpasswd# ,
+        	#identitycard# ,
+        	#phone# ,
+        	#email# ,
+        	#qq# ,
+        	#birthday# ,
+        	#grade# ,
+        	#puiid# ,
+        	#status# ,
+        	#url# ,
+        	#regip# ,
+        	#createDate# ,
+        	#apipassword#,
+        	#updateDate#,
+        	#typeflag#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_user_info_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="uiid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="memberInfo">
+    <![CDATA[
+        UPDATE a_user_info SET
+	        account = #account# ,
+	        passwd = #passwd# ,
+	        accounttype = #accounttype# ,
+	        uname = #uname# ,
+	        atmpasswd = #atmpasswd# ,
+	        identitycard = #identitycard# ,
+	        phone = #phone# ,
+	        email = #email# ,
+	        QQ = #qq# ,
+	        birthday = #birthday# ,
+	        grade = #grade# ,
+	        puiid = #puiid# ,
+	        status = #status# ,
+	        url = #url# ,
+	        regip = #regip# ,
+	        remark = #remark#,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# ,
+	        typeflag = #typeflag#,
+	        weekrake = #weekrake#,
+	        withdrawl_flag = #withdrawlFlag#,
+	        mgId = #mgId#
+        WHERE 
+	        uiid = #uiid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_user_info where
+        uiid = #uiid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="memberInfoResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_user_info 
+	        where 
+		        uiid = #uiid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+ 		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="passwd">
+	             passwd = #passwd#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="accounttype">
+	             accounttype != #accounttype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="utype">
+	             accounttype = #utype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uname">
+	             uname = #uname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="atmpasswd">
+	             atmpasswd = #atmpasswd#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="identitycard">
+	             identitycard = #identitycard#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="phone">
+	             phone = #phone#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="email">
+	             email = #email#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="qq">
+	             QQ = #qq#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="birthday">
+	             birthday = #birthday#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="grade">
+	             grade = #grade#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="puiid">
+	             puiid = #puiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="lock">
+	             lock = #lock#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="url">
+	             url = #url#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="regip">
+	             regip = #regip#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="weekrake">
+	             weekrake = #weekrake#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="withdrawlFlag">
+	             withdrawl_flag = #withdrawlFlag#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="manageIds">
+	             (uiid in ($manageIds$) or puiid in ($manageIds$))
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	<sql id="dynamicWhereVo">
+ 		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="uiid">
+	             a.uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             a.account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uname">
+	             a.uname = #uname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="phone">
+	             a.phone = #phone#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="email">
+	             a.email = #email#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="identitycard">
+	             a.identitycard = #identitycard#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="qq">
+	             a.qq = #qq#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="grade">
+	             a.grade = #grade#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="puiid">
+	             a.puiid = #puiid#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="status">
+	             a.status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="url">
+	             a.url = #url#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="likeurl">
+	             a.url like '%$likeurl$%'
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="regip">
+	             a.regip = #regip#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="weekrake">
+	             a.weekrake = #weekrake#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="accounttype">
+	             a.accounttype = #accounttype#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="beginDate">
+	        	<![CDATA[ a.create_date >= CONCAT(#beginDate#,' 00:00:00')]]>
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="endDate">
+	        	<![CDATA[ a.create_date <= CONCAT(#endDate#,' 23:59:59')]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="puiid">
+	             a.puiid=#puiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ispays">
+			   (select sum(pays.amount) from a_pay_order pays where pays.paytyple=0 and pays.status=3 and pays.uiid=a.uiid) >0	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="nopays">
+	           (select sum(pays.amount) from a_pay_order pays where pays.paytyple=0 and pays.status=3 and pays.uiid=a.uiid) is null
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="norelaflag">
+	             (a.relaflag=0 or a.relaflag is null)
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="relaflag">
+	             a.relaflag=#relaflag#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="withdrawlFlag">
+	             a.withdrawl_flag = #withdrawlFlag#
+	       </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="manageIds">
+	             (a.uiid in ($manageIds$) or a.puiid in ($manageIds$))
+	       </isNotEmpty>
+	     </dynamic>
+    </sql>
+	       
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_user_info
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+     <select id="countVo" resultClass="long">
+      <![CDATA[
+			SELECT count(0)
+			FROM
+			a_user_info a left OUTER JOIN 
+			a_game_proxyinfo b on a.puiid=b.pyid
+		
+	    ]]>
+	    <include refid="dynamicWhereVo"/>
+		  
+    </select>
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="memberInfoResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_user_info 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+	<select id="pageSelectAgent" resultClass="com.gameportal.manage.member.model.MemberInfoVo" resultSetType="SCROLL_INSENSITIVE">
+	   
+			SELECT <include refid="commonColumnsVo"/>,
+			<![CDATA[
+			(SELECT account FROM a_user_info p WHERE p.uiid=a.puiid) as puname,
+			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=0 and pay.status=3 and pay.uiid=a.uiid),'0.00') as paymoney
+			FROM
+			a_user_info a 
+		
+	    ]]>
+	    <include refid="dynamicWhereVo"/>
+	    <dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	
+	<select id="countLog" resultClass="long">
+	<![CDATA[
+		select count(1) from user_login_log 
+		 ]]>
+		 <dynamic prepend="where">
+		 	<isNotEmpty prepend="AND" property="account">
+	            account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="iparea">
+	            iparea = #iparea#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="loginip">
+	            loginip like '%$loginip$%'
+	       </isNotEmpty>
+		 </dynamic>
+	</select>
+	
+	<select id="selectLog" resultClass="userLoginLog">
+		<![CDATA[select logid,uiid,account,truename,logintime,loginip,iparea,loginsource,logindevice from user_login_log]]>
+		 <dynamic prepend="where">
+		   <isNotEmpty prepend="AND" property="account">
+	            account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="iparea">
+	            iparea = #iparea#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="loginip">
+	            loginip like '%$loginip$%'
+	       </isNotEmpty>
+		 </dynamic>
+		 <dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	
+	<select id="pageSelectWin" resultClass="com.gameportal.manage.member.model.MemberInfoReport">
+	   <![CDATA[
+			SELECT u.uiid,u.account,u.uname,u.apipassword,
+			IFNULL(m.totalamount,'0.00') AS money,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=0 
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			),'0.00') AS depositTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=1 
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			),'0.00') AS withdrawalTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype >0 and p.ordertype <> 3
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			),'0.00') AS preferentialTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype=3  
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			),'0.00') AS ximaTotal,
+			IFNULL((SELECT SUM(bet.profitamount) FROM a_game_betlog bet WHERE bet.account = u.account 
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				bet.betdate >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[bet.betdate <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			),'0.00') AS winLossTotal
+			FROM a_user_info u LEFT JOIN a_account_money m ON m.uiid=u.uiid
+	    ]]>
+	   <dynamic prepend="WHERE">
+	   	   <isNotEmpty prepend="AND" property="puiid">
+	   	   		u.puiid = #puiid#
+	   	   </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             u.account = #account#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="uname">
+	             u.uname = #uname#
+	       </isNotEmpty>
+	     </dynamic>
+	    <dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			<![CDATA[limit $thisPage$, $pageSize$]]>
+		</isNotEmpty>
+	</select>
+	
+	<!-- 下线会员本月报表 -->
+	<select id="pageSelectWinTotal" resultClass="com.gameportal.manage.member.model.MemberInfoReportTotal">
+	   <![CDATA[
+			SELECT 
+			IFNULL(sum(m.totalamount),'0.00') AS moneyTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=0 
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			)),'0.00') AS depositTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=1 
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			)),'0.00') AS withdrawalTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype >0 and p.ordertype <> 3
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			)),'0.00') AS preferentialTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype=3  
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				p.deposittime >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[p.deposittime <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			)),'0.00')AS ximaTotal,
+			IFNULL(sum((SELECT SUM(bet.profitamount) FROM a_game_betlog bet WHERE bet.account = u.account 
+			]]>
+			<isNotEmpty prepend="AND" property="startDate">
+				bet.betdate >=#startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				 <![CDATA[bet.betdate <= #endDate#]]>
+			</isNotEmpty>
+			<![CDATA[
+			)),'0.00') AS winLossTotal
+			FROM a_user_info u LEFT JOIN a_account_money m ON m.uiid=u.uiid
+	    ]]>
+	   <dynamic prepend="WHERE">
+	   	   <isNotEmpty prepend="AND" property="puiid">
+	   	   		u.puiid = #puiid#
+	   	   </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             u.account = #account#
+	       </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="uname">
+	             u.uname = #uname#
+	       </isNotEmpty>
+	     </dynamic>
+	</select>
+	
+	
+	<!-- 根据会员账号查询会员信息 -->
+	<select id="selectByAccount" resultMap="memberInfoResult">
+		select	<include refid="commonColumns"/>
+		<![CDATA[
+		 	 from a_user_info where account=#account#
+		]]>
+	</select>
+	
+	<!-- 风控会员资料分页总计数 -->
+	<select id="fkMemberCount" resultClass="long">
+      <![CDATA[
+			SELECT count(0) from a_user_info a
+	    ]]>
+	    <include refid="dynamicWhereVo"/>
+    </select>
+    
+    <!-- 风控列表 -->
+    <select id="pageSelectFkMemberInfo" resultClass="com.gameportal.manage.member.model.MemberInfoVo" resultSetType="SCROLL_INSENSITIVE">
+	   
+			SELECT <include refid="commonColumnsVo"/>,
+			<![CDATA[
+			(SELECT account FROM a_user_info p WHERE p.uiid=a.puiid) as puname,
+			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=0 and pay.status=3 and pay.uiid=a.uiid),'0.00') as paymoney,
+			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=1 and pay.status=3 and pay.uiid=a.uiid),'0.00') as withdrawalMoney,
+			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=2 and pay.status=3 and pay.uiid=a.uiid),'0.00') as couponMoney,
+			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=1 and pay.status=3 and pay.uiid=a.uiid),'0.00')-IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=0 and pay.status=3 and pay.uiid=a.uiid),'0.00') as winMoney
+			FROM
+			a_user_info a 
+	    ]]>
+	    <include refid="dynamicWhereVo"/>
+	    <dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	
+	
+	<!-- 风控会员详情 -->
+	<select id="fkMemberDetail" resultClass="com.gameportal.manage.member.model.MemberInfoVo">
+		SELECT a.uiid ,
+        	a.account ,
+        	a.passwd ,
+        	a.accounttype ,
+        	a.uname ,
+        	a.atmpasswd ,
+        	a.identitycard ,
+        	a.phone ,
+        	a.email ,
+        	a.QQ ,
+        	a.birthday ,
+        	a.grade ,
+        	a.puiid ,
+        	a.status ,
+        	a.url ,
+        	a.ulabel,
+        	a.remark,
+        	a.regip ,
+        	a.create_date as createDate,
+        	a.update_date as updateDate,
+        	a.typeflag,
+        	a.phonevalid,
+        	a.emailvalid,
+        	a.relaflag,
+        	a.relaaccount,
+        	a.logincount,
+        	a.iparea,
+        	a.phonearea,
+        	a.regdevice,
+        	ag.account as puname,
+        <![CDATA[
+          	IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=0 and pay.status=3 and pay.uiid=a.uiid),'0.00') as paymoney,
+  			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=1 and pay.status=3 and pay.uiid=a.uiid),'0.00') as withdrawalMoney,
+  			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=2 and pay.status=3 and pay.uiid=a.uiid),'0.00') as couponMoney,
+  			IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=1 and pay.status=3 and pay.uiid=a.uiid),'0.00')-IFNULL((select sum(pay.amount) from a_pay_order pay where pay.paytyple=0 and pay.status=3 and pay.uiid=a.uiid),'0.00') as winMoney,
+  			IFNULL((select mon.totalamount from a_account_money mon where mon.uiid=a.uiid),'0.00') as accountMoney
+ 			from a_user_info a left join a_user_info ag on a.puiid=ag.uiid WHERE a.uiid=#uiid#
+	    ]]>
+    </select>
+    
+  	<!-- 风控资金流水数据总数 -->
+	<select id="fkPayOrderLogCount" resultClass="long">
+      <![CDATA[
+    		select count(0) from a_pay_order_log where uiid=#uiid# order by createtime desc 
+	    ]]>
+	    <include refid="dynamicWhereVo"/>
+    </select>
+    
+    <!-- 资金流水数据 -->
+    <select id="fkPayOrderLogResult" resultClass="com.gameportal.manage.pay.model.PayOrderLog" resultSetType="SCROLL_INSENSITIVE">
+    	<![CDATA[
+    		select coid,uiid,orderid,type,amount,walletlog,gamelog,remark,createtime from a_pay_order_log where uiid=#uiid# order by createtime desc 
+    	]]>
+    	<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    
+    <!-- 转账记录数据 -->
+    <select id="fkTransferResult" resultClass="com.gameportal.manage.member.model.GameTransfer" resultSetType="SCROLL_INSENSITIVE">
+    	<![CDATA[
+			select a.account as account,a.uname as truename,gm.gtid,gm.uuid,gm.gpid,gm.gamename,gm.togpid,gm.togamename,gm.amount,gm.remark,gm.status,gm.create_date as createDate,gm.update_date as updateDate,gm.balance from a_game_transfer gm inner join a_user_info a on gm.uuid=a.uiid where gm.uuid=#uiid# order by gm.create_date desc     	]]>
+    	<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <!-- 登录日志数据 -->
+    <select id="fkLoginLogResult" resultClass="com.gameportal.manage.member.model.UserLoginLog" resultSetType="SCROLL_INSENSITIVE">
+    	<![CDATA[
+    		select logid,uiid,account,truename,logintime,loginip,loginsource,logindevice,iparea from user_login_log where uiid=#uiid# order by logintime desc 
+    	]]>
+    	<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    
+   	<!-- 存款-提款-加款查询字段 -->
+	<sql id="payorderCol">
+	    <![CDATA[
+        	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ordertype,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date as createDate,
+        	update_date as updateDate,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	kfopttime ,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	cwopttime,
+        	beforebalance,
+        	laterbalance,
+        	hdnumber,
+        	ordernumber
+	    ]]>
+	</sql>
+    <!-- 存款-提款-优惠记录 -->
+    <select id="fkPayOrderResult" resultClass="com.gameportal.manage.pay.model.PayOrder" resultSetType="SCROLL_INSENSITIVE">
+    	select <include refid="payorderCol"/>
+    	<![CDATA[
+    		 from a_pay_order where uiid=#uiid# and paytyple in ($paytyple$) and status=3
+    	]]>
+    	order by update_date desc
+    	<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+</sqlMap>

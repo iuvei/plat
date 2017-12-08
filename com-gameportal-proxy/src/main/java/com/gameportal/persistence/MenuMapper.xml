@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.MenuMapper">
+
+	<resultMap type="MenuEntity" id="menuResultMap">
+		<id column="menu_id" property="menu_id"/>
+		<result column="menu_name" property="menu_name"/>
+		<result column="menu_url" property="menu_url"/>
+		<result column="parent_id" property="parent_id"/>
+		<result column="menu_order" property="menu_order"/>
+		<result column="menu_icon" property="menu_icon"/>
+		<result column="menu_type" property="menu_type"/>
+	</resultMap>
+	
+	<!-- ztree -->
+	<resultMap type="MenuEntity" id="menuZtreeResultMap">
+		<id column="menu_id" property="menu_id"/>
+		<result column="menu_name" property="menu_name"/>
+		<result column="menu_url" property="menu_url"/>
+		<result column="parent_id" property="parent_id"/>
+		<result column="menu_order" property="menu_order"/>
+		<result column="menu_icon" property="menu_icon"/>
+		<result column="menu_type" property="menu_type"/>
+		<result column="target" property="target"></result>
+	</resultMap>
+	
+	<sql id="selectRow">
+		menu_id,
+		menu_name,
+		menu_url,
+		parent_id,
+		menu_order,
+		menu_icon,
+		menu_type
+	</sql>
+
+	<select id="listAllParentMenu" resultMap="menuResultMap" parameterType="String">
+		SELECT <include refid="selectRow"/> FROM sys_proxy_menu where parent_id=0
+	</select>
+	
+	<select id="listSubMenuByParentId" parameterType="String" resultMap="menuResultMap">
+		SELECT  <include refid="selectRow"/> FROM sys_proxy_menu
+		where parent_id = #{parentId} order by menu_order 
+	</select>
+</mapper>

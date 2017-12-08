@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.GamePlatFormMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="selectRow">
+	    <![CDATA[
+        	gpid ,
+        	gpname ,
+        	domainname ,
+        	domainip ,
+        	deskey ,
+        	apiaccount ,
+        	ciphercode ,
+        	status ,
+        	create_date ,
+        	update_date 
+	    ]]>
+	</sql>
+	
+	<!-- 查询条件    -->
+	<sql id="selectWhere">
+			<if test="gpid !=null and gpid !=''">
+				and gpid = #{gpid}
+			</if>
+			<if test="gpname !=null and gpname !=''">
+				and gpname = #{gpname}
+			</if>
+			<if test="domainname !=null and domainname !=''">
+				and domainname = #{domainname}
+			</if>
+			<if test="domainip !=null and domainip !=''">
+				and domainip = #{domainip}
+			</if>
+			<if test="deskey !=null and deskey !=''">
+				and deskey = #{deskey}
+			</if>
+			<if test="apiaccount !=null and apiaccount !=''">
+				and apiaccount = #{apiaccount}
+			</if>
+			<if test="ciphercode !=null and ciphercode !=''">
+				and ciphercode = #{ciphercode}
+			</if>
+			<if test="status !=null and status !=''">
+				and status = #{status}
+			</if>
+			<if test="createDate !=null and createDate !=''">
+				and create_date = #{createDate}
+			</if>
+			<if test="updateDate !=null and updateDate !=''">
+				and update_date = #{updateDate}
+			</if>
+	</sql>
+	
+	<!-- 查询游戏平台列表 -->
+	<select id="findGamePlatform" resultType="GamePlatform" parameterType="java.util.Map">
+    	select <include refid="selectRow"/>
+	    <![CDATA[
+	        from a_game_platform where 1=1
+	    ]]>
+		<include refid="selectWhere"/>
+    </select>
+</mapper>

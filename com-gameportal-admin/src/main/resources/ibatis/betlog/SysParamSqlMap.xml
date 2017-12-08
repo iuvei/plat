@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SysParam">
+
+    <typeAlias alias="sysParam" type="com.gameportal.manage.betlog.model.SysParam"/>
+
+    <resultMap id="sysParamResult" class="sysParam">
+        <result property="id" column="id"/>
+        <result property="paramkey" column="paramkey"/>
+        <result property="paramvalue" column="paramvalue"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	id ,
+        	paramkey ,
+        	paramvalue 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="sysParam">
+    <![CDATA[
+        INSERT INTO
+        system_param (
+        	id ,
+        	paramkey ,
+        	paramvalue 
+        ) VALUES (
+        	#id# ,
+        	#paramkey# ,
+        	#paramvalue# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="id" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="sysParam">
+    <![CDATA[
+        UPDATE system_param SET
+	        paramkey = #paramkey# ,
+	        paramvalue = #paramvalue# 
+        WHERE 
+	        id = #id# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from system_param where
+        id = #id# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="sysParamResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_param 
+	        where 
+		        id = #id# 
+	    ]]>
+    </select>
+ 	<select id="getByKey" resultMap="sysParamResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_param 
+	        where 
+		        paramkey = #paramkey# 
+	    ]]>
+    </select>
+    
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="id">
+	             id = #id#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paramkey">
+	             paramkey = #paramkey#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="paramvalue">
+	             paramvalue = #paramvalue#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from system_param
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="sysParamResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_param 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	
+</sqlMap>

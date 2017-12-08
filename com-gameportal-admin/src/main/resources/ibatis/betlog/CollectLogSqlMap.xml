@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CollectLog">
+
+    <typeAlias alias="collectLog" type="com.gameportal.manage.betlog.model.CollectLog"/>
+
+    <resultMap id="collectLogResult" class="collectLog">
+        <result property="pid" column="pid"/>
+        <result property="flatformCode" column="flatformCode"/>
+        <result property="kind" column="kind"/>
+        <result property="message" column="message"/>
+        <result property="createDate" column="createDate"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	pid ,
+        	flatformCode ,
+        	kind ,
+        	message ,
+        	createDate 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="collectLog">
+    <![CDATA[
+        INSERT INTO
+        a_game_collectlog (        	
+        	flatformCode ,
+        	kind ,
+        	message ,
+        	createDate 
+        ) VALUES (
+        	#flatformCode# ,
+        	#kind# ,
+        	#message# ,
+        	#createDate# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="pid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="collectLog">
+    <![CDATA[
+        UPDATE a_game_collectlog SET
+	        flatformCode = #flatformCode# ,
+	        kind = #kind# ,
+	        message = #message# ,
+	        createDate = #createDate# 
+        WHERE 
+	        pid = #pid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_game_collectlog where
+        pid = #pid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="collectLogResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_collectlog 
+	        where 
+		        pid = #pid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="pid">
+	             pid = #pid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="flatformCode">
+	             flatformCode = #flatformCode#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="kind">
+	             kind = #kind#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="message">
+	             message = #message#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             createDate = #createDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_collectlog
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="collectLogResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_collectlog 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	
+</sqlMap>

@@ -1,0 +1,260 @@
+html,
+body {
+    height: 100%;
+    /* overflow: hidden; */
+}
+
+body {
+    background-color: #fff;
+    color: #7d7d7d;
+}
+
+.title {
+    height: 50px;
+    padding-left: 20px;
+    border-bottom: 1px solid #ccc;
+    line-height: 56px;
+    background-color: #eee;
+}
+.no-bg{
+    background-color: transparent!important;
+}
+
+.title ul {
+    /* margin-left: -51px; */
+}
+
+.title li {
+    width: 130px;
+    cursor: pointer;
+    margin-right: 10px;
+    background: #eee;
+    line-height: 48px;
+    height: 48px;
+    border: 1px solid #d0d0d0;
+    border-bottom: 1px solid transparent;
+}
+
+.title li.active {
+    /* height: 50px; */
+    border: 1px solid transparent;
+    color: #fff;
+    background-color: #9fc1ff;
+    cursor: default;
+    /* line-height: 50px; */
+    /* height: 50px; */
+}
+.title li>a{
+    display:block;
+    height:100%;
+    color:inherit;
+}
+.user-layer {
+    padding-left: 55px!important;
+}
+
+.main .user-layer .ui-inputBox {
+    width: 750px;
+    height: 50px;
+}
+
+.main .user-layer .ui-inputBox label {
+    height: 32px;
+    line-height: 32px;
+}
+
+.main .user-layer .ui-inputBox label > span {
+    width: 100px;
+    height: 32px;
+    margin-right: 5px;
+    line-height: 33px;
+    text-align: right;
+    /* font-size: 14px; */
+}
+
+.main .user-layer .ui-inputBox span.name {
+    height: 34px;
+    line-height: 34px;
+}
+
+.main .user-layer .ui-inputBox label > span.long {
+    width: 140px;
+}
+
+.main .user-layer .ui-inputBox label > span.short {
+    width: 84px;
+}
+
+.main .user-layer .ui-inputBox label > input {
+    width: 240px;
+    height: 26px;
+    padding: 2px 3px;
+    border: 1px solid #dcdcdc;
+    margin-right: 10px;
+}
+
+.main .user-layer .ui-inputBox label a.copy,
+.main .user-layer .ui-inputBox label a.SMSCode {
+    display: inline-block;
+    height: 24px;
+    padding: 0 10px;
+    line-height: 24px;
+}
+
+.main .user-layer .ui-inputBox label a.SMSCode {
+    width: 101px;
+    margin-left: 10px;
+}
+
+.main .user-layer .ui-inputBox label > input.short {
+    width: 170px;
+}
+
+.main .user-layer .ui-inputBox label .ui-datePicker {
+    margin-right: 10px;
+}
+
+.main .user-layer .ui-inputBox .ui-datePicker .ui-calendar {
+    z-index: 1;
+}
+
+.main .user-layer .ui-inputBox label input.verifyCode {
+    width: 180px;
+    margin-right: -1px;
+}
+
+.main .user-layer .ui-inputBox label input.verifyCode.short {
+    width: 110px;
+}
+
+.main .user-layer .ui-inputBox label a.verifyCode {
+    width: 60px;
+    height: 30px
+    border: 1px solid #b2bdc8;
+    margin-right: 10px;
+}
+
+.main .user-layer .ui-inputBox label a.verifyCode img {
+    width: 60px;
+    height: 30px;
+}
+
+.main .user-layer .ui-inputBox p {
+    margin-left: 40px;
+}
+
+.main .user-layer .ui-inputBox p.short {
+    margin-left: 22px;
+}
+
+.main .user-layer .ui-inputBox p.long {
+    margin-left: 79px;
+}
+
+.main .user-layer .submit {
+    width: 248px;
+    margin: 12px 0 12px 105px;
+}
+
+.main .user-layer .query {
+    padding: 0 8px;
+    margin: 0 0 0 20px;
+}
+
+.main .user-layer .submit.long {
+    margin-left: 145px;
+    margin-top: 20px;
+}
+
+.main .user-layer .submit.short {
+    width: 178px;
+    margin-left: 90px;
+}
+
+.main .user-layer .user-list {
+    width: 700px;
+}
+
+.main .user-layer .user-list li {
+    height: 24px;
+    margin-bottom: 22px;
+    line-height: 24px;
+}
+
+.main .user-layer .user-list li label {
+    display: inline-block;
+    width: 100px;
+    margin-right: 5px;
+    text-align: right;
+}
+
+.main .user-layer .user-list li label.long {
+    width: 140px;
+}
+
+.main .user-layer .user-list li label.short {
+    width: 84px;
+}
+
+.main .user-layer .marginLeftLong {
+    margin: -5px 0 0 145px;
+}
+
+.main .user-layer .marginLeftShort {
+    margin: -5px 0 0 89px;
+}
+
+.main .user-layer .ui-table {
+    width: 935px;
+    margin-left: -40px;
+}
+
+.main .user-layer .user-box {
+    width: 270px;
+    padding: 10px 20px 5px 20px;
+    border: 1px solid #eee;
+    box-shadow: 2px 3px 8px #ccc;
+}
+
+.main .user-layer .user-box img {
+    width: 270px;
+    height: 150px;
+}
+
+.main .user-layer .user-box .ui-ddl {
+    width: 132px;
+    padding: 2px 3px;
+    margin: 15px 0 15px 65px;
+    text-align: left;
+}
+
+.main .user-layer .ui-ddl ul {
+    max-height: 200px;
+}
+
+.main .user-layer .user-box .get {
+    width: 180px;
+    margin: 7px auto;
+}
+
+.main .user-layer .ui-paging {
+    margin-right: 50px;
+}
+
+
+.u-bg{
+    background-color: #f9f9f9;
+}
+.user-wrapper{
+    width: 1180px!important;
+    margin: 50px auto;
+}
+.border{
+    border:1px solid #dcdcdc;
+}
+.tab-tit{
+    line-height: 64px;
+    padding-left:30px;
+    font-size: 20px;
+    font-weight: normal;
+}

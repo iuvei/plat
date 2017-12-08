@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Activity">
+	<typeAlias alias="activityEntity" type="com.gameportal.web.user.model.Activity"/>
+	
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	aid,
+        hdtype,
+        hdnumber,
+        hdtext,
+        hdscale,
+        multiple,
+        isxima,
+        notecontext,
+        status,
+        DATE_FORMAT(uptime,'%Y-%m-%d %H:%i:%s') as uptime,
+        maxmoney,
+        minmoney,
+        hdrule,
+        acgroup,
+        rewmoney
+	  ]]>
+	</sql>
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hdnumber">
+				hdnumber = #hdnumber#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="aid">
+				aid = #aid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hdtype">
+				hdtype = #hdtype#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<select id="getList" resultClass="activityEntity">
+		select <include refid="commonColumns"/>
+	  <![CDATA[
+	    from a_activity
+	  ]]>
+	  <include refid="dyncmicWhere"/>
+	</select>
+</sqlMap>

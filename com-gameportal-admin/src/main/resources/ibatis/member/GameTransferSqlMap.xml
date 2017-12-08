@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GameTransfer">
+
+    <typeAlias alias="gameTransfer" type="com.gameportal.manage.member.model.GameTransfer"/>
+
+    <resultMap id="gameTransferResult" class="gameTransfer">
+        <result property="gtid" column="gtid"/>
+        <result property="uuid" column="uuid"/>
+        <result property="gpid" column="gpid"/>
+        <result property="gamename" column="gamename"/>
+        <result property="togpid" column="togpid"/>
+        <result property="togamename" column="togamename"/>
+        <result property="amount" column="amount"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="account" column="account"/>
+        <result property="truename" column="truename"/>
+        <result property="balance" column="balance"/>
+        <result property="origamount" column="origamount"/>
+        <result property="otherbefore" column="otherbefore"/>
+        <result property="otherafter" column="otherafter"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	t.gtid ,
+        	t.uuid ,
+        	t.gpid ,
+        	t.gamename ,
+        	t.togpid ,
+        	t.togamename ,
+        	t.amount ,
+        	t.remark ,
+        	t.status ,
+        	t.create_date ,
+        	t.update_date ,
+        	t.balance,
+        	t.origamount,
+        	t.otherbefore,
+        	t.otherafter,
+        	u.account,
+        	u.uname as truename
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="gameTransfer">
+    <![CDATA[
+        INSERT INTO
+        a_game_transfer (
+        	gtid ,
+        	uuid ,
+        	gpid ,
+        	gamename ,
+        	togpid ,
+        	togamename ,
+        	amount ,
+        	remark ,
+        	status ,
+        	create_date ,
+        	update_date ,
+        	balance,
+        	origamount,
+        	otherbefore,
+        	otherafter
+        ) VALUES (
+        	#gtid# ,
+        	#uuid# ,
+        	#gpid# ,
+        	#gamename# ,
+        	#togpid# ,
+        	#togamename# ,
+        	#amount# ,
+        	#remark# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# ,
+        	#balance#,
+        	#origamount#,
+        	#otherbefore#,
+        	#otherafter#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_game_transfer_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="gtid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="gameTransfer">
+    <![CDATA[
+        UPDATE a_game_transfer SET
+	        uuid = #uuid# ,
+	        gpid = #gpid# ,
+	        gamename = #gamename# ,
+	        togpid = #togpid# ,
+	        togamename = #togamename# ,
+	        amount = #amount# ,
+	        remark = #remark# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate#,
+	        balance=#balance#,
+        	origamount=#origamount#,
+        	otherbefore=#otherbefore#,
+        	otherafter=#otherafter# 
+        WHERE 
+	        gtid = #gtid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_game_transfer where
+        gtid = #gtid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="gameTransferResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_transfer 
+	        where 
+		        gtid = #gtid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="gtid">
+	             t.gtid = #gtid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uuid">
+	             t.uuid = #uuid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             t.gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gamename">
+	             t.gamename = #gamename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="togpid">
+	             t.togpid = #togpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="togamename">
+	             t.togamename = #togamename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="amount">
+	             t.amount = #amount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remark">
+	             t.remark = #remark#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             t.status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             t.create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             t.update_date = #updateDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             u.account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="startDate">
+				<![CDATA[	           
+ 					t.create_date >= #startDate#
+ 				]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="endDate">
+	       		<![CDATA[
+	             	t.create_date <= #endDate#
+	            ]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gameplat">
+	            (t.togamename like CONCAT('%',#gameplat#,'%') or t.gamename like CONCAT('%',#gameplat#,'%'))
+	       </isNotEmpty>
+	       
+	       
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_transfer t LEFT JOIN a_user_info u ON t.uuid=u.uiid
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="gameTransferResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_transfer t LEFT JOIN a_user_info u ON t.uuid=u.uiid 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+	<!-- 转账记录统计列表 -->
+    <select id="transferLogReport" resultClass="java.util.HashMap">
+    	select togamename,count(distinct uuid) AS acounts,sum(amount) as amounts 
+	    <![CDATA[
+	        from a_game_transfer 
+	        where togamename <> '我的钱包'
+	    ]]>
+	    <isNotEmpty prepend="AND" property="startDate">
+			<![CDATA[	           
+ 				create_date >= #startDate#
+ 			]]>
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="endDate">
+	    		<![CDATA[
+	          	create_date <= #endDate#
+	         ]]>
+	    </isNotEmpty>
+	    group by togamename
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 转账记录总数 -->
+    <select id="transferLogReportCount" resultClass="long">
+    	select count(distinct togamename) 
+	    <![CDATA[
+	        from a_game_transfer 
+	        where togamename <> '我的钱包'
+	    ]]>
+	    <isNotEmpty prepend="AND" property="startDate">
+			<![CDATA[	           
+ 				create_date >= #startDate#
+ 			]]>
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="endDate">
+	    		<![CDATA[
+	          	create_date <= #endDate#
+	         ]]>
+	    </isNotEmpty>
+    </select>
+</sqlMap>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="DxMemberReportForm">
+	
+	<!-- 电销客户分析表 -->
+	<typeAlias alias="dxMember" type="com.gameportal.manage.reportform.model.DxMemberReportForm"/>
+    
+    <!-- 查询条件 -->
+    <sql id="dynamicWhere">
+ 		<dynamic prepend="WHERE">
+ 			<isNotEmpty prepend="AND" property="account">
+ 				u.account = #account#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="uname">
+ 				u.uname = #uname#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="phone">
+ 				u.phone = #phone#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="email">
+ 				u.email = #email#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="qq">
+ 				u.QQ = #qq#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="belongid">
+ 				um.belongid = #belongid#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="truename">
+ 				dx.truename = #truename#
+ 			</isNotEmpty>
+ 		</dynamic>
+ 	</sql>
+    
+    <!-- 统计电销客户输赢列表 -->
+	<select id="selectDxMemberList" resultClass="dxMember">
+		select 	dx.truename,u.account,u.uname,
+		IFNULL((select SUM(amount) from a_pay_order where paytyple = 0 AND status=3 AND uiid=um.uiid 
+		<isNotEmpty prepend="AND" property="startDate">
+ 			<![CDATA[
+ 				deposittime>=#startDate#
+ 			]]>
+ 		</isNotEmpty>
+ 		<isNotEmpty prepend="AND" property="endDate">
+ 			<![CDATA[
+ 				deposittime<=#endDate# 
+ 			]]>
+ 		</isNotEmpty>
+		),'0.00') AS depositorderMoney,
+		IFNULL((select SUM(amount) from a_pay_order where paytyple = 1 AND status=3 AND uiid=um.uiid
+		<isNotEmpty prepend="AND" property="startDate">
+ 			<![CDATA[
+ 				 deposittime>=#startDate#
+ 			]]>
+ 		</isNotEmpty>
+ 		<isNotEmpty prepend="AND" property="endDate">
+ 			<![CDATA[
+ 				 deposittime<=#endDate# 
+ 			]]>
+ 		</isNotEmpty>
+ 		),'0.00') AS pickUpMoney,
+		IFNULL((select sum(finalamount) from a_game_betlog where account=u.account
+		<isNotEmpty prepend="AND" property="startDate">
+ 			<![CDATA[
+ 				 betdate>=#startDate#
+ 			]]>
+ 		</isNotEmpty>
+ 		<isNotEmpty prepend="AND" property="endDate">
+ 			<![CDATA[
+ 				 betdate<=#endDate# 
+ 			]]>
+ 		</isNotEmpty>
+		),'0.00') AS finalMoney,
+		IFNULL((select sum(validBetAmount) from a_game_betlog where account=u.account
+		<isNotEmpty prepend="AND" property="startDate">
+ 			<![CDATA[
+ 				 betdate>=#startDate#
+ 			]]>
+ 		</isNotEmpty>
+ 		<isNotEmpty prepend="AND" property="endDate">
+ 			<![CDATA[
+ 				 betdate<=#endDate# 
+ 			]]>
+ 		</isNotEmpty>
+		),'0.00') AS validBetMoney
+		<![CDATA[
+			from user_manager um LEFT JOIN a_user_info u ON um.uiid = u.uiid LEFT JOIN system_users dx ON um.belongid=dx.user_id 
+	   	]]> 
+	   	<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+		<isNotEmpty property="sortColumns">
+				$sortColumns$
+		</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 统计电销客户输赢总计 -->
+	<select id="selectDxMemberCount" resultClass="long">
+			select count(1)
+		<![CDATA[
+			from user_manager um LEFT JOIN a_user_info u ON um.uiid = u.uiid LEFT JOIN system_users dx ON um.belongid=dx.user_id 
+	   	]]> 
+	   	<include refid="dynamicWhere"/>
+    </select>
+</sqlMap>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProxySet">
+
+	<typeAlias alias="proxySet" type="com.gameportal.manage.proxy.model.ProxySet"/>
+	
+	<sql id="commonColumns">
+		<![CDATA[
+			p.pyid,
+			p.uiid,
+			u.account,
+			u.uname,
+			p.returnscale,
+			p.ximascale,
+			p.isximaflag,
+			p.clearingtype,
+			p.status,
+			p.createtime,
+			p.uptime,
+			p.upuser,
+			p.upclientip
+		]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			 <isNotEmpty prepend="AND" property="pyid">
+	            p.pyid = #pyid#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="uiid">
+	            p.uiid = #uiid#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="status">
+	            p.status = #status#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+	            u.account = #account#
+	      	 </isNotEmpty>
+		</dynamic>
+		
+	</sql>
+	
+	<insert id="insert" parameterClass="proxySet">
+		<![CDATA[
+			insert into a_game_proxyinfo
+			(
+				uiid,
+				returnscale,
+				ximascale,
+				status,
+				createtime,
+				isximaflag,
+				clearingtype,
+				uptime,
+				upuser,
+				upclientip
+			) VALUES (
+				#uiid#,
+				#returnscale#,
+				#ximascale#,
+				#status#,
+				#createtime#,
+				#isximaflag#,
+				#clearingtype#,
+				#uptime#,
+				#upuser#,
+				#upclientip#
+			)
+		 ]]>
+	</insert>
+	
+	<delete id="delete" parameterClass="java.lang.Long">
+		<![CDATA[
+        delete from a_game_proxyinfo where
+        pyid = #pyid#
+    ]]>
+	</delete>
+	
+	<update id="update" parameterClass="proxySet">
+		<![CDATA[
+			update a_game_proxyinfo set 
+			uiid = #uiid#,
+			returnscale = #returnscale#,
+			ximascale = #ximascale#,
+			status = #status#,
+			createtime = #createtime#,
+			isximaflag = #isximaflag#,
+			clearingtype = #clearingtype#,
+			uptime = #uptime#,
+			upuser = #upuser#,
+			upclientip = #upclientip# 
+			WHERE 
+		        pyid = #pyid# 
+		]]>
+	</update>
+	
+	<select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_proxyinfo p LEFT JOIN a_user_info u ON p.uiid = u.uiid
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+	
+	<select id="pageSelect" resultClass="proxySet">
+		select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_proxyinfo p LEFT JOIN a_user_info u ON p.uiid = u.uiid
+	    ]]>
+	    <include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+</sqlMap>

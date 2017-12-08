@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GamePlatform">
+
+    <typeAlias alias="gamePlatform" type="com.gameportal.web.game.model.GamePlatform"/>
+	<typeAlias alias="mgElectronic" type="com.gameportal.web.game.model.MGElectronic"/>
+	<typeAlias alias="agElectronic" type="com.gameportal.web.game.model.AGElectronic"/>
+	<typeAlias alias="aginElectronic" type="com.gameportal.web.game.model.AGINElectronic"/>
+	<typeAlias alias="saElectronic" type="com.gameportal.web.game.model.SAElectronic"/>
+	
+    <resultMap id="gamePlatformResult" class="gamePlatform">
+        <result property="gpid" column="gpid"/>
+        <result property="gpname" column="gpname"/>
+        <result property="domainname" column="domainname"/>
+        <result property="domainip" column="domainip"/>
+        <result property="deskey" column="deskey"/>
+        <result property="apiaccount" column="apiaccount"/>
+        <result property="ciphercode" column="ciphercode"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="fullname" column="fullname"/>
+    </resultMap>
+    
+   <resultMap class="mgElectronic" id="mgElectronicResult">
+    	<result property="electronicid" column="electronicid"/>
+    	<result property="category" column="Category"/>
+    	<result property="categoryID" column="CategoryID"/>
+    	<result property="gameEnName" column="GameEnName"/>
+    	<result property="imageFileName" column="ImageFileName"/>
+    	<result property="gameName" column="GameName"/>
+    	<result property="gameNameCN" column="GameNameCN"/>
+    	<result property="sequence" column="Sequence"/>
+    	<result property="status" column="status"/>
+    	<result property="prizepool" column="prizepool"/>
+   </resultMap>
+   
+   <resultMap class="agElectronic" id="agElectronicResult">
+    	<result property="electronicid" column="electronicid"/>
+    	<result property="category" column="Category"/>
+    	<result property="categoryID" column="CategoryID"/>
+    	<result property="gameEnName" column="GameEnName"/>
+    	<result property="imageFileName" column="ImageFileName"/>
+    	<result property="gameName" column="GameName"/>
+    	<result property="gameNameCN" column="GameNameCN"/>
+    	<result property="sequence" column="Sequence"/>
+    	<result property="status" column="status"/>
+    	<result property="ModuleID" column="ModuleID"/>
+    	<result property="ClientID" column="ClientID"/>
+   </resultMap>
+   
+  <resultMap class="aginElectronic" id="aginElectronicResult">
+    	<result property="electronicid" column="electronicid"/>
+    	<result property="gameCode" column="GameCode"/>
+    	<result property="category" column="Category"/>
+    	<result property="gameEnName" column="GameEnName"/>
+    	<result property="imageFileName" column="ImageFileName"/>
+    	<result property="gameNameCN" column="GameNameCN"/>
+    	<result property="sequence" column="Sequence"/>
+    	<result property="status" column="status"/>
+   </resultMap>
+   
+   <resultMap class="saElectronic" id="saElectronicResult">
+    	<result property="electronicid" column="electronicid"/>
+    	<result property="gameId" column="gameId"/>
+    	<result property="gameNameEN" column="gameNameEN"/>
+    	<result property="gameType" column="gameType"/>
+    	<result property="imageFileName" column="imageFileName"/>
+    	<result property="gameNameCN" column="gameNameCN"/>
+    	<result property="gameConfig" column="gameConfig"/>
+    	<result property="sequence" column="sequence"/>
+    	<result property="status" column="status"/>
+   </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	gpid ,
+        	gpname ,
+        	domainname ,
+        	domainip ,
+        	deskey ,
+        	apiaccount ,
+        	ciphercode ,
+        	status ,
+        	create_date ,
+        	update_date,
+        	fullname
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="gamePlatform">
+    <![CDATA[
+        INSERT INTO
+        a_game_platform (
+        	gpid ,
+        	gpname ,
+        	domainname ,
+        	domainip ,
+        	deskey ,
+        	apiaccount ,
+        	ciphercode ,
+        	status ,
+        	create_date ,
+        	update_date 
+        ) VALUES (
+        	#gpid# ,
+        	#gpname# ,
+        	#domainname# ,
+        	#domainip# ,
+        	#deskey# ,
+        	#apiaccount# ,
+        	#ciphercode# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_game_platform_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="gpid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+    
+    <!-- 添加MG电子游戏 -->
+    <insert id="insertMGElectronic" parameterClass="mgElectronic">
+    <![CDATA[
+    	INSERT INTO
+        mg_electronic (
+        	Category,
+        	CategoryID,
+        	GameEnName,
+        	ImageFileName,
+        	GameName,
+        	GameNameCN,
+        	Sequence,
+        	status
+        ) VALUES (
+        	#category#,
+        	#categoryID#,
+        	#gameEnName#,
+        	#imageFileName#,
+        	#gameName#,
+        	#gameNameCN#,
+        	#sequence#,
+        	#status#
+        )
+    ]]>
+    <selectKey resultClass="java.lang.Integer" type="post" keyProperty="electronicid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="gamePlatform">
+    <![CDATA[
+        UPDATE a_game_platform SET
+	        gpname = #gpname# ,
+	        domainname = #domainname# ,
+	        domainip = #domainip# ,
+	        deskey = #deskey# ,
+	        apiaccount = #apiaccount# ,
+	        ciphercode = #ciphercode# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        gpid = #gpid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_game_platform where
+        gpid = #gpid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="gamePlatformResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_platform 
+	        where 
+		        gpid = #gpid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpname">
+	             gpname = #gpname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="domainname">
+	             domainname = #domainname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="domainip">
+	             domainip = #domainip#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="deskey">
+	             deskey = #deskey#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="apiaccount">
+	             apiaccount = #apiaccount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ciphercode">
+	             ciphercode = #ciphercode#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_game_platform
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+     <select id="queryMPT" resultMap="mgElectronicResult">
+    	<![CDATA[
+    		select 
+    		electronicid,
+    		Category,
+        	CategoryID,
+        	GameEnName,
+        	ImageFileName,
+        	GameName,
+        	GameNameCN,
+        	Sequence,
+        	status,
+        	prizepool
+        	from pt_electronic_mobile
+    	]]>
+    	<dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="status">
+	    		status > #status#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="categoryID">
+	    		CategoryID = #categoryID#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="gamename">
+	    		GameNameCN like CONCAT('%',#gamename#,'%')
+	    	</isNotEmpty>
+        </dynamic>
+    	<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="gamePlatformResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_platform 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <select id="queryAllGame" resultMap="gamePlatformResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_game_platform 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <select id="queryElectronicCount" resultClass="long">
+    <![CDATA[
+        select count(0) from mg_electronic
+    ]]> 
+    <dynamic prepend="WHERE">
+    	<isNotEmpty prepend="AND" property="status">
+    		status > #status#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="categoryID">
+    		CategoryID = #categoryID#
+    	</isNotEmpty>
+    </dynamic>
+    </select>
+    
+    <select id="queryElectronic" resultMap="mgElectronicResult">
+    	<![CDATA[
+    		select 
+    		electronicid,
+    		Category,
+        	CategoryID,
+        	GameEnName,
+        	ImageFileName,
+        	GameName,
+        	GameNameCN,
+        	Sequence,
+        	status,
+        	prizepool 
+        	from mg_electronic
+    	]]>
+    	<dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="status">
+	    		status > #status#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="categoryID">
+	    		CategoryID = #categoryID#
+	    	</isNotEmpty>
+        </dynamic>
+    	<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <select id="selectElectronic" resultMap="mgElectronicResult">
+    	<![CDATA[
+    		select 
+    		electronicid,
+    		Category,
+        	CategoryID,
+        	GameEnName,
+        	ImageFileName,
+        	GameName,
+        	GameNameCN,
+        	Sequence,
+        	status,
+        	prizepool 
+        	from mg_electronic
+    	]]>
+    	<dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="status">
+	    		status = #status#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="categoryID">
+	    		CategoryID = #categoryID#
+	    	</isNotEmpty>
+        </dynamic>
+    	<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+   <select id="queryAgElectronicCount" resultClass="long">
+    <![CDATA[
+        select count(0) from mg_electronic_new
+    ]]> 
+    <dynamic prepend="WHERE">
+    	<isNotEmpty prepend="AND" property="status">
+    		status = #status#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="category">
+	    	Category = #category#
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="clientID">
+	    	ClientID = #clientID#
+	    </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="gamename">
+    		gameNameCN  like CONCAT('%',#gamename#,'%')
+   	 	</isNotEmpty>
+    </dynamic>
+    </select>
+    
+    <select id="selectAgElectronic" resultMap="agElectronicResult">
+    	<![CDATA[
+    		select 
+    		electronicid,
+    		Category,
+        	CategoryID,
+        	GameEnName,
+        	ImageFileName,
+        	GameCode as GameName,
+        	GameNameCN,
+        	Sequence,
+        	status,
+        	ModuleID,
+        	ClientID
+        	from mg_electronic_new
+    	]]>
+    	<dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="status">
+	    		status = #status#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="category">
+	    		Category = #category#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="clientID">
+	    		ClientID = #clientID#
+	    	</isNotEmpty>
+	    	 <isNotEmpty prepend="AND" property="gamename">
+	    		gameNameCN  like CONCAT('%',#gamename#,'%')
+	   	 	</isNotEmpty>
+        </dynamic>
+    	<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	<!-- 查询AGIN电子游戏记录数 -->
+	<select id="queryAginElectronicCount" resultClass="long">
+    <![CDATA[
+        select count(0) from agin_electronic
+    ]]> 
+    <dynamic prepend="WHERE">
+    	<isNotEmpty prepend="AND" property="status">
+    		status = #status#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="category">
+	    		Category = #category#
+	    </isNotEmpty>
+    </dynamic>
+    </select>
+    
+    <!-- 分页查询AGIN电子游戏 -->
+    <select id="selectAginElectronic" resultMap="aginElectronicResult">
+    	<![CDATA[
+    		select 
+    		electronicid,
+    		GameCode,
+    		Category,
+        	GameEnName,
+        	ImageFileName,
+        	GameNameCN,
+        	Sequence,
+        	status
+        	from agin_electronic
+    	]]>
+    	<dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="status">
+	    		status = #status#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="category">
+	    		Category = #category#
+	    	</isNotEmpty>
+        </dynamic>
+    	<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    
+    <!-- 查询AGIN电子游戏记录数 -->
+	<select id="querySAElectronicCount" resultClass="long">
+    <![CDATA[
+        select count(0) from sa_electronic
+    ]]> 
+    <dynamic prepend="WHERE">
+    	<isNotEmpty prepend="AND" property="status">
+    		status = #status#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="gameType">
+	    		gameType = #gameType#
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="gamename">
+    		gameNameCN  like CONCAT('%',#gamename#,'%')
+   	 	</isNotEmpty>
+    </dynamic>
+    </select>
+    
+    <!-- 分页查询SA电子游戏 -->
+    <select id="selectSAinElectronic" resultMap="saElectronicResult">
+    	<![CDATA[
+    		select 
+    		electronicid,
+    		gameId,
+    		gameNameEN,
+    		gameType,
+        	imageFileName,
+        	gameNameCN,
+        	gameConfig,
+        	sequence,
+        	status
+        	from sa_electronic
+    	]]>
+    	<dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="status">
+	    		status = #status#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="gameType">
+	    		gameType = #gameType#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="gamename">
+	    		gameNameCN like CONCAT('%',#gamename#,'%')
+	   	 	</isNotEmpty>
+        </dynamic>
+    	<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+</sqlMap>

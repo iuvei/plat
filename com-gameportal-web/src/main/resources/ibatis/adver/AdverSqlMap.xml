@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Adver">
+
+	<typeAlias alias="adver"
+		type="com.gameportal.web.adver.model.Adver" />
+
+	<resultMap id="adverResult" class="adver">
+		<result property="id" column="adid" />
+		<result property="title" column="adtitle" />
+		<result property="images" column="adimages" />
+		<result property="href" column="adhref" />
+		<result property="height" column="adheight" />
+		<result property="width" column="adwidth" />
+		<result property="color" column="adcolor" />
+		<result property="status" column="status" />
+		<result property="sequence" column="adsequence" />
+		<result property="location" column="adlocation" />
+		<result property="editTime" column="edittime" />
+	</resultMap>
+
+	<insert id="insert" parameterClass="adver">
+    <![CDATA[
+        INSERT INTO
+        a_web_ad (
+        	adid,
+        	adtitle,
+        	adimages,
+        	adhref,
+        	adheight,
+        	adwidth,
+        	adcolor,
+        	adsequence,
+        	adlocation,
+        	edittime
+        ) VALUES (
+        	#id#,
+        	#title#,
+        	#images#,
+        	#href#,
+        	#height#,
+        	#width#,
+        	#color#,
+        	#sequence#,
+        	#location#,
+        	#editTime#
+        	
+        )
+    ]]>
+		<selectKey resultClass="java.lang.Long" type="post"
+			keyProperty="adid">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+	
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	adid,
+       	adtitle,
+       	adimages,
+       	adhref,
+       	adheight,
+       	adwidth,
+       	adcolor,
+       	status,
+       	adsequence,
+       	adlocation,
+       	edittime
+	  ]]>
+	</sql>
+	
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="adlocation">
+				adlocation =#adlocation#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<select id="queryAll" resultMap="adverResult">
+	  select <include refid="commonColumns"/>
+	  <![CDATA[
+	    from a_web_ad
+	  ]]>
+	  <include refid="dyncmicWhere"/>
+	  	order by adsequence asc
+	</select>
+	
+</sqlMap>

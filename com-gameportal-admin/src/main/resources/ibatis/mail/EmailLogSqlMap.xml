@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EmailLog">
+
+	<typeAlias alias="emailLog" type="com.gameportal.manage.mail.model.EmailLog"/>
+	
+	<sql id="commonColumns">
+		<![CDATA[
+			mailid,
+			uuid,
+			mailServerHost,
+			mailServerPort,
+			fromAddress,
+			toAddress,
+			subject,
+			content,
+			createDate,
+			sendDate,
+			validTime,
+			status
+		]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="mailid">
+	             mailid = #mailid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uuid">
+	             uuid = #uuid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="mailServerHost">
+	             mailServerHost = #mailServerHost#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="mailServerPort">
+	             mailServerPort = #mailServerPort#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="fromAddress">
+	             fromAddress = #fromAddress#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="toAddress">
+	             toAddress = #toAddress#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="subject">
+	             subject = #subject#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             createDate = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="sendDate">
+	             sendDate = #sendDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="starttime">
+	             createDate >= #starttime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="endtime">
+	             <![CDATA[createDate <= #endtime#]]>
+	       </isNotEmpty>
+	    </dynamic>
+	</sql>
+	
+	<insert id="insert" parameterClass="emailLog">
+		INSERT INTO c_sendmail_log 
+		(
+			uuid,
+			mailServerHost,
+			mailServerPort,
+			fromAddress,
+			toAddress,
+			subject,
+			content,
+			createDate,
+			sendDate,
+			status
+		) VALUES (
+			#uuid#,
+			#mailServerHost#,
+			#mailServerPort#,
+			#fromAddress#,
+			#toAddress#,
+			#subject#,
+			#content#,
+			#createDate#,
+			#sendDate#,
+			#status#
+		)
+	</insert>
+	
+	<update id="update" parameterClass="emailLog">
+		UPDATE c_sendmail_log SET 
+			mailServerHost = #mailServerHost#,
+			mailServerPort = #mailServerPort#,
+			fromAddress = #fromAddress#,
+			toAddress = #toAddress#,
+			subject = #subject#,
+			content = #content#,
+			createDate = #createDate#,
+			sendDate = #sendDate#,
+			status = #status#
+		WHERE
+			mailid = #mailid#
+	</update>
+	
+	<delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from c_sendmail_log where
+        mailid = #mailid#
+    ]]>
+    </delete>
+    
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from c_sendmail_log
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <select id="pageSelect" resultClass="emailLog">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from c_sendmail_log 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+	
+</sqlMap>

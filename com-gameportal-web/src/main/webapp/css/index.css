@@ -1,0 +1,397 @@
+@charset "utf-8";
+/* CSS Document */
+.banner{ min-width:962px; margin:0 auto; width:100%;}
+.notice{color:#fff;/* font-size:16px; *//* padding:40px 0 30px; */}
+.vipIn{ border:solid 1px #000; display:block;}
+.gameList{ padding-top:10px;}
+.gameList li{ width:229px; height:180px; overflow:hidden; float:left;/*  border:solid 1px #000; */ margin-right:12px; display:inline; position:relative;}
+.gameList li.last{ margin-right:0;}
+.gameList li h2{ position:absolute; left:25px; bottom:30px; width:180px; height:54px; background:#0babff; color:#fff; font-size:26px; font-weight:normal; text-align:center; padding-top:6px;}
+.gameList li h2 span{ font-size:12px; color:#065945; font-family:"Verdana"; display:block; text-shadow:0 1px 1px #fff;}
+.advList li{ width:298px; height:178px; overflow:hidden; float:left; border:solid 1px #000; display:inline;}
+.advList li.handsel{ margin:0 31px; position:relative;}
+.advList li.handsel p{ position:absolute; color:#c4222e; top:84px; left:0; width:100%; text-align:center; font-size:40px;}
+
+#imformation,#findpwd,#freePlay{ width:400px;}
+#imformation p.tip,#findpwd p.tip,#freePlay p.tip{ text-align:center; padding:8px 0; color:#a3a3a3; border-bottom:solid 1px #eee; width:90%; margin:0 auto; line-height:20px;}
+.changeIfm{ padding:18px 0;}
+.formli{ margin-bottom:10px;}
+.formli span.red{ font-weight:bold; vertical-align:middle;}
+.formli label{width:8.5em; text-align:right; color:#63666e; font-size:12px; display:inline-block; vertical-align:middle;}
+#imformation .box_btn,#findpwd .box_btn{ padding:10px 0 0 8.8em;}
+.getCode{ margin-left:6px; width:118px; height:30px; font-size:0; border:solid 1px #dbdbdb; overflow:hidden; display:inline-block; vertical-align:middle;}
+.getCode img{ width:118px;}
+#findpwd p.tip,#freePlay p.tip{ padding:15px 0;}
+
+#freePlay .changeIfm{ padding:25px 0;}
+#freePlay .formli{ margin-bottom:25px;}
+#freePlay .formli .apply{ font-size:14px; color:#fe9100;}
+#freePlay .formli .apply span{ margin-left:20px; color:#333;}
+
+.clause{ padding:30px;}
+.clause_nav{ border-bottom:solid 2px #0babff;}
+.clause_nav a{ float:left; display:block; width:103px; height:34px; line-height:34px; text-align:center; font-size:16px; color:#63666e;}
+.clause_nav a.curr{ color:#fff; background:#0babff;}
+.clause_con{ padding:20px 0 0 0;}
+.clause_con p{ color:#63666e; font-size:14px; line-height:24px; margin-bottom:15px;}
+
+
+/*新版首页样式*/
+.bg-gray{
+    background-color: #eee;
+}
+.box{
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+    margin-bottom: 40px;
+    border: none;
+}
+.notice{
+    line-height: 40px;
+    text-align: left;
+    color: #555;
+}
+.notice .top-scroll{
+  float: left;
+  width: 980px;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.notice .top-scroll .marquee-item{
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* 轮播图原点 */
+#index-banner .carousel-indicators li {
+    width: 8px;
+    height: 8px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 6px solid #417be7;
+    border-radius: 50%;
+}
+
+#index-banner .carousel-indicators .active {
+    border: 6px solid #ee2722;
+}
+
+.section-hd{
+    padding: 12px;
+    background: #fff url(../images/index/index-top-bg.jpg) center 83% no-repeat;
+    height: 162px;
+    color: #fff;
+}
+.section-hd a{
+    color:#fff;
+}
+.section-hd h2{
+    font-size:22px;
+    margin-bottom: 8px;
+}
+.section-hd .sub-tit{
+    margin-bottom:10px;
+}
+.section-hd .inner{
+    display: block;
+    padding-left: 177px;
+    padding-top: 28px;
+    text-align: left;
+    width: auto;
+}
+.section-hd .btn{
+    height: 28px;
+    line-height: 28px;
+    background-color: #ffd571;
+    color: #bd792a;
+}
+.section-hd .jackpot{
+    position: absolute;
+    top: 67px;
+    right: 22px;
+    font-size: 38px;
+    letter-spacing: .17em;
+    color: #333;
+}
+.section-main{
+    position:relative;
+}
+.section-main .aside-bg,
+.section-main .winner-box{
+    float: left;
+    height: 400px;
+}
+.section-main .aside-bg{
+    background: linear-gradient(to bottom,#abbfe3 0%,#d8e0ee 100%);
+    width: 255px;
+}
+.section-main .more-game{
+    position: absolute;
+    right: 0;
+    top:-32px;
+    width:113px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background-color: #ffc539;
+    color: #a34f01;
+}
+.section-main .superman{
+    position: absolute;
+    top: -42px;
+    left: 200px;
+    opacity: 0;
+    transition: all .5s;
+}
+.section-main .superman.active{
+    opacity:1;
+    left:-40px;
+}
+
+
+
+/*
+ * 前台 - 首页 - 最新游戏推荐、最受欢迎游戏、最高盈利游戏
+ * ================================*/
+.game-box {
+    float: left;
+    width: 680px;
+    height: 400px;
+}
+.game-tab{
+    position:absolute;
+    left: 255px;
+    right:0;
+    top: -46px;
+}
+.game-tab li {
+    float: left;
+    width: 200px;
+    height: 46px;
+    line-height: 46px;
+    text-align: center;
+    font-size: 14px;
+    background: #c4d9ff;
+}
+
+.game-tab .active {
+    background: #fff;
+}
+
+.game-tab a {
+    color: #586782;
+    display: block;
+    font-size: 18px;
+}
+
+.game-box .gamelist {
+    padding: 18px 0 18px 18px;
+}
+
+
+.game-box .gamelist li {
+    float: left;
+    margin-right: 18px;
+    /* padding-top: 10px; */
+    margin-bottom: 13px;
+    width: 200px;
+}
+.game-box .gamelist li:first-child {
+    margin-left: 0;
+}
+
+.gamelist .i-btn {
+    width: 100px;
+    float: left;
+    height: 22px;
+    color: #fff;
+    text-align: center;
+    line-height: 22px;
+    font-size: 13px;
+    display: block;
+    background-color: #777;
+    margin-bottom: 9px;
+}
+
+.gamelist .i-btn.demo{
+    background-color: #ffb400;
+}
+
+.gamelist .mg-game-pic {
+    width: 120px;
+    height: 128px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.gamelist .game-pic img{
+    width: 100%;
+    height: 120px;
+}
+
+.gamelist .game-name {
+    text-align: center;
+    font-size: 14px;
+    /* margin-bottom: 10px; */
+    line-height: 28px;
+}
+
+/*中奖信息*/
+.winner-wrapper{
+    float: left;
+    width: 230px;
+    height: 400px;
+    overflow: hidden;
+}
+
+.winner-box h2{
+    font-size:16px;
+    line-height:48px;
+}
+.winner-list .icon-tap{
+    position: absolute;
+    left: 0;
+    top: 13px;
+    color: #d0d0d0;
+    font-size: 30px;
+}
+.winner-list{
+    height: 330px;
+    overflow:hidden;
+}
+.winner-list a{
+    color: #555;
+}
+.winner-list .marquee-item{
+    font-size: 12px;
+    display: block;
+    padding: 10px 14px 10px 18px;
+    /* margin-bottom: 10px; */
+    border-bottom: 1px solid #ebebeb;
+    position: relative;
+}
+.winner-list p{
+    text-align: left;
+    margin-bottom:10px;
+}
+/*section尾部*/
+.section-ft .item{
+    padding: 38px 0 42px;
+    text-align: center;
+    line-height: 1;
+}
+.section-ft .item:hover{
+    background-color: rgb(178, 214, 243);
+}
+.section-ft h2{
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+.section-ft .iconfont{
+    font-size: 56px;
+    height: 50px;
+    color: #449be2;
+    vertical-align: top;
+    float: left;
+    margin-left: 80px;
+}
+.section-ft .sub-tit{
+    color: #9b9b9b;
+    /* display: inline-block; */
+    float: left;
+}
+
+/*首页弹窗*/
+#modal-index .modal-dialog{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border: none;
+    box-shadow: none;
+    background:transparent url("../images/index/modal.png") no-repeat;
+    width: 850px;
+    height: 467px;
+    color: #fff;
+    margin-left: -433px;
+    margin-top: -254px;
+}
+
+#modal-index .close{
+    position: absolute;
+    width: 90px;
+    height: 58px;
+    color: #fff;
+    font-size: 30px;
+    top: 36px;
+    right: 30px;
+    text-indent: -9999em;
+}
+
+#modal-index .notice-wp{
+    position: relative;
+    height: 270px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 90px 410px 0 45px;
+    /* background: red; */
+}
+#modal-index .notice-tit{
+   text-align: left;
+   font-size: 38px;
+   color: #fcf7d5;
+   /* margin-top: 20px; */
+   margin-bottom: 36px;
+}
+
+#modal-index .notice-cnt{
+    /* text-indent: 2em; */
+    line-height: 1.7;
+    font-size: 16px;
+    text-align: justify;
+}
+#modal-index.fade .modal-dialog {
+    -webkit-transition: -webkit-transform .45s ease-out;
+    transition: transform .45s ease-out;
+    opacity: 1;
+    -ms-transform: translate(0,-120%);
+    transform: translate(0,-120%);
+}
+#modal-index.in .modal-dialog {
+    -ms-transform: translate(0,0);
+    transform: translate(0,0);
+}
+
+/*侧边广告栏*/
+#aside-ad {
+    display: block;
+    position: fixed;
+    visibility: hidden;
+    bottom: 20px;
+    width: 350px;
+    height: 245px;
+    background: url("../images/hbicon.gif") no-repeat;
+    z-index: 9;
+    -webkit-transition:  all .6s;
+}
+#aside-ad>a{
+    display: block;
+    height: 100%;
+}
+#aside-ad.active{
+    visibility:visible;
+    left: 0;
+}
+#aside-ad .close{
+    position: absolute;
+    right: 6px;
+    top: -1px;
+    width: 40px;
+    height: 40px;
+    line-height: 30px;
+    color: #fff;
+    font-size: 28px;
+    background-color: transparent;
+}

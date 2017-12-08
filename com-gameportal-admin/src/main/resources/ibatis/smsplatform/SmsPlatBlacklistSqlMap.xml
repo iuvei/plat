@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SmsPlatBlacklist">
+
+    <typeAlias alias="smsPlatBlacklist" type="com.gameportal.manage.smsplatform.model.SmsPlatBlacklist"/>
+
+    <resultMap id="smsPlatBlacklistResult" class="smsPlatBlacklist">
+        <result property="spbid" column="spbid"/>
+        <result property="spiid" column="spiid"/>
+        <result property="mobile" column="mobile"/>
+        <result property="createtime" column="createtime"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	spbid ,
+        	spiid ,
+        	mobile ,
+        	createtime 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="smsPlatBlacklist">
+    <![CDATA[
+        INSERT INTO
+        sms_plat_blacklist (
+        	spiid ,
+        	mobile ,
+        	createtime 
+        ) VALUES (
+        	#spiid# ,
+        	#mobile# ,
+        	#createtime# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="spbid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="smsPlatBlacklist">
+    <![CDATA[
+        UPDATE sms_plat_blacklist SET
+	        spiid = #spiid# ,
+	        mobile = #mobile# ,
+	        createtime = #createtime# 
+        WHERE 
+	        spbid = #spbid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from sms_plat_blacklist where
+        spbid = #spbid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="smsPlatBlacklistResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from sms_plat_blacklist 
+	        where 
+		        spbid = #spbid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="spbid">
+	             spbid = #spbid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="spiid">
+	             spiid = #spiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="mobile">
+	             mobile = #mobile#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createtime">
+	             createtime = #createtime#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(*) from sms_plat_blacklist
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="smsPlatBlacklistResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from sms_plat_blacklist 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	
+</sqlMap>

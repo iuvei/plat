@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.MemberInfoMapper">
+
+	<resultMap type="MemberInfo" id="memberInfoMap">
+        <result property="uiid" column="uiid"/>
+        <result property="account" column="account"/>
+        <result property="passwd" column="passwd"/>
+        <result property="accounttype" column="accounttype"/>
+        <result property="uname" column="uname"/>
+        <result property="atmpasswd" column="atmpasswd"/>
+        <result property="identitycard" column="identitycard"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="qq" column="QQ"/>
+        <result property="birthday" column="birthday"/>
+        <result property="grade" column="grade"/>
+        <result property="puiid" column="puiid"/>
+        <result property="status" column="status"/>
+        <result property="url" column="url"/>
+        <result property="regip" column="regip"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="typeflag" column="typeflag"/>
+        <result property="phonevalid" column="phonevalid"/>
+        <result property="emailvalid" column="emailvalid"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="selectRow">
+	    <![CDATA[
+        	uiid ,
+        	account ,
+        	passwd ,
+        	accounttype ,
+        	uname ,
+        	atmpasswd ,
+        	identitycard ,
+        	phone ,
+        	email ,
+        	QQ ,
+        	birthday ,
+        	grade ,
+        	puiid ,
+        	status ,
+        	url ,
+        	regip ,
+        	create_date,
+        	update_date,
+        	typeflag,
+        	phonevalid,
+        	emailvalid
+	    ]]>
+	</sql>
+	
+	<!-- 代理推广地址 -->
+	<sql id="selectProxyDomain">
+		<![CDATA[
+			d.urlid,
+			d.proxyurl,
+			d.proxyuid,
+			d.status,
+			u.account AS proxyaccount,
+			u.uname AS proxyname
+		]]>
+	</sql>
+	
+	<!-- 代理占成 -->
+	<sql id="scaleRow">
+		<![CDATA[
+			p.pyid,
+			p.uiid,
+			u.account,
+			u.uname,
+			p.returnscale,
+			p.ximascale,
+			p.isximaflag,
+			p.clearingtype,
+			p.status,
+			p.createtime,
+			p.uptime,
+			p.upuser,
+			p.upclientip
+		]]>
+	</sql>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="downUserSet">
+	    <![CDATA[
+        	pdid ,
+        	account ,
+        	platformcode ,
+        	gamecode ,
+        	gamename ,
+        	gameCategory ,
+        	betdate ,
+        	betno ,
+        	betamount ,
+        	profitamount ,
+        	currency ,
+        	tormbrate ,
+        	finalamount ,
+        	origin ,
+        	gameResult ,
+        	result ,
+        	validBetAmount,
+        	flag,
+        	playType,
+        	tableCode,
+        	inningsCode,
+        	loginIP,
+        	beforeCerdit,
+        	recalcuTime,
+        	roundNo
+	    ]]>
+	</sql>
+	
+	<!-- 用于下线会员戏码记录-->
+	<sql id="proxyUserXimaSet">
+	    <![CDATA[
+    	xm.logid,
+		xm.uiid,
+		xm.account,
+		xm.uname,
+		xm.puiid,
+		xm.ximascale,
+		xm.ximamoney,
+		xm.yhmoney,
+		xm.validmoney,
+		xm.jsstarttime,
+		xm.jsendtime,
+		xm.ximatime,
+		xm.status,
+		u.account AS proxyaccount,
+		u.uname AS proxyuname
+	    ]]>
+	</sql>
+	
+	
+	<!-- 查询条件    -->
+	<sql id="selectWhere">
+		<if test="uiid !=null and uiid !=''">
+			and uiid = #{uiid}
+		</if>
+		<if test="neuiid !=null and neuiid !=''">
+			<![CDATA[and uiid != #{neuiid}]]>
+		</if> 
+  		<if test="account !=null and account !=''">
+			and account = #{account}
+		</if>
+		<if test="passwd !=null and passwd !=''">
+			and passwd = #{passwd}
+		</if>
+		<if test="accounttype !=null and accounttype !=''">
+			and accounttype = #{accounttype}
+		</if>
+		<if test="uname !=null and uname !=''">
+			and uname = #{uname}
+		</if>
+		<if test="atmpasswd !=null and atmpasswd !=''">
+			and atmpasswd = #{atmpasswd}
+		</if>
+		<if test="identitycard !=null and identitycard !=''">
+			and identitycard = #{identitycard}
+		</if>
+		<if test="phone !=null and phone !=''">
+			and phone = #{phone}
+		</if>
+		<if test="email !=null and email !=''">
+			and email = #{email}
+		</if>
+		<if test="QQ !=null and QQ !=''">
+			and QQ = #{QQ}
+		</if>
+		<if test="birthday !=null and birthday !=''">
+			and birthday = #{birthday}
+		</if>
+		<if test="grade !=null and grade !=''">
+			and grade = #{grade}
+		</if>
+		<if test="puiid !=null and puiid !=''">
+			and puiid = #{puiid}
+		</if>
+		<if test="lock !=null and lock !=''">
+			and lock = #{lock}
+		</if>
+		<if test="url !=null and url !=''">
+			and url = #{url}
+		</if>
+		<if test="status !=null and status !=''">
+			and status = #{status}
+		</if>
+		<if test="regip !=null and regip !=''">
+			and regip = #{regip}
+		</if>
+		<if test="createDate !=null and createDate !=''">
+			and create_date = #{createDate}
+		</if>
+		<if test="updateDate !=null and updateDate !=''">
+			and update_date = #{updateDate}
+		</if>
+	</sql>
+
+	<!-- 查询会员信息 -->
+	<select id="selectMemberInfo" resultType="MemberInfo" parameterType="java.util.HashMap">
+		select <include refid="selectRow"/> from a_user_info where 1=1
+		<include refid="selectWhere"/>
+	</select>
+	
+	<!-- 查询会员信息 -->
+	<select id="selectDownCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+		<![CDATA[
+    		SELECT COUNT(1) FROM a_user_info u where 1=1
+    	]]>
+    	<if test="uiid !=null and uiid !=''">
+			and u.puiid = #{uiid}
+		</if>
+		<if test="account !=null and account !=''">
+			and u.account = #{account}
+		</if>
+		<if test="startDate !=null and startDate !=''">
+			<![CDATA[and u.create_date >=CONCAT(#{startDate},' 00:00:00')]]>
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and u.create_date <=CONCAT(#{endDate},' 23:59:59')]]>
+		</if>
+	</select>
+	
+	<!-- 查询代理推广地址 -->
+	<select id="selectProxyUrl" resultType="ProxyDomain" parameterType="java.util.HashMap">
+		select <include refid="selectProxyDomain"/>
+	    <![CDATA[
+	        from a_proxy_url d LEFT JOIN a_user_info u ON d.proxyuid=u.uiid where 1=1
+	    ]]>
+    	<if test="proxyuid !=null and proxyuid !=''">
+			and d.proxyuid = #{proxyuid}
+		</if>
+	</select>
+	
+	<!-- 根据代理ID统计盈亏 -->
+    <select id="getProxyLoss" resultType="java.lang.String">
+		<![CDATA[
+    		SELECT IFNULL((SELECT SUM(pay.amount) FROM a_pay_order pay 
+		WHERE pay.uiid=u.uiid AND pay.status=3 AND pay.paytyple=3 AND pay.ordertype=0
+    	]]>
+    	<if test="startDate !=null and startDate !=''">
+			and pay.deposittime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and pay.deposittime <= #{endDate}]]>
+		</if>
+    	<![CDATA[),'0.00')+
+    		IFNULL(-SUM(bet.finalamount),'0.00')+IFNULL((SELECT SUM(CONVERT(clog.clearingAmount,DECIMAL(10,2))) FROM a_proxy_clearing_log clog WHERE clog.clearingStatus=2 
+    	]]>
+    	<if test="uiid !=null and uiid !=''">
+			and clog.uiid= #{uiid}
+		</if>
+    	<![CDATA[),'0.00') AS finalamountTotal 
+			FROM a_game_betlog bet LEFT JOIN a_user_info u ON bet.account = u.account where 1=1
+    	]]>
+    	<if test="uiid !=null and uiid !=''">
+			and u.puiid= #{uiid}
+		</if>
+		<if test="startDate !=null and startDate !=''">
+			and bet.betdate>= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and bet.betdate <= #{endDate}]]>
+		</if>
+    </select>
+    
+     <!-- 查询代理下线玩家所有优惠加洗码 -->
+    <select id="getProxyPreferential" resultType="java.lang.String">
+    	<![CDATA[
+    	SELECT 
+		(SUM(IFNULL((SELECT SUM(xm.total) FROM c_member_xima_main xm WHERE xm.uiid = u.uiid 
+		]]>
+		<if test="startDate !=null and startDate !=''">
+			and xm.updatetime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and xm.updatetime <= #{endDate}]]>
+		</if>
+    	<![CDATA[
+		),'0.00'))+
+		SUM(IFNULL((SELECT SUM(ap.amount) FROM a_pay_order ap WHERE ap.uiid=u.uiid AND ap.paytyple=2 AND ap.status = 3 AND ap.ordertype != 0  and ap.ordertype != 3
+		]]>
+		<if test="startDate !=null and startDate !=''">
+			and ap.deposittime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and ap.deposittime <= #{endDate}]]>
+		</if>
+		<![CDATA[
+		),'0.00'))+
+		IFNULL((SELECT SUM(pulog.ximamoney) FROM a_proxyuser_xima_log pulog WHERE pulog.puiid=#{uiid}
+		]]>
+		<if test="startDate !=null and startDate !=''">
+			and pulog.ximatime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and pulog.ximatime <= #{endDate}]]>
+		</if>
+		),'0.00')) AS preferential
+		 FROM a_user_info u where 1=1
+		<if test="uiid !=null and uiid !=''">
+			and u.puiid = #{uiid}
+		</if>
+    </select>
+    
+    <!-- 占成 -->
+    <select id="getScaleResult" resultType="ProxySet">
+    	select <include refid="scaleRow"/>
+	    <![CDATA[
+	        from a_game_proxyinfo p LEFT JOIN a_user_info u ON p.uiid = u.uiid where 1=1
+	    ]]>
+	    <if test="uiid !=null and uiid !=''">
+			and p.uiid = #{uiid}
+		</if>
+		    <if test="pyid !=null and pyid !=''">
+			and p.pyid = #{pyid}
+		</if>
+		    <if test="status !=null and status !=''">
+			and p.status = #{status}
+		</if>
+		    <if test="account !=null and account !=''">
+			and u.account = #{account}
+		</if>
+	 </select>
+	 
+	 <!-- 下线本月报表 -->
+	 <select id="findlistPageMonthReport" resultType="MemberInfoReport" parameterType="page">
+	   <![CDATA[
+			SELECT u.uiid,u.account,u.uname,u.apipassword,
+			IFNULL(m.totalamount,'0.00') AS money,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=0
+			]]>
+			<if test="pd.startDate !=null and pd.startDate !=''">
+				<![CDATA[and p.deposittime >= #{pd.startDate}]]>
+			</if>
+			<if test="pd.endDate !=null and pd.endDate !=''">
+				<![CDATA[and p.deposittime <= #{pd.endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS depositTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=1
+			]]>
+			<if test="pd.startDate !=null and pd.startDate !=''">
+				<![CDATA[and p.deposittime >= #{pd.startDate}]]>
+			</if>
+			<if test="pd.endDate !=null and pd.endDate !=''">
+				<![CDATA[and p.deposittime <= #{pd.endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS withdrawalTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype !=0 and p.ordertype=3
+			]]>
+			<if test="pd.startDate !=null and pd.startDate !=''">
+				<![CDATA[and p.deposittime >= #{pd.startDate}]]>
+			</if>
+			<if test="pd.endDate !=null and pd.endDate !=''">
+				<![CDATA[and p.deposittime <= #{pd.endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS preferentialTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype=3  
+			]]>
+			<if test="pd.startDate !=null and pd.startDate !=''">
+				<![CDATA[and p.deposittime >= #{pd.startDate}]]>
+			</if>
+			<if test="pd.endDate !=null and pd.endDate !=''">
+				<![CDATA[and p.deposittime <= #{pd.endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00')AS ximaTotal
+			FROM a_user_info u LEFT JOIN a_account_money m ON m.uiid=u.uiid where 1=1
+	    	]]>
+	   		<if test="pd.puiid !=null and pd.puiid !=''">
+				<![CDATA[and u.puiid = #{pd.puiid}]]>
+			</if>
+			<if test="pd.account !=null and pd.account !=''">
+				<![CDATA[and u.account = #{pd.account}]]>
+			</if>
+			<if test="pd.uname !=null and pd.uname !=''">
+				<![CDATA[and u.uname = #{pd.uname}]]>
+			</if>
+			order by depositTotal desc
+	</select>
+	
+	 <!-- 查询带个会员 -->
+	 <select id="querySingleWinorLess" resultType="MemberInfoReport" parameterType="java.util.Map">
+			SELECT IFNULL(SUM(bet.profitamount),'0.00') AS winLossTotal FROM a_game_betlog bet,a_user_info u WHERE u.account = bet.account
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and bet.betdate >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and bet.betdate <= #{endDate}]]>
+			</if>
+			<if test="account !=null and account !=''">
+				<![CDATA[and bet.account = #{account}]]>
+			</if>
+			<if test="puiid !=null and puiid !=''">
+				<![CDATA[and u.puiid = #{puiid}]]>
+			</if>
+	</select>
+	
+		<!-- 下线会员本月报表 -->
+	<select id="downUserMonthReportTotal" resultType="DownUserReportTotal" parameterType="java.util.Map">
+	   <![CDATA[
+			SELECT 
+			IFNULL(sum(m.totalamount),'0.00') AS moneyTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=0 
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			)),'0.00') AS depositTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=1 
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			)),'0.00') AS withdrawalTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype !=0 and p.ordertype !=3 
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			)),'0.00') AS preferentialTotal,
+			IFNULL(sum((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype=3  
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			)),'0.00') AS ximaTotal,
+			IFNULL(sum((SELECT SUM(bet.profitamount) FROM a_game_betlog bet WHERE bet.account = u.account 
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and bet.betdate >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and bet.betdate <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			)),'0.00') AS winLossTotal
+			FROM a_user_info u LEFT JOIN a_account_money m ON m.uiid=u.uiid
+	    ]]>
+	    where 1=1
+	   		<if test="puiid !=null and puiid !=''">
+				<![CDATA[and u.puiid = #{puiid}]]>
+			</if>
+			<if test="account !=null and account !=''">
+				<![CDATA[and u.account = #{account}]]>
+			</if>
+			<if test="uname !=null and uname !=''">
+				<![CDATA[and u.uname = #{uname}]]>
+			</if>
+	</select>
+	
+	 <!-- 查询代理下线 -->
+    <select id="findlistPageDownUser" resultType="BetLogTotal" parameterType="page">
+    	<![CDATA[
+    	SELECT u.uiid,u.account,u.uname,u.phone,u.email,u.QQ AS qq,u.birthday,
+    	IFNULL(cx.ximascale,'0.00') AS ximascale,
+		(SELECT COUNT(1) FROM a_game_betlog g WHERE g.account=u.account
+		]]>
+		<if test="pd.startDate !=null and pd.startDate !=''">
+			<![CDATA[and g.betdate >= #{pd.startDate}]]>
+		</if>
+		<if test="pd.endDate !=null and pd.endDate !=''">
+			<![CDATA[and g.betdate <= #{pd.endDate}]]>
+		</if>
+   		<![CDATA[
+		) AS betTotel,
+		IFNULL(SUM(bet.betamount),'0.00') AS betAmountTotal,
+		IFNULL(SUM(bet.profitamount),'0.00') AS profitamountTotal,
+		IFNULL(-SUM(bet.finalamount),'0.00') AS finalamountTotal,
+		IFNULL(SUM(bet.validBetAmount),'0.00') AS validBetAmountTotal
+		FROM a_user_info u LEFT JOIN c_user_xima_set cx ON cx.uiid = u.uiid AND cx.proxyid = #{pd.uiid} LEFT JOIN a_game_betlog bet ON u.account = bet.account 
+		]]>
+		<if test="pd.startDate !=null and pd.startDate !=''">
+			<![CDATA[and bet.betdate >= #{pd.startDate}]]>
+		</if>
+		<if test="pd.endDate !=null and pd.endDate !=''">
+			<![CDATA[and bet.betdate <= #{pd.endDate}]]>
+		</if>
+		where 1=1
+		<if test="pd.uiid !=null and pd.uiid !=''">
+			<![CDATA[and u.puiid = #{pd.uiid}]]>
+		</if>
+		<if test="pd.account !=null and pd.account !=''">
+			<![CDATA[and u.account = #{pd.account}]]>
+		</if>
+		GROUP BY u.account 
+    </select>
+    
+    
+     <!-- 查询代理下二级代理 -->
+    <select id="findlistPageDownProxy" resultType="MemberInfo" parameterType="page">
+    	<![CDATA[
+    	SELECT u.uiid,u.account,u.uname,u.create_date,
+		(select count(1) from a_user_info b where b.puiid =u.uiid) as puiid
+		from a_user_info u where 1=1 and u.accounttype =1
+		]]>
+		<if test="pd.uiid !=null and pd.uiid !=''">
+			<![CDATA[and u.puiid = #{pd.uiid}]]>
+		</if>
+		<if test="pd.account !=null and pd.account !=''">
+			<![CDATA[and u.account = #{pd.account}]]>
+		</if>
+		GROUP BY u.account 
+    </select>
+    
+    <!-- 会员投注明细 -->
+    <select id="findlistPageDownUserDetail" resultType="BetLog" parameterType="page">
+    	select <include refid="downUserSet"/>
+	    <![CDATA[
+	        from a_game_betlog where 1=1
+	    ]]>
+		<if test="pd.account !=null and pd.account !=''">
+			and account = #{pd.account}
+		</if>
+		<if test="pd.startDate !=null and pd.startDate !=''">
+			and betdate >= #{pd.startDate}
+		</if>
+		<if test="pd.endDate !=null and pd.endDate !=''">
+			<![CDATA[and betdate <= #{pd.endDate} ]]>
+		</if>
+		order by betdate DESC
+    </select>
+    
+    <!-- 下线洗码明细 -->
+    <select id="findlistPageMemberXimaLog" resultType="ProxyUserXimaLog" parameterType="page"> 
+		SELECT <include refid="proxyUserXimaSet"/>
+		<![CDATA[
+			FROM a_proxyuser_xima_log xm LEFT JOIN a_user_info u ON xm.puiid = u.uiid where 1=1
+		]]>
+		<if test="pd.logid !=null and pd.logid !=''">
+			and xm.logid = #{pd.logid}
+		</if>
+		<if test="pd.account !=null and pd.account !=''">
+			and xm.account = #{pd.account}
+		</if>
+		<if test="pd.startDate !=null and pd.startDate !=''">
+			and xm.ximatime >= #{pd.startDate}
+		</if>
+		<if test="pd.endDate !=null and pd.endDate !=''">
+			<![CDATA[
+				and xm.ximatime <= #{pd.endDate}
+			]]>
+		</if>
+		<if test="pd.puiid !=null and pd.puiid !=''">
+			and xm.puiid = #{pd.puiid}
+		</if>
+		order by xm.ximatime DESC
+	</select>
+	
+	<!-- 查询用户洗码设置字段-->
+	<sql id="findUserXimaSetRows">
+		<![CDATA[
+			cs.xmid,
+			cs.uiid,
+			cs.proxyid,
+			cs.ximascale,
+			cs.status,
+			cs.settime,
+			u.account,
+			u.uname
+		]]>
+	</sql>
+	<!-- 查询用户洗码设置-->
+	<select id="findUserXimaSet" resultType="UserXimaSet">
+			SELECT <include refid="findUserXimaSetRows"/>
+			<![CDATA[
+	        	from c_user_xima_set cs LEFT JOIN a_user_info u ON cs.uiid = u.uiid 
+	    	]]>
+	    	where 1=1
+	    	<if test="xmid !=null and xmid !=''">
+				and cs.xmid = #{xmid}
+			</if>
+			<if test="uiid !=null and uiid !=''">
+				and cs.uiid = #{uiid}
+			</if>
+			<if test="proxyid !=null and proxyid !=''">
+				and cs.proxyid = #{proxyid}
+			</if>
+			<if test="status !=null and status !=''">
+				and cs.status = #{status}
+			</if>
+			<if test="account !=null and account !=''">
+				and u.accoun = #{account}
+			</if>
+		</select>
+		
+		<!-- 修改用户洗码比例 -->
+		<update id="updateXimaScale" parameterType="UserXimaSet">
+			<![CDATA[
+				UPDATE c_user_xima_set SET
+					ximascale = #{ximascale},
+					status = #{status},
+					settime = #{settime}
+				WHERE
+					xmid = #{xmid}
+			]]>
+		</update>
+		
+		<!-- 新增用户洗码比例 -->
+		<insert id="insertUserXimaSet" parameterType="UserXimaSet">
+		<![CDATA[
+			INSERT INTO c_user_xima_set (
+				xmid,
+				uiid,
+				proxyid,
+				ximascale,
+				status,
+				settime
+			) VALUES (
+				#{xmid},
+				#{uiid},
+				#{proxyid},
+				#{ximascale},
+				#{status},
+				#{settime}
+			)
+			]]>
+		</insert>
+		
+	<!-- 每日游戏用户统计 -->
+    <select id="getPlayerByDate" resultType="MemberInfo" resultMap ="memberInfoMap"> 
+		SELECT account from a_game_betlog where 1=1
+		<if test="startDate !=null and startDate !=''">
+			<![CDATA[ and betdate >= #{startDate}]]>
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and betdate <= #{endDate}]]>
+		</if>
+		group by account
+	</select>
+	
+	<!-- 每日交易用户统计 -->
+    <select id="getTransByDate" resultType="MemberInfo" resultMap ="memberInfoMap"> 
+		SELECT uaccount as account from a_pay_order where 1=1
+		<if test="startDate !=null and startDate !=''">
+			<![CDATA[ and deposittime >= #{startDate}]]>
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and deposittime <= #{endDate}]]>
+		</if>
+		group by uaccount
+	</select>
+	
+	 <!-- 会员投注日统计 -->
+    <select id="userBetDailyStats" resultType="BetLogTotal">
+    	<![CDATA[
+		SELECT
+		    count(1) AS betTotel,
+			IFNULL(SUM(bet.betamount), '0.00') AS betAmountTotal,
+			IFNULL(SUM(bet.profitamount),'0.00') AS profitamountTotal,
+			IFNULL(- SUM(bet.finalamount),'0.00') AS finalamountTotal,
+			IFNULL(SUM(bet.validBetAmount),'0.00') AS validBetAmountTotal
+		FROM a_game_betlog bet where 1=1
+		]]>
+		<if test="startDate !=null and startDate !=''">
+			<![CDATA[and bet.betdate >= #{startDate}]]>
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and bet.betdate <= #{endDate}]]>
+		</if>
+		<if test="account !=null and account !=''">
+			and bet.account = #{account}
+		</if>
+    </select>
+    
+    
+     <!-- 用户交易日报表 -->
+	 <select id="queryUserDailyReport" resultType="DownUserReportTotal">
+	 	<![CDATA[
+			SELECT u.uiid,u.account,u.uname,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=0
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{pd.startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS depositTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=1
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS withdrawalTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype <>0  
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS preferentialTotal,
+			IFNULL((SELECT SUM(p.amount) FROM a_pay_order p WHERE p.uiid = u.uiid AND p.status=3 AND p.paytyple=2 AND p.ordertype=3  
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and p.deposittime >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and p.deposittime <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS ximaTotal,
+			IFNULL((SELECT SUM(bet.profitamount) FROM a_game_betlog bet WHERE bet.account = u.account 
+			]]>
+			<if test="startDate !=null and startDate !=''">
+				<![CDATA[and bet.betdate >= #{startDate}]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+				<![CDATA[and bet.betdate <= #{endDate}]]>
+			</if>
+			<![CDATA[
+			),'0.00') AS winLossTotal
+			FROM a_user_info u where 1=1
+	    	]]>
+	   		<if test="puiid !=null and puiid !=''">
+				<![CDATA[and u.puiid = #{puiid}]]>
+			</if>
+			<if test="account !=null and account !=''">
+				<![CDATA[and u.account = #{account}]]>
+			</if>
+			<if test="uname !=null and uname !=''">
+				<![CDATA[and u.uname = #{uname}]]>
+			</if>
+	</select>
+</mapper>

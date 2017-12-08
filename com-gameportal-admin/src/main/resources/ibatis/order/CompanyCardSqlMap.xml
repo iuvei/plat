@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CompanyCard">
+
+    <typeAlias alias="companyCard" type="com.gameportal.manage.order.model.CompanyCard"/>
+
+    <resultMap id="companyCardResult" class="companyCard">
+        <result property="ccid" column="ccid"/>
+        <result property="ccholder" column="ccholder"/>
+        <result property="ccno" column="ccno"/>
+        <result property="bankname" column="bankname"/>
+        <result property="openbank" column="openbank"/>
+        <result property="bankaddr" column="bankaddr"/>
+        <result property="remarks" column="remarks"/>
+        <result property="status" column="status"/>
+        <result property="createuserid" column="createuserid"/>
+        <result property="createusername" column="createusername"/>
+        <result property="createtime" column="createtime"/>
+        <result property="updateuserid" column="updateuserid"/>
+        <result property="updateusername" column="updateusername"/>
+        <result property="updatetime" column="updatetime"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	ccid ,
+        	ccholder ,
+        	bankname ,
+        	openbank ,
+        	ccno ,
+        	bankaddr ,
+        	remarks ,
+        	status ,
+        	createuserid ,
+        	createusername ,
+        	createtime ,
+        	updateuserid ,
+        	updateusername ,
+        	updatetime 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="companyCard">
+    <![CDATA[
+        INSERT INTO
+        b_company_card (
+        	ccid ,
+        	ccholder ,
+        	bankname ,
+        	openbank ,
+        	ccno ,
+        	bankaddr ,
+        	remarks ,
+        	status ,
+        	createuserid ,
+        	createusername ,
+        	createtime ,
+        	updateuserid ,
+        	updateusername ,
+        	updatetime 
+        ) VALUES (
+        	#ccid# ,
+        	#ccholder# ,
+        	#bankname# ,
+        	#openbank# ,
+        	#ccno# ,
+        	#bankaddr# ,
+        	#remarks# ,
+        	#status# ,
+        	#createuserid# ,
+        	#createusername# ,
+        	#createtime# ,
+        	#updateuserid# ,
+        	#updateusername# ,
+        	#updatetime# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="ccid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="companyCard">
+    <![CDATA[
+        UPDATE b_company_card SET
+	        ccholder = #ccholder# ,
+	        bankname = #bankname# ,
+	        openbank = #openbank# ,
+	        ccno = #ccno# ,
+	        bankaddr = #bankaddr# ,
+	        remarks = #remarks# ,
+	        status = #status# ,
+	        createuserid = #createuserid# ,
+	        createusername = #createusername# ,
+	        createtime = #createtime# ,
+	        updateuserid = #updateuserid# ,
+	        updateusername = #updateusername# ,
+	        updatetime = #updatetime# 
+        WHERE 
+	        ccid = #ccid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from b_company_card where
+        ccid = #ccid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="companyCardResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from b_company_card 
+	        where 
+		        ccid = #ccid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="ccid">
+	             ccid = #ccid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ccholder">
+	             ccholder = #ccholder#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankname">
+	             bankname = #bankname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="openbank">
+	             openbank = #openbank#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ccno">
+	             ccno = #ccno#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="bankaddr">
+	             bankaddr = #bankaddr#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="remarks">
+	             remarks = #remarks#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createuserid">
+	             createuserid = #createuserid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createusername">
+	             createusername = #createusername#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createtime">
+	             createtime = #createtime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateuserid">
+	             updateuserid = #updateuserid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateusername">
+	             updateusername = #updateusername#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updatetime">
+	             updatetime = #updatetime#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from b_company_card
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="companyCardResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from b_company_card 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+
+	<update id="updateStatus">
+    <![CDATA[
+        UPDATE b_company_card SET
+	        updateuserid = #updateuserid# ,
+	        updateusername = #updateusername# ,
+	        updatetime = #updatetime# ,
+	        status = #status#
+        WHERE 
+	        ccid = #ccid# 
+    ]]>
+    </update>
+    
+    <select id="queryByCcgid" resultMap="companyCardResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from b_company_card
+	        where  status=0 and ccid in (
+	        		select ccid from b_cc_and_group where ccgid=#ccgid#
+	        	)
+	        order by ccid
+	    ]]>
+    </select>
+    
+    <select id="queryByUiidInCcgx" resultMap="companyCardResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from b_company_card
+	        where  status=0 and ccid in (
+	        		select ccid from b_cc_and_group where ccgid in (
+	        			select ccgxid from b_cc_groupx_and_user where uiid=#uiid#
+	        		)
+	        	)
+	        order by ccid
+	    ]]>
+    </select>
+    
+    
+	
+</sqlMap>

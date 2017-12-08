@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.XimaFlagMapper">
+   <insert id="insert" parameterType="XimaFlag">
+   	 	<selectKey resultType="int" keyProperty="flagid" order="AFTER">  
+        	SELECT LAST_INSERT_ID()  
+    	</selectKey>  
+		<![CDATA[
+	        INSERT INTO
+	        a_isxima_flag (
+	        	flaguiid ,
+	        	flagaccount ,
+	        	isxima ,
+	        	updatetime,
+	        	remark
+	        ) VALUES (
+	        	#{flaguiid} ,
+	        	#{flagaccount} ,
+	        	#{isxima} ,
+	        	#{updatetime},
+	        	#{remark}
+	        )
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="XimaFlag">
+		<![CDATA[
+        UPDATE a_isxima_flag SET
+	        flagid = #{flagid} ,
+        	flaguiid = #{flaguiid} ,
+        	flagaccount = #{flagaccount},
+        	isxima = #{isxima}# ,
+        	updatetime = #{updatetime}
+        WHERE 
+	        flagid = #{flagid} 
+    	]]>
+	</update>
+	
+	<!-- 查询会员信息 -->
+	<select id="selectXimaFlag" resultType="XimaFlag" parameterType="java.util.HashMap">
+		select * from a_isxima_flag where flaguiid =#{flaguiid} order by updatetime desc
+	</select>
+</mapper>

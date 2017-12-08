@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+        http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<description>Spring公共配置 </description>
+	<!--解析资源文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<context:annotation-config />
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxIdleTime" value="${conn.maxIdleTime}" />
+		<property name="maxStatements" value="${conn.maxStatements}" />
+		<property name="initialPoolSize" value="${conn.initialPoolSize}" />
+		<property name="maxPoolSize" value="${conn.maxPoolSize}" />
+		<property name="minPoolSize" value="${conn.minPoolSize}" />
+	</bean>
+
+	<aop:config>
+		<aop:pointcut id="serviceMethmods"
+			expression="execution(* com.gameportal.*.service.*.*(..))" />
+		<aop:advisor pointcut-ref="serviceMethmods" advice-ref="txAdvice" />
+	</aop:config>
+	<!-- 事务的传播特性 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="modify*" propagation="REQUIRED" />
+			<tx:method name="accumulat*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!--ibatis的sqlMapClient -->
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="classpath:sql-map-config.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- BEGIN 解决responseBody返回乱码数据 注意此配置放在context:component-scan前！ -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="com.gameportal.pay.httpmessageconverter.UTF8StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/html;charset=utf-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+
+	<!-- END 解决responseBody返回乱码数据 ,同时注释掉<mvc:annotation-driven /> -->
+	<!-- 使用annotation 自动注册bean,并保证@Required,@Autowired的属性被注入 -->
+	<context:component-scan base-package="com.gameportal" />
+</beans>

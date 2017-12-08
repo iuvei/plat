@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProxyClearingLog">
+
+	<typeAlias alias="proxyClearingLog" type="com.gameportal.manage.proxy.model.ProxyClearingLog"/>
+	
+	<typeAlias alias="proxyClearingLogTotal" type="com.gameportal.manage.proxy.model.ProxyClearingLogTotal"/>
+	
+	<sql id="commonColumns">
+		<![CDATA[
+		g.clearingid,
+		g.uiid,
+		g.clearingAmount,
+		g.clearingScale,
+		g.finalamountTotal,
+		g.validBetAmountTotal,
+		g.ximaAmount,
+		g.preferentialTotal,
+		g.realPL,
+		g.clearingType,
+		g.clearingStatus,
+		g.clearingTime,
+		g.clearingStartTime,
+		g.clearingEndTime,
+		g.clearingRemark,
+		g.upuser,
+		g.uptime,
+		g.upclient,
+		u.account,
+		u.uname
+		]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="clearingid">
+				g.clearingid = #clearingid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="uiid">
+				g.uiid = #uiid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="startDate">
+				g.clearingTime >= #startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="updateDate">
+				<![CDATA[g.clearingTime < #updateDate#]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				<![CDATA[g.clearingTime <= #endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="account">
+				u.account = #account#
+			</isNotEmpty>
+			
+			<isNotEmpty prepend="AND" property="clearingStatus">
+				g.clearingStatus = #clearingStatus#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<insert id="insert" parameterClass="proxyClearingLog">
+		<![CDATA[
+			INSERT INTO a_proxy_clearing_log 
+			(
+				uiid,
+				clearingAmount,
+				clearingScale,
+				finalamountTotal,
+				validBetAmountTotal,
+				ximaAmount,
+				preferentialTotal,
+				realPL,
+				clearingType,
+				clearingStatus,
+				clearingTime,
+				clearingStartTime,
+				clearingEndTime,
+				clearingRemark,
+				upuser,
+				uptime,
+				upclient
+			) VALUES (
+				#uiid#,
+				#clearingAmount#,
+				#clearingScale#,
+				#finalamountTotal#,
+				#validBetAmountTotal#,
+				#ximaAmount#,
+				#preferentialTotal#,
+				#realPL#,
+				#clearingType#,
+				#clearingStatus#,
+				#clearingTime#,
+				#clearingStartTime#,
+				#clearingEndTime#,
+				#clearingRemark#,
+				#upuser#,
+				#uptime#,
+				#upclient#
+			)
+		]]>
+	</insert>
+	
+	<update id="update" parameterClass="proxyClearingLog">
+		<![CDATA[
+			UPDATE a_proxy_clearing_log SET
+				uiid = #uiid#,
+				clearingAmount = #clearingAmount#,
+				clearingScale = #clearingScale#,
+				finalamountTotal = #finalamountTotal#,
+				validBetAmountTotal = #validBetAmountTotal#,
+				ximaAmount = #ximaAmount#,
+				preferentialTotal = #preferentialTotal#,
+				realPL = #realPL#,
+				clearingType = #clearingType#,
+				clearingStatus = #clearingStatus#,
+				clearingTime = #clearingTime#,
+				clearingStartTime = #clearingStartTime#,
+				clearingEndTime = #clearingEndTime#,
+				clearingRemark = #clearingRemark#,
+				upuser = #upuser#,
+				uptime = #uptime#,
+				upclient = #upclient#
+			WHERE
+				clearingid = #clearingid#
+		]]>
+	</update>
+	
+	<update id="updateStauts" parameterClass="proxyClearingLog">
+		UPDATE a_proxy_clearing_log SET
+		clearingStatus = 3
+		WHERE uiid = #uiid# AND clearingStatus=2
+	</update>
+	
+	<delete id="delete" parameterClass="java.lang.Long">
+		<![CDATA[
+			DELETE FROM a_proxy_clearing_log WHERE clearingid = #clearingid#
+		]]>
+	</delete>
+	
+	
+	<select id="count" resultClass="java.lang.Long">
+		<![CDATA[
+			SELECT COUNT(0) FROM a_proxy_clearing_log g LEFT JOIN a_user_info u ON g.uiid=u.uiid 
+		]]>
+		<include refid="dynamicWhere"/> 
+	</select>
+	
+	<select id="pageSelect" resultClass="proxyClearingLog">
+		SELECT <include refid="commonColumns"/>
+	    <![CDATA[
+	        FROM a_proxy_clearing_log g LEFT JOIN a_user_info u ON g.uiid=u.uiid 
+	    ]]>
+	    <include refid="dynamicWhere"/> 
+	    <dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	<!-- 总计 -->
+	<select id="proxyClearingLogSum" resultClass="proxyClearingLogTotal">
+		SELECT IFNULL(sum(clearingAmount),'0.00') as clearingAmounts,IFNULL(sum(finalamountTotal),'0.00') as finalamountTotals,IFNULL(sum(validBetAmountTotal),'0.00') as validBetAmountTotals,IFNULL(sum(ximaAmount),'0.00') as ximaAmounts,IFNULL(sum(preferentialTotal),'0.00') as preferentialTotals,IFNULL(sum(realPL),'0.00') as realPLs
+	    <![CDATA[
+	        FROM a_proxy_clearing_log g LEFT JOIN a_user_info u ON g.uiid=u.uiid 
+	    ]]>
+	    <include refid="dynamicWhere"/> 
+	</select>
+	
+</sqlMap>

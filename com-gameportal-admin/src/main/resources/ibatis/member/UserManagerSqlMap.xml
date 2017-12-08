@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="UserManager">
+	<typeAlias alias="userManager" type="com.gameportal.manage.member.model.UserManager"/>
+	
+	<!-- 订单模块 -->
+	<typeAlias alias="payOrder" type="com.gameportal.manage.pay.model.PayOrder"/>
+	<!-- 洗码模块 -->
+	<typeAlias alias="memberXimaMain" type="com.gameportal.manage.xima.model.MemberXimaMain"/>
+	
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ximaColumns">
+	    <![CDATA[
+        	mxmid ,
+        	gpid ,
+        	uiid ,
+        	account ,
+        	name ,
+        	total ,
+        	ymdstart ,
+        	ymdend ,
+        	updatetime ,
+        	locked 
+	    ]]>
+	</sql>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="payOrderColumns">
+	    <![CDATA[
+        	poid ,
+        	platformorders ,
+        	uiid ,
+        	paytyple ,
+        	ordertype,
+        	ppid ,
+        	paymethods ,
+        	bankname ,
+        	bankcard ,
+        	openname ,
+        	deposit ,
+        	deposittime ,
+        	amount ,
+        	paystatus ,
+        	status ,
+        	remarks ,
+        	ordercontent ,
+        	create_date ,
+        	update_date ,
+        	uaccount ,
+        	urealname ,
+        	kfremarks ,
+        	kfid ,
+        	kfname ,
+        	kfopttime ,
+        	cwremarks ,
+        	cwid ,
+        	cwname ,
+        	cwopttime,
+        	beforebalance,
+        	laterbalance
+	    ]]>
+	</sql>
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+	    	um.uiid,
+        	u.account ,
+        	u.accounttype ,
+        	u.uname ,
+        	u.identitycard ,
+        	u.phone ,
+        	u.email ,
+        	u.QQ as qq,
+        	u.url ,
+        	u.create_date as createDate,
+        	u.typeflag,
+        	u.phonevalid,
+        	u.emailvalid,
+        	u.logincount,
+        	u.update_date as updateDate,
+        	um.belongid,
+        	um.payertype,
+        	um.remark,
+        	um.clienttype,
+        	dx.truename,
+        	dx.remark as extno
+	    ]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+ 		<dynamic prepend="WHERE">
+ 			<isNotEmpty prepend="AND" property="uiid">
+ 				um.uiid = #uiid#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="account">
+ 				u.account = #account#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="uname">
+ 				u.uname = #uname#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="phone">
+ 				u.phone = #phone#
+ 			</isNotEmpty>
+ 			
+ 			<isNotEmpty prepend="AND" property="email">
+ 				u.email = #email#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="qq">
+ 				u.QQ = #qq#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="belongid">
+ 				um.belongid = #belongid#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="truename">
+ 				dx.truename = #truename#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="starttime">
+ 				$starttime$
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="endtime">
+ 				$endtime$
+ 			</isNotEmpty>
+ 		</dynamic>
+ 	</sql>
+ 	
+ 	<insert id="insert" parameterClass="userManager">
+		INSERT INTO user_manager 
+		(
+			uiid,
+			belongid,
+			payertype,
+			remark,
+			clienttype
+		) VALUES
+		(
+			#uiid#,
+			#belongid#,
+			#payertype#,
+			#remark#,
+			#clienttype#
+		)
+	</insert>
+	
+	<update id="update" parameterClass="userManager">
+		UPDATE user_manager SET 
+			uiid = #uiid#,
+			belongid = #belongid#,
+			payertype = #payertype#,
+			remark = #remark#,
+			clienttype = #clienttype#
+		WHERE 
+		   uiid = #uiid#
+	</update>
+	
+	<delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from user_manager where
+        uiid = #uiid# 
+    ]]>
+    </delete>
+    
+    <select id="getDXList" resultClass="java.util.HashMap">
+    	<![CDATA[
+    		SELECT u.user_id as userId,u.account,u.truename,u.remark FROM system_users u LEFT JOIN system_user_role role ON u.user_id = role.user_id LEFT JOIN  system_roles roles ON roles.role_id = role.role_id
+			WHERE roles.role_name LIKE '%电销%'
+		]]>
+		<isNotEmpty prepend="AND" property="account">
+			u.account =#account#
+		</isNotEmpty>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+	
+	<select id="count" resultClass="long">
+		<![CDATA[
+        select count(0) from user_manager um LEFT JOIN a_user_info u ON um.uiid = u.uiid LEFT JOIN system_users dx ON um.belongid=dx.user_id 
+    	]]>
+		<include refid="dynamicWhere"/>   
+		
+	</select>
+	
+	<select id="selectUManager" resultClass="userManager">
+		SELECT uiid,belongid,payertype,remark,clienttype FROM user_manager WHERE uiid = #uiid#
+	</select>
+	<select id="pageSelect" resultClass="userManager">
+		select <include refid="commonColumns"/>,
+		IFNULL((SELECT SUM(amount) FROM a_pay_order WHERE paytyple = 2 AND status=3 AND ordertype=4 AND uiid=um.uiid),'0.00') AS fastpay,
+		IFNULL((SELECT SUM(amount) FROM a_pay_order WHERE paytyple = 0 AND status=3 AND uiid=um.uiid),'0.00') AS paytotal
+	    <![CDATA[
+	        from user_manager um LEFT JOIN a_user_info u ON um.uiid = u.uiid LEFT JOIN system_users dx ON um.belongid=dx.user_id 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<isNotEmpty property="paytotal">
+ 			<![CDATA[HAVING paytotal > #paytotal#]]>
+ 		</isNotEmpty> 
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	
+	
+	<!-- 存款取款 优惠 -->
+	<select id="selectPayOrderList" resultClass="payOrder">
+		select <include refid="payOrderColumns"/> 
+			<![CDATA[
+				from a_pay_order where status=3   	
+			]]>
+		<isNotEmpty property="paytyple">
+			and paytyple=#paytyple# 
+		</isNotEmpty>
+		<isNotEmpty property="uaccount">
+			and uaccount=#uaccount# 
+		</isNotEmpty>
+		<isNotEmpty property="coupon">
+			and ordertype >0
+		</isNotEmpty>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	<select id="selectPayOrderCount" resultClass="long">
+		select  count(1)
+			<![CDATA[
+				from a_pay_order where status=3   	
+			]]>
+		<isNotEmpty property="paytyple">
+			and paytyple=#paytyple# 
+		</isNotEmpty>
+		<isNotEmpty property="uaccount">
+			and uaccount=#uaccount# 
+		</isNotEmpty>
+		<isNotEmpty property="coupon">
+			and ordertype >0
+		</isNotEmpty> 
+	</select>
+	
+	
+	<!-- 会员洗码记录 -->
+	<select id="selectXimaList" resultClass="memberXimaMain">
+		select <include refid="ximaColumns"/> 
+			<![CDATA[
+				from c_member_xima_main where 1=1
+			]]>
+		<isNotEmpty property="uaccount">
+			and account=#uaccount# 
+		</isNotEmpty>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	<select id="selectXimaCount" resultClass="long">
+		select count(1)
+			<![CDATA[
+				from c_member_xima_main where 1=1
+			]]>
+		<isNotEmpty property="uaccount">
+			and account=#uaccount# 
+		</isNotEmpty>
+	</select>
+	
+</sqlMap>

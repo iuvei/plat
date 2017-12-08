@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="UserBulletin">
+	
+	<typeAlias alias="userBulletin"
+		type="com.gameportal.web.adver.model.UserBulletin" />
+		
+	<resultMap id="userBulletinResult" class="userBulletin">
+		<result property="rid" column="rid" />
+		<result property="bid" column="bid" />
+		<result property="userid" column="userid" />
+	</resultMap>
+	
+	<select id="queryAll" resultMap="userBulletinResult">
+	  select * 
+	  <![CDATA[
+	    from a_user_web_pulletin where userid = #userid#
+	  ]]>
+	</select>
+	
+	<insert id="insert" parameterClass="userBulletin">
+    <![CDATA[
+        INSERT INTO
+        a_user_web_pulletin (
+        	rid,
+        	bid,
+        	userid
+        ) VALUES (
+        	#rid#,
+        	#bid#,
+        	#userid#
+        )
+    ]]>
+		<selectKey resultClass="java.lang.Long" type="post"
+			keyProperty="rid">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+	
+	 <update id="update" parameterClass="userBulletin">
+    	<![CDATA[
+			UPDATE a_user_web_pulletin SET userid = #userid#
+		]]>
+	      <dynamic>  
+	        <isNotEmpty property="bid" prepend=",">  
+	            <![CDATA[ 
+	                bid = #bid#
+	            ]]>  
+	        </isNotEmpty>
+	      </dynamic>
+		<![CDATA[
+	        WHERE userid = #userid#
+	    ]]>
+    </update>
+</sqlMap>

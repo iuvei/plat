@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="FcRecord">
+
+    <typeAlias alias="fcRecord" type="com.gameportal.manage.fcrecord.model.FcRecord"/>
+
+    <resultMap id="fcRecordResult" class="fcRecord">
+        <result property="rid" column="rid"/>
+        <result property="account" column="account"/>
+        <result property="username" column="username"/>
+        <result property="phone" column="phone"/>
+        <result property="pname" column="pname"/>
+        <result property="money" column="money"/>
+        <result property="paytime" column="paytime"/>
+        <result property="visitorId" column="visitorId"/>
+        <result property="visitor" column="visitor"/>
+        <result property="vistortime" column="vistortime"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	rid ,
+        	account ,
+        	username ,
+        	phone ,
+        	pname ,
+        	money ,
+        	paytime,
+        	visitorId,
+        	visitor,
+        	vistortime,
+        	remark
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="fcRecord">
+    <![CDATA[
+        INSERT INTO
+        a_fc_record (
+        	rid ,
+        	account ,
+        	username ,
+        	phone ,
+        	pname ,
+        	money ,
+        	paytime,
+        	visitorId,
+        	visitor,
+        	vistortime,
+        	remark
+        ) VALUES (
+        	#rid# ,
+        	#account# ,
+        	#username# ,
+        	#phone# ,
+        	#pname# ,
+        	#money# ,
+        	#paytime#,
+        	#visitorId#,
+        	#visitor#,
+        	#vistortime#,
+        	#remark#
+        )
+    ]]>
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="rid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="fcRecord">
+    <![CDATA[
+        UPDATE a_fc_record SET rid = #rid#
+    ]]>
+    <dynamic>
+		 <isNotEmpty prepend="," property="account">
+	           <![CDATA[ account = #account# ]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="username">
+	            <![CDATA[ username = #username#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="phone">
+	             <![CDATA[ phone = #phone#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="pname">
+	             <![CDATA[ pname = #pname#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="money">
+	             <![CDATA[ money = #money#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="paytime">
+	             <![CDATA[ paytime = #paytime#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="visitorId">
+	             <![CDATA[ visitorId = #visitorId#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="visitor">
+	             <![CDATA[ visitor = #visitor#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="vistortime">
+	             <![CDATA[ vistortime = #vistortime#]]>
+	     </isNotEmpty>
+	     <isNotEmpty prepend="," property="remark">
+	             <![CDATA[ remark = #remark#]]>
+	     </isNotEmpty>
+    </dynamic>
+	 <![CDATA[
+        WHERE rid = #rid#
+	 ]]>
+    </update>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="account">
+	             account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="pname">
+	             pname = #pname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="startDate">
+	            <![CDATA[ paytime >= CONCAT(#startDate#,' 00:00:00')]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="endDate">
+	            <![CDATA[ paytime <= CONCAT(#endDate#,' 23:59:59')]]>
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+    
+    <select id="getObject" resultClass="fcRecord">
+    	select <include refid="commonColumns"/>
+    	<![CDATA[
+    	 from a_fc_record  
+    	]]>
+    	where account = #account#
+    </select>
+    <select id="pageSelect" resultMap="fcRecordResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_fc_record 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <select id="sumFcMoney" resultClass="long">
+    	select IFNULL(sum(money),0)
+	    <![CDATA[
+	        from a_fc_record 
+	    ]]>
+		<include refid="dynamicWhere"/>
+    </select>
+    
+      <select id="count" resultClass="long">
+    	select count(1)
+	    <![CDATA[
+	        from a_fc_record 
+	    ]]>
+		<include refid="dynamicWhere"/>
+    </select>
+</sqlMap>

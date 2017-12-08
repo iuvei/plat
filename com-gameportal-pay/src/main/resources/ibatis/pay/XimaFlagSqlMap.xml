@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="XimaFlag">
+
+	<typeAlias alias="ximaFlag" type="com.gameportal.web.user.model.XimaFlag"/>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	flagid ,
+        	flaguiid ,
+        	flagaccount ,
+        	isxima ,
+        	updatetime,
+        	remark
+	    ]]>
+	</sql>
+	
+	<insert id="insert" parameterClass="ximaFlag">
+		<![CDATA[
+	        INSERT INTO
+	        a_isxima_flag (
+	        	flagid ,
+	        	flaguiid ,
+	        	flagaccount ,
+	        	isxima ,
+	        	updatetime,
+	        	remark
+	        ) VALUES (
+	        	#flagid# ,
+	        	#flaguiid# ,
+	        	#flagaccount# ,
+	        	#isxima# ,
+	        	#updatetime#,
+	        	#remark#
+	        )
+	    ]]>
+        <selectKey resultClass="java.lang.Integer" type="post" keyProperty="flagid" >
+           SELECT  last_insert_id()
+        </selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="ximaFlag">
+		<![CDATA[
+        UPDATE a_isxima_flag SET
+	        flagid = #flagid# ,
+        	flaguiid = #flaguiid# ,
+        	flagaccount = #flagaccount# ,
+        	isxima = #isxima# ,
+        	updatetime = #updatetime#
+        WHERE 
+	        flagid = #flagid# 
+    	]]>
+	</update>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="flagid">
+	             flagid = #flagid#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="flaguiid">
+	             flaguiid = #flaguiid#
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="flagaccount">
+	             flagaccount = #flagaccount#
+	        </isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<select id="count" resultClass="long">
+		<![CDATA[
+        select count(flagid) from a_isxima_flag
+    	]]>
+		<include refid="dynamicWhere"/>    
+	</select>
+	
+	<select id="pageSelect" resultClass="ximaFlag">
+		select <include refid="commonColumns"/>
+		<![CDATA[
+	        from a_isxima_flag 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+</sqlMap>

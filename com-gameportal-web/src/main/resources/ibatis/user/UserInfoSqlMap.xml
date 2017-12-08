@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="UserInfo">
+
+    <typeAlias alias="userInfo" type="com.gameportal.web.user.model.UserInfo"/>
+    <typeAlias alias="userLoginLog" type="com.gameportal.web.user.model.UserLoginLog"/>
+    <typeAlias alias="betLog" type="com.gameportal.web.user.model.BetLog"/>
+    <typeAlias alias="userSign" type="com.gameportal.web.user.model.UserSign"/>
+
+    <resultMap id="userInfoResult" class="userInfo">
+        <result property="uiid" column="uiid"/>
+        <result property="account" column="account"/>
+        <result property="passwd" column="passwd"/>
+        <result property="accounttype" column="accounttype"/>
+        <result property="uname" column="uname"/>
+        <result property="atmpasswd" column="atmpasswd"/>
+        <result property="identitycard" column="identitycard"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="qq" column="QQ"/>
+        <result property="birthday" column="birthday"/>
+        <result property="grade" column="grade"/>
+        <result property="puiid" column="puiid"/>
+        <result property="url" column="url"/>
+        <result property="regip" column="regip"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="loginip" column="uloginip"/>
+        <result property="logincount" column="logincount"/>
+        <result property="apipassword" column="apipassword"/>
+        <result property="phonevalid" column="phonevalid"/>
+        <result property="emailvalid" column="emailvalid"/>
+        <result property="ulabel" column="ulabel"/>
+        <result property="relaflag" column="relaflag"/>
+        <result property="relaaccount" column="relaaccount"/>
+        <result property="iparea" column="iparea"/>
+        <result property="phonearea" column="phonearea"/>
+        <result property="regdevice" column="regdevice"/>
+        <result property="weekrake" column="weekrake"/>
+        <result property="platforms" column="platforms"/>
+        <result property="spread" column="spread"/>
+        <result property="withdrawlFlag" column="withdrawl_flag"/>
+        <result property="mgId" column="mgId"/>
+    </resultMap>
+    
+    <resultMap id="betLogResult" class="betLog">
+    	<result property="pdid" column="pdid"/>
+    	<result property="account" column="account"/>
+    	<result property="platformcode" column="platformcode"/>
+    	<result property="gamecode" column="gamecode"/>
+    	<result property="gamename" column="gamename"/>
+    	<result property="gameCategory" column="gameCategory"/>
+    	<result property="betdate" column="betdate"/>
+    	<result property="betno" column="betno"/>
+    	<result property="betamount" column="betamount"/>
+    	<result property="profitamount" column="profitamount"/>
+    	<result property="currency" column="currency"/>
+    	<result property="tormbrate" column="tormbrate"/>
+    	<result property="finalamount" column="finalamount"/>
+    	<result property="origin" column="origin"/>
+    	<result property="gameResult" column="gameResult"/>
+    	<result property="result" column="result"/>
+    	<result property="validBetAmount" column="validBetAmount"/>
+    	<result property="flag" column="flag"/>
+    	<result property="playType" column="playType"/>
+    	<result property="tableCode" column="tableCode"/>
+    	<result property="inningsCode" column="inningsCode"/>
+    	<result property="loginIP" column="loginIP"/>
+    	<result property="beforeCerdit" column="beforeCerdit"/>
+    	<result property="round" column="round"/>
+    	<result property="recalcuTime" column="recalcuTime"/>
+    	<result property="roundNo" column="roundNo"/>
+    	<result property="commission" column="commission"/>
+    </resultMap>
+    
+     <resultMap id="userSignResult" class="userSign">
+    	<result property="sid" column="sid"/>
+    	<result property="uiid" column="uiid"/>
+    	<result property="account" column="account"/>
+    	<result property="puid" column="puid"/>
+    	<result property="createtime" column="createtime"/>
+    	<result property="status" column="status"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	uiid ,
+        	account ,
+        	passwd ,
+        	accounttype ,
+        	uname ,
+        	atmpasswd ,
+        	identitycard ,
+        	phone ,
+        	email ,
+        	QQ ,
+        	birthday ,
+        	grade ,
+        	puiid ,
+        	url,
+        	regip,
+        	status ,
+        	create_date ,
+        	update_date,
+        	uloginip,
+        	logincount,
+        	apipassword,
+        	phonevalid,
+        	emailvalid,
+        	ulabel,
+        	relaflag,
+        	relaaccount,
+        	iparea,
+        	phonearea,
+        	regdevice,
+        	weekrake,
+        	platforms,
+        	spread,
+        	withdrawl_flag,
+        	mgId
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="userInfo">
+    <![CDATA[
+        INSERT INTO
+        a_user_info (
+        	uiid ,
+        	account ,
+        	passwd ,
+        	accounttype ,
+        	uname ,
+        	atmpasswd ,
+        	identitycard ,
+        	phone ,
+        	email ,
+        	QQ ,
+        	birthday ,
+        	grade ,
+        	puiid ,
+        	url,
+        	regip,
+        	status ,
+        	create_date ,
+        	apipassword,
+        	update_date ,
+        	ulabel,
+        	regdevice,
+        	spread
+        ) VALUES (
+        	#uiid# ,
+        	#account# ,
+        	#passwd# ,
+        	#accounttype# ,
+        	#uname# ,
+        	#atmpasswd# ,
+        	#identitycard# ,
+        	#phone# ,
+        	#email# ,
+        	#qq# ,
+        	#birthday# ,
+        	#grade# ,
+        	#puiid# ,
+        	#url#,
+        	#regip#,
+        	#status# ,
+        	#createDate# ,
+        	#apipassword#,
+        	#updateDate# ,
+        	#ulabel#,
+        	#regdevice#,
+        	#spread#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_user_info_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="uiid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+    
+   	<select id="selectUserLoginLog" resultClass="String">
+		select <![CDATA[ account from user_login_log c]]>
+		 <dynamic prepend="where">
+		 	<isNotEmpty prepend="AND" property="loginips">
+	           <![CDATA[c.uiid <> #uiid# and c.loginip in ($loginips$)]]>
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="loginip">
+	           c.loginip = #loginip#
+	        </isNotEmpty>
+		 </dynamic>
+	      GROUP BY account
+	</select>
+	
+	<select id="selectUserLoginIps" resultClass="String">
+		select <![CDATA[ loginip from user_login_log where 1=1 ]]>
+		<isNotEmpty prepend="AND" property="uiid">
+			 uiid = #uiid#
+		</isNotEmpty>
+		GROUP BY loginip
+	</select>
+	
+	<insert id="insertLog" parameterClass="userLoginLog">
+		INSERT INTO user_login_log (
+			uiid,
+			account,
+			truename,
+			logintime,
+			loginip,
+			loginsource,
+			logindevice,
+			iparea
+		) VALUES (
+			#uiid#,
+			#account#,
+			#truename#,
+			#logintime#,
+			#loginip#,
+			#loginsource#,
+			#logindevice#,
+			#iparea#
+		)
+	</insert>
+    <update id="update" parameterClass="userInfo">
+        UPDATE a_user_info SET
+	        account = #account# ,
+	        passwd = #passwd# ,
+	        accounttype = #accounttype# ,
+	        <isNotNull property="uname">
+	        uname = #uname# ,
+	        </isNotNull>
+	        atmpasswd = #atmpasswd# ,
+	        <isNotNull property="identitycard">
+	         identitycard = #identitycard# ,
+	        </isNotNull>
+	        <isNotNull property="phone">
+	        phone = #phone# ,
+	        </isNotNull>
+	        <isNotNull property="email">
+	        email = #email# ,
+	        </isNotNull>
+	        <isNotNull property="qq">
+	        QQ = #qq# ,
+	        </isNotNull>
+	       <isNotNull property="phonevalid">
+	      	phonevalid =#phonevalid# ,
+	       </isNotNull>
+	       <isNotNull property="emailvalid">
+	       	emailvalid = #emailvalid#,
+	       </isNotNull>
+	       <isNotNull property="relaflag">
+	       	relaflag = #relaflag#,
+	       </isNotNull>
+	       <isNotNull property="relaaccount">
+	       	relaaccount = #relaaccount#,
+	       </isNotNull>
+	       <isNotNull property="iparea">
+	       	iparea = #iparea#,
+	       </isNotNull>
+	       <isNotNull property="phonearea">
+	       	phonearea = #phonearea#,
+	       </isNotNull>
+	       <isNotNull property="regdevice">
+	       	regdevice = #regdevice#,
+	       </isNotNull>
+	       <isNotNull property="platforms">
+	       	platforms = #platforms#,
+	       </isNotNull>
+	       <isNotNull property="mgId">
+	       	mgId = #mgId#,
+	       </isNotNull>
+	        birthday = #birthday# ,
+	        grade = #grade# ,
+	        puiid = #puiid# ,
+	        status = #status# ,
+	        create_date = #createDate# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        uiid = #uiid# 
+    
+    </update>
+    
+    <update id="loginUpdate" parameterClass="userInfo">
+    	UPDATE a_user_info SET
+    	<isNotNull property="loginip">
+    		uloginip = #loginip#,
+    	</isNotNull>
+    	<isNotNull property="logincount">
+    		logincount = logincount+#logincount#,
+    	</isNotNull>
+    	<isNotNull property="relaflag">
+	       	relaflag = #relaflag#,
+	       </isNotNull>
+	       <isNotNull property="relaaccount">
+	       	relaaccount = #relaaccount#,
+	       </isNotNull>
+	       <isNotNull property="status">
+	       	status = #status#,
+	       </isNotNull>
+	       <isNotNull property="iparea">
+	       	iparea = #iparea#,
+	       </isNotNull>
+	       <isNotNull property="phonearea">
+	       	phonearea = #phonearea#,
+	       </isNotNull>
+	       <isNotNull property="regdevice">
+	       	regdevice = #regdevice#,
+	       </isNotNull>
+	        <isNotNull property="platforms">
+	       	platforms = #platforms#,
+	       </isNotNull>
+	       <isNotNull property="mgId">
+	       	mgId = #mgId#,
+	       </isNotNull>
+    	update_date = #updateDate# 
+    	WHERE 
+	        uiid = #uiid# 
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_user_info where
+        uiid = #uiid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="userInfoResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_user_info 
+	        where 
+		        uiid = #uiid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="uiid">
+	             uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="passwd">
+	             passwd = #passwd#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="accounttype">
+	             accounttype > #accounttype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uname">
+	             uname = #uname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="atmpasswd">
+	             atmpasswd = #atmpasswd#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="identitycard">
+	             identitycard = #identitycard#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="phone">
+	             phone = #phone#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="email">
+	             email = #email#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="qq">
+	             QQ = #qq#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="birthday">
+	             birthday = #birthday#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="grade">
+	             grade = #grade#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="puiid">
+	             puiid = #puiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status > #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="phonevalid">
+	       		phonevalid =#phonevalid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="emailvalid">
+	       		emailvalid > #emailvalid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="emaileq">
+	       		emailvalid = #emaileq#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="neuiid">
+	       		uiid != #neuiid#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_user_info
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!-- 获取电销ID -->
+    <select id="getDXList" resultClass="String">
+    	SELECT u.user_id FROM system_users u LEFT JOIN system_user_role role ON u.user_id = role.user_id LEFT JOIN  system_roles roles ON roles.role_id = role.role_id
+		WHERE roles.role_name LIKE '%电销%'
+    </select>
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="userInfoResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_user_info 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	<select id="selectProxyUrl" resultClass="java.util.HashMap">
+		select <![CDATA[
+		urlid,proxyurl,proxyuid from a_proxy_url where status=1
+		]]>
+		<isNotEmpty prepend="AND" property="proxyurl">
+			proxyurl LIKE CONCAT('%',#proxyurl#,'%' )
+		</isNotEmpty>
+	</select>
+	
+	<sql id="gameOrderWhere">
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="starttime">
+				betdate >= #starttime#
+			</isNotNull>
+			<isNotNull prepend="AND" property="endtime">
+				<![CDATA[ betdate <= #endtime#]]>
+			</isNotNull>
+			<isNotNull prepend="AND" property="account">
+				account = #account#
+			</isNotNull>
+			<isNotNull prepend="AND" property="flag">
+				flag = #flag#
+			</isNotNull>
+			<isNotEmpty prepend="AND" property="platformcode">
+	       		platformcode = #platformcode#
+	        </isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<!-- 查询游戏订单 -->
+	<select id="selectGameOrder" resultClass="betLog">
+		<![CDATA[
+		  select platformcode,gamename,betdate,betno,betamount,validBetAmount,profitamount,flag from a_game_betlog
+		 ]]>
+		 <include refid="gameOrderWhere"/>
+		 <![CDATA[
+		 	 order by betdate desc
+		 ]]>
+		  <isNotEmpty property="limitParams">
+		  	limit $limitParams$
+		  </isNotEmpty>
+	</select>
+	
+	<!-- 统计游戏注单条数 -->
+	<select id="selectGameOrderCount" resultClass="long">
+		 <![CDATA[
+        select count(0) from a_game_betlog
+    ]]>
+		<include refid="gameOrderWhere"/>    
+	</select>
+	
+	<!-- 查询游戏订单 -->
+	<select id="selectGameBetLog" resultClass="betLog">
+		select pdid,account,gamename,profitamount from a_game_betlog where
+		<isNotNull property="winAmount">
+			profitamount &gt;= #winAmount#
+		</isNotNull>
+		order by betdate desc , profitamount desc
+		<isNotEmpty property="limitNum">
+			limit $limitNum$
+		</isNotEmpty>
+	</select>
+	
+	
+	<!-- 查询所有有转账到MG记录的用户信息 -->
+	<select id="selectUserOfTransferMg" resultClass="userInfo">
+		select a.* from (select DISTINCT uuid from a_game_transfer where togamename like 'MG%' and create_date &lt; '2016-03-28 00:00:00') aa LEFT JOIN a_user_info a ON aa.uuid = a.uiid
+	</select>
+	
+	<!--新增会员签到记录-->
+	 <insert id="insertUserSign" parameterClass="userSign">
+    	<![CDATA[
+        INSERT INTO a_user_sign (
+        	sid ,
+        	uiid ,
+        	account ,
+        	puid ,
+        	createtime
+	        ) VALUES (
+	        	#sid# ,
+	        	#uiid# ,
+	        	#account# ,
+	        	#puid# ,
+	        	#createtime#
+	        )
+	    ]]>
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="sid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+    
+	<!-- 查询会员是否签到 -->
+	<select id="queryUserSignList" resultMap="userSignResult">
+		<![CDATA[
+        	select * from a_user_sign
+    	]]>
+    	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="uiid">
+				uiid = #uiid#
+			</isNotNull>
+			<isNotNull prepend="AND" property="status">
+				status = #status#
+			</isNotNull>
+			<isNotNull prepend="AND" property="starttime">
+				DATE_FORMAT(createtime,'%Y-%m-%d') >= #starttime#
+			</isNotNull>
+			<isNotNull prepend="AND" property="endtime">
+				<![CDATA[ DATE_FORMAT(createtime,'%Y-%m-%d') <= #endtime#]]>
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<!-- 更新用户签到记录 -->
+	<update id="updateUserSign" parameterClass="userSign">
+    	UPDATE a_user_sign SET
+    	<isNotNull property="status">
+    		status = #status#
+    	</isNotNull>
+    	WHERE uiid = #uiid#
+    </update>
+	
+</sqlMap>

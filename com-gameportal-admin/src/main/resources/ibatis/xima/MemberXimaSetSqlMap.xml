@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MemberXimaSet">
+
+    <typeAlias alias="memberXimaSet" type="com.gameportal.manage.xima.model.MemberXimaSet"/>
+
+    <resultMap id="memberXimaSetResult" class="memberXimaSet">
+        <result property="mxsid" column="mxsid"/>
+        <result property="gpid" column="gpid"/>
+        <result property="grade" column="grade"/>
+        <result property="scale" column="scale"/>
+        <result property="updateuserid" column="updateuserid"/>
+        <result property="updatetime" column="updatetime"/>
+        <result property="updateusername" column="updateusername"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	mxsid ,
+        	gpid ,
+        	grade ,
+        	scale ,
+        	updateuserid ,
+        	updatetime ,
+        	updateusername 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="memberXimaSet">
+    <![CDATA[
+        INSERT INTO
+        c_member_xima_set (
+        	mxsid ,
+        	gpid ,
+        	grade ,
+        	scale ,
+        	updateuserid ,
+        	updatetime ,
+        	updateusername 
+        ) VALUES (
+        	#mxsid# ,
+        	#gpid# ,
+        	#grade# ,
+        	#scale# ,
+        	#updateuserid# ,
+        	#updatetime# ,
+        	#updateusername# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="mxsid" >
+           select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="memberXimaSet">
+    <![CDATA[
+        UPDATE c_member_xima_set SET
+	        gpid = #gpid# ,
+	        grade = #grade# ,
+	        scale = #scale# ,
+	        updateuserid = #updateuserid# ,
+	        updatetime = #updatetime# ,
+	        updateusername = #updateusername# 
+        WHERE 
+	        mxsid = #mxsid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from c_member_xima_set where
+        mxsid = #mxsid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="memberXimaSetResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from c_member_xima_set 
+	        where 
+		        mxsid = #mxsid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="mxsid">
+	             mxsid = #mxsid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="gpid">
+	             gpid = #gpid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="grade">
+	             grade = #grade#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="scale">
+	             scale = #scale#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateuserid">
+	             updateuserid = #updateuserid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updatetime">
+	             updatetime = #updatetime#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateusername">
+	             updateusername = #updateusername#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from c_member_xima_set
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="memberXimaSetResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from c_member_xima_set 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	
+</sqlMap>

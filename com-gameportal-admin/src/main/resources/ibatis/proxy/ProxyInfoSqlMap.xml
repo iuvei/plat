@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProxyInfo">
+
+    <typeAlias alias="proxyInfo" type="com.gameportal.manage.proxy.model.ProxyInfo"/>
+    <typeAlias alias="proxyReportEntity" type="com.gameportal.manage.proxy.model.ProxyReportEntity"/>
+
+    <resultMap id="proxyInfoResult" class="proxyInfo">
+        <result property="uiid" column="uiid"/>
+        <result property="account" column="account"/>
+        <result property="passwd" column="passwd"/>
+        <result property="accounttype" column="accounttype"/>
+        <result property="uname" column="uname"/>
+        <result property="atmpasswd" column="atmpasswd"/>
+        <result property="identitycard" column="identitycard"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="qq" column="QQ"/>
+        <result property="url" column="url"/>
+        <result property="birthday" column="birthday"/>
+        <result property="grade" column="grade"/>
+        <result property="puiid" column="puiid"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="lowerUser" column="LowerUser"/>
+        <result property="returnscale" column="returnscale"/>
+        <result property="ximascale" column="ximascale"/>
+        <result property="isximaflag" column="isximaflag"/>
+        <result property="clearingtype" column="clearingtype"/>
+        <result property="pyid" column="pyid"/>
+        <result property="loginip" column="uloginip"/>
+        <result property="logincount" column="logincount"/>
+    </resultMap>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="uiid">
+	             u1.uiid = #uiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="account">
+	             u1.account = #account#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="passwd">
+	             u1.passwd = #passwd#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="accounttype">
+	             u1.accounttype = #accounttype#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="uname">
+	             u1.uname = #uname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="atmpasswd">
+	             u1.atmpasswd = #atmpasswd#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="identitycard">
+	             u1.identitycard = #identitycard#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="phone">
+	             u1.phone = #phone#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="email">
+	             u1.email = #email#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="qq">
+	             u1.QQ = #qq#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="birthday">
+	             u1.birthday = #birthday#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="grade">
+	             u1.grade = #grade#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="puiid">
+	             u1.puiid = #puiid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             u1.status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             u1.create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             u1.update_date = #updateDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="domain">
+	       		purl.proxyurl LIKE '%$domain$%'
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="manageIds">
+	            (u1.uiid in ($manageIds$) or u1.puiid in ($manageIds$))
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_user_info u1  LEFT JOIN a_game_proxyinfo p ON u1.uiid = p.uiid JOIN a_proxy_url purl ON u1.uiid = purl.proxyuid 
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="proxyInfoResult">
+    	select
+	    <![CDATA[
+        	u1.uiid ,
+        	u1.account ,
+        	u1.passwd ,
+        	u1.accounttype ,
+        	u1.uname ,
+        	u1.atmpasswd ,
+        	u1.identitycard ,
+        	u1.phone ,
+        	u1.email ,
+        	u1.QQ ,
+        	u1.birthday ,
+        	u1.grade ,
+        	u1.puiid ,
+        	u1.status ,
+        	u1.uloginip,
+        	u1.logincount,
+        	u1.create_date ,
+        	u1.update_date ,
+        	p.pyid,
+        	purl.proxyurl as url,
+        	ifnull(p.returnscale,'0.00') as returnscale,
+        	ifnull(p.ximascale,'0.00') as ximascale,
+        	ifnull(p.isximaflag,'0') as isximaflag,
+        	ifnull(p.clearingtype,'0') as clearingtype,
+        	(SELECT COUNT(0) FROM a_user_info WHERE puiid=u1.uiid) AS LowerUser
+	        from a_user_info u1 LEFT JOIN a_game_proxyinfo p ON u1.uiid = p.uiid LEFT JOIN a_proxy_url purl ON u1.uiid = purl.proxyuid 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+	
+	
+	<!-- 查询代理用户信息 -->
+	<select id="getUserMsg" resultClass="proxyReportEntity">
+		SELECT 
+		u.uiid AS proxyid,
+		u.account AS proxyaccount,
+		u.uname AS proxyname,
+		pu.proxyurl AS proxydomain,
+		p.clearingtype AS clearingtype,
+		p.returnscale AS returnscale,
+		p.ximascale AS ximascale,
+		p.isximaflag AS ximaStatus,
+		(SELECT COUNT(lu.uiid) FROM a_user_info lu WHERE lu.puiid = u.uiid) AS lowerUser
+		FROM a_user_info u LEFT JOIN a_game_proxyinfo p ON u.uiid = p.uiid LEFT JOIN a_proxy_url pu ON u.uiid = pu.proxyuid
+		WHERE u.accounttype = 1
+		<isNotEmpty prepend="AND" property="proxyuid">
+		   u.uiid=#proxyuid#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 查询代理推广数据 -->
+	<select id="getProxySpreadInfo" resultClass="proxyReportEntity">
+	SELECT * FROM (
+		SELECT
+		(SELECT COUNT(lu.uiid) FROM a_user_info lu WHERE lu.puiid = u.uiid 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[lu.create_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[lu.create_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS lowecCount,
+		(SELECT COUNT(DISTINCT ulog.uiid) FROM user_login_log ulog LEFT JOIN a_user_info u2 ON ulog.uiid = u2.uiid WHERE u2.puiid = u.uiid 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[ulog.logintime >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[ulog.logintime <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS activeUser,
+		(SELECT COUNT(DISTINCT p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=0 AND p.status = 3
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS payusercount,
+		(SELECT COUNT(p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=0 AND p.status = 3
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS paycount,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=0 AND p.status = 3
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS payAmountTotal,
+		(SELECT COUNT(DISTINCT p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=1 AND p.status = 3 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS atmusercount,
+		(SELECT COUNT(p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=1 AND p.status = 3 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS atmcount,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=1 AND p.status = 3 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS atmAmountTotal,
+		(<![CDATA[SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=2 AND p.status = 3 AND p.ordertype <> 3]]> 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS preferentialTotal,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=2 AND p.status = 3 AND p.ordertype = 3 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS sdximaAmount,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=3 AND p.status = 3 AND p.ordertype = 0 
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[p.update_date >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[p.update_date <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS buckleAmount,
+		(SELECT SUM(px.ximamoney) FROM a_proxyuser_xima_log px WHERE px.status=1 
+		<isNotEmpty prepend="AND" property="proxyuid">
+			px.puiid=#proxyuid#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[px.ximatime >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[px.ximatime <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS proxyXimaAmount,
+		(SELECT SUM(cx.total) FROM c_member_xima_main cx LEFT JOIN a_user_info u2 ON cx.uiid = u2.uiid WHERE u2.puiid = u.uiid AND cx.locked=1
+		<isNotEmpty prepend="AND" property="startdate">
+			<![CDATA[cx.updatetime >= CONCAT(#startdate#,' ','00:00:00')]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="enddate">
+			<![CDATA[cx.updatetime <= CONCAT(#enddate#,' ','23:59:59')]]>
+		</isNotEmpty>
+		) AS sysXimaAmount,
+		(SELECT SUM(ap.clearingAmount) FROM a_proxy_clearing_log ap WHERE ap.uiid=u.uiid AND ap.clearingStatus = 2) AS recordAmount
+		FROM
+		a_user_info u
+		WHERE u.accounttype = 1 
+		<isNotEmpty prepend="AND" property="proxyuid">
+		   u.uiid=#proxyuid#
+		</isNotEmpty>
+	) AS tmp
+	</select>
+	
+	<!-- 获取代理报表投注信息 -->
+	<select id="getProxyBetInfo" resultClass="proxyReportEntity">
+	SELECT 
+	COUNT(a.pdid) AS betTotel,
+	SUM(a.betamount) AS betAmountTotal,
+	SUM(a.validBetAmount) AS validBetAmountTotal,
+	SUM(a.finalamount) AS winlossTotal
+	FROM a_user_info u LEFT JOIN a_game_betlog a ON u.account = a.account
+	WHERE u.puiid = #proxyuid#
+	<isNotEmpty prepend="AND" property="startdate">
+		<![CDATA[a.betdate >= CONCAT(#startdate#,' ','00:00:00')]]>
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="enddate">
+		<![CDATA[a.betdate <= CONCAT(#enddate#,' ','23:59:59')]]>
+	</isNotEmpty>
+	</select>
+	
+	<!-- 代理线下首存会员存款总金额 -->
+	<select id="selectProxyFcPayOrderTotal" resultClass="long">
+		<![CDATA[select IFNULL(sum(a.amount),'0') from a_pay_order a ]]> 
+		<dynamic prepend="WHERE">
+		    <isNotEmpty prepend="AND" property="paytyple">
+		        a.paytyple = #paytyple#
+		    </isNotEmpty>
+		    <isNotEmpty prepend="AND" property="status">
+		        a.status = #status#
+		    </isNotEmpty>
+		    <isNotEmpty prepend="AND" property="startDate">
+		       <![CDATA[ a.update_date >=CONCAT(#startDate#,' 00:00:00')]]>
+		    </isNotEmpty>
+		    <isNotEmpty prepend="AND" property="endDate">
+		       <![CDATA[ a.update_date <=CONCAT(#endDate#,' 23:59:59')]]>
+		    </isNotEmpty>
+			<isNotEmpty prepend="AND" property="pname">
+		        <![CDATA[ a.uaccount in (select b.account from a_fc_record b where b.paytime>=CONCAT(#startDate#,' 00:00:00') and b.paytime<=CONCAT(#endDate#,' 23:59:59') and b.pname = #pname#) ]]>
+		    </isNotEmpty>
+	    </dynamic>
+	</select>
+</sqlMap>

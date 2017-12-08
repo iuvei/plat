@@ -1,0 +1,12 @@
+.bg-keno{
+    background:#0055ce url("../images/keno-bg.jpg") no-repeat;
+    padding-top: 80px;
+    padding-bottom:80px;
+}
+.keno-main{
+    width: 1006px;
+    padding: 20px;
+    border: 1px solid #fdfdfd;
+    margin: 0 auto;
+    background: rgba(255,255,255,.3);
+}

@@ -1,0 +1,31 @@
+@charset "utf-8";
+/* CSS Document */
+.notice{ color:#fff; font-size:16px; padding:18px 0;}
+.qipai_h{ height:88px; background:url(../images/h02.png) no-repeat;}
+.qipai_h .fl{ font-size:30px; color:#331f00; padding:12px 0 0 45px;}
+.qipai_h .fl span{ font-size:18px; display:block;}
+.qipai_h .fl span i{ color:#ffc05c; font-style:normal; font-size:12px;}
+.qipai_h .fr{ width:740px; text-align:center; line-height:90px; color:#fff; font-size:36px;}
+.qipai_h .fr span{ color:#c4222e;}
+.qipaiList{ padding:26px 7px 0; border:solid 2px #ff9900;}
+.qipaiList li{ float:left; width:298px; height:438px; background:url(../images/mask.png); margin:0 7px 26px; border:solid 1px #787878; position:relative;}
+.gameImg{ padding:20px 0; text-align:center; height:260px; overflow:hidden;}
+.gameImg img{ width:260px;}
+.qipaiList li h2{ font-size:30px; height:60px; line-height:60px; background:#ff9900; color:#331f00; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 10px; text-align:center;}
+.qipaiList li span{ width:100px; height:100px; display:block; position:absolute; right:-5px; top:-5px; background:url(../images/icon_state.png) no-repeat;}
+.qipaiList li span.new{ background-position:0 0;}
+.qipaiList li span.hot{ background-position:-104px 0;}
+.qipaiList li span.recommend{ background-position:-210px 0;}
+.gameOpt{ border-top:solid 1px #787878; padding:18px 0; height:40px; overflow:hidden; background:url(../images/mask.png);}
+.gameOpt a{ width:100px; height:40px; line-height:40px; text-align:center; display:inline-block; margin:0 20px; font-size:18px; border-radius:3px;}
+.gameOpt .gameRule{ color:#331f00; background:#cccccc;}
+.gameOpt .playNow{ color:#ffffff; background:#0babff;}
+.gameOpt .fr:hover{ color:#0babff;}
+.gameOpt .fl:hover{ color:#c4222e;}
+.rule_con{ padding:20px 40px 40px;}
+.rule_con h2{ color:#0babff; font-size:14px; padding:15px 0;}
+.rule_con h3{ color:#333; font-size:14px; padding-top:10px;}
+.rule_con p{ color:#63666e; line-height:24px; font-size:14px;}
+
+#rule{ width:800px; height:650px; overflow-x:hidden;}
+

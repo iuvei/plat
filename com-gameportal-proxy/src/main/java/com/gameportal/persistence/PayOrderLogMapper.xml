@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.PayOrderLogMapper">
+	<insert id="insert" parameterType="PayOrderLog">
+	 <selectKey resultType="int" keyProperty="coid" order="AFTER">  
+       	 SELECT LAST_INSERT_ID()  
+   	 </selectKey>
+     <![CDATA[
+        INSERT INTO
+        	a_pay_order_log (
+        	uiid ,
+        	orderid ,
+        	amount ,
+        	walletlog ,
+        	gamelog ,
+        	type,
+        	remark,
+        	createtime 
+        ) VALUES (
+        	#{uiid},
+        	#{orderid},
+        	#{amount},
+        	#{walletlog},
+        	#{gamelog},
+        	#{type},
+        	#{remark},
+        	#{createtime}
+        )
+    ]]>
+    </insert>
+</mapper>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SiteSettings">
+
+    <typeAlias alias="siteSettings" type="com.gameportal.manage.sitesettings.model.SiteSettings"/>
+
+    <resultMap id="siteSettingsResult" class="siteSettings">
+        <result property="ssid" column="ssid"/>
+        <result property="sitename" column="sitename"/>
+        <result property="siteurl" column="siteurl"/>
+        <result property="spreadkey" column="spreadkey"/>
+        <result property="lockedcount" column="lockedcount"/>
+        <result property="isclosed" column="isclosed"/>
+        <result property="isregister" column="isregister"/>
+        <result property="islogin" column="islogin"/>
+        <result property="isrecharge" column="isrecharge"/>
+        <result property="isdraw" column="isdraw"/>
+        <result property="lowestdraw" column="lowestdraw"/>
+        <result property="highestdraw" column="highestdraw"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	ssid ,
+        	sitename ,
+        	siteurl ,
+        	spreadkey ,
+        	lockedcount ,
+        	isclosed ,
+        	isregister ,
+        	islogin ,
+        	isrecharge ,
+        	isdraw ,
+        	lowestdraw ,
+        	highestdraw ,
+        	create_date ,
+        	update_date 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="siteSettings">
+    <![CDATA[
+        INSERT INTO
+        a_site_settings (
+        	ssid ,
+        	sitename ,
+        	siteurl ,
+        	spreadkey ,
+        	lockedcount ,
+        	isclosed ,
+        	isregister ,
+        	islogin ,
+        	isrecharge ,
+        	isdraw ,
+        	lowestdraw ,
+        	highestdraw ,
+        	create_date ,
+        	update_date 
+        ) VALUES (
+        	#ssid# ,
+        	#sitename# ,
+        	#siteurl# ,
+        	#spreadkey# ,
+        	#lockedcount# ,
+        	#isclosed# ,
+        	#isregister# ,
+        	#islogin# ,
+        	#isrecharge# ,
+        	#isdraw# ,
+        	#lowestdraw# ,
+        	#highestdraw# ,
+        	#createDate# ,
+        	#updateDate# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_site_settings_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="ssid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="siteSettings">
+    <![CDATA[
+        UPDATE a_site_settings SET
+	        sitename = #sitename# ,
+	        siteurl = #siteurl# ,
+	        spreadkey = #spreadkey# ,
+	        lockedcount = #lockedcount# ,
+	        isclosed = #isclosed# ,
+	        isregister = #isregister# ,
+	        islogin = #islogin# ,
+	        isrecharge = #isrecharge# ,
+	        isdraw = #isdraw# ,
+	        lowestdraw = #lowestdraw# ,
+	        highestdraw = #highestdraw# ,
+	        update_date = #updateDate# 
+        WHERE 
+	        ssid = #ssid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_site_settings where
+        ssid = #ssid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="siteSettingsResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_site_settings 
+	        where 
+		        ssid = #ssid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="ssid">
+	             ssid = #ssid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="sitename">
+	             sitename = #sitename#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="siteurl">
+	             siteurl = #siteurl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="spreadkey">
+	             spreadkey = #spreadkey#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="lockedcount">
+	             lockedcount = #lockedcount#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="isclosed">
+	             isclosed = #isclosed#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="isregister">
+	             isregister = #isregister#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="islogin">
+	             islogin = #islogin#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="isrecharge">
+	             isrecharge = #isrecharge#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="isdraw">
+	             isdraw = #isdraw#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="lowestdraw">
+	             lowestdraw = #lowestdraw#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="highestdraw">
+	             highestdraw = #highestdraw#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="updateDate">
+	             update_date = #updateDate#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_site_settings
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="siteSettingsResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_site_settings 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	
+</sqlMap>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PayPlatform">
+
+    <typeAlias alias="payPlatform" type="com.gameportal.manage.payplatform.model.PayPlatform"/>
+
+    <resultMap id="payPlatformResult" class="payPlatform">
+        <result property="ppid" column="ppid"/>
+        <result property="pname" column="pname"/>
+        <result property="domainname" column="domainname"/>
+        <result property="platformkey" column="platformkey"/>
+        <result property="ciphercode" column="ciphercode"/>
+        <result property="returnUrl" column="returnUrl"/>
+        <result property="noticeUrl" column="noticeUrl"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="sequence" column="sequence"/>
+        <result property="channelType" column="channelType"/>
+        <result property="fee" column="fee"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	ppid ,
+        	pname ,
+        	domainname ,
+        	platformkey ,
+        	ciphercode ,
+        	returnUrl ,
+        	noticeUrl ,
+        	status ,
+        	create_date ,
+        	update_date,
+        	sequence,
+        	fee,
+        	channelType
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="payPlatform">
+    <![CDATA[
+        INSERT INTO
+        a_pay_platform (
+        	ppid ,
+        	pname ,
+        	domainname ,
+        	platformkey ,
+        	ciphercode ,
+        	returnUrl ,
+        	noticeUrl ,
+        	status ,
+        	create_date ,
+        	update_date ,
+        	sequence,
+        	fee,
+        	channelType
+        ) VALUES (
+        	#ppid# ,
+        	#pname# ,
+        	#domainname# ,
+        	#platformkey# ,
+        	#ciphercode# ,
+        	#returnUrl# ,
+        	#noticeUrl# ,
+        	#status# ,
+        	#createDate# ,
+        	#updateDate# ,
+        	#sequence#,
+        	#fee#,
+        	#channelType#
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL a_pay_platform_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="ppid" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="payPlatform">
+    <![CDATA[
+        UPDATE a_pay_platform SET
+	        pname = #pname# ,
+	        domainname = #domainname# ,
+	        platformkey = #platformkey# ,
+	        ciphercode = #ciphercode# ,
+	        returnUrl = #returnUrl# ,
+	        noticeUrl = #noticeUrl# ,
+	        status = #status# ,
+	        update_date = #updateDate# ,
+	        sequence =#sequence#,
+	        fee=#fee#
+        WHERE 
+	        ppid = #ppid# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from a_pay_platform where
+        ppid = #ppid# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="payPlatformResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_pay_platform 
+	        where 
+		        ppid = #ppid# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="ppid">
+	             ppid = #ppid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="pname">
+	             pname like  CONCAT('%',#pname#,'%')
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="domainname">
+	             domainname = #domainname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="platformkey">
+	             platformkey = #platformkey#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="ciphercode">
+	             ciphercode = #ciphercode#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="returnUrl">
+	             returnUrl = #returnUrl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="noticeUrl">
+	             noticeUrl = #noticeUrl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="status">
+	             status = #status#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="createDate">
+	             create_date = #createDate#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channelType">
+	             channelType = #channelType#
+	       </isNotEmpty>
+	
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_pay_platform
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="payPlatformResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_pay_platform 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+
+	
+</sqlMap>

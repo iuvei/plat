@@ -1,0 +1,127 @@
+#insert-notices,
+.ui-notices {
+    margin-bottom: 0;
+}
+
+.ui-notices .detail {
+    width: 881px;
+}
+
+.ui-contents {
+    height: auto;
+}
+
+.main {
+    margin-right: -2px;
+    margin-bottom: 80px;
+    overflow: hidden;
+    border-radius: 7px 0 0 0;
+    -webkit-border-radius: 7px 0 0 0;
+}
+
+.main .nav {
+    height: 57px;
+    border-bottom: 2px solid #ccc;
+    line-height: 56px;
+    background-color: #eee;
+}
+
+.main .nav li {
+    float: left;
+    width: 200px;
+    cursor: pointer;
+}
+
+.main .nav li.active {
+    height: 57px;
+    border-bottom: 2px solid #e58961;
+    color: #fff;
+    background-color: #ff996c;
+    cursor: default;
+    border-radius: 7px 7px 0 0;
+    -webkit-border-radius: 7px 7px 0 0;
+}
+
+.main .content {
+    width: 956px;
+    padding-bottom: 20px;
+    margin: auto;
+}
+
+.main .content .item .banner {
+    position: relative;
+    width: 950px;
+    height: 200px;
+    border: 3px solid #ff996c;
+    cursor: pointer;
+}
+
+.main .content .item .banner img {
+    width: 950px;
+    height: 200px;
+}
+
+.main .content .item .banner .ui-mask {
+    display: none;
+    position: absolute;
+}
+
+.main .content .item .banner .ui-btn {
+    display: none;
+    top: 85px;
+    left: 410px;
+    width: 130px;
+    z-index: 1000;
+}
+
+.main .content .item .banner:hover .ui-mask,
+.main .content .item .banner:hover .ui-btn {
+    display: block;
+}
+
+.main .content .item.active .banner:hover .ui-mask,
+.main .content .item.active .banner:hover .ui-btn {
+    display: none;
+}
+
+.main .content .item .shadow {
+    width: 956px;
+    height: 20px;
+    background: url(/static/images/topic/onSale/shadow.png) no-repeat top center;
+}
+
+.main .content .item .split {
+    width: 956px;
+    height: 32px;
+    margin-top: 10px;
+    background: url(/static/images/topic/onSale/splite.png) no-repeat top center;
+}
+
+.main .content .item.active .split {
+    display: none;
+}
+
+.main .content .item .text h1 {
+    height: 46px;
+    line-height: 46px;
+}
+
+.main .content .item .text h2 {
+    height: 30px;
+    line-height: 30px;
+}
+
+.main .content .item .text li {
+    line-height: 26px;
+}
+
+.main .content .item .text table {
+    width: 956px;
+}
+
+.main .content .item .text .back {
+    width: 280px;
+    height: 46px;
+    margin: 70px auto 30px auto;
+    line-height: 46px;
+}

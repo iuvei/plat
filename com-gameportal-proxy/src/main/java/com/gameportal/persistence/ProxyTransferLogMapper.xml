@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.ProxyTransferLogMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="selectRow">
+	    <![CDATA[
+   		tid,
+		pid,
+		paccount,
+		lid,
+		laccount,
+		amount,
+		createdate,
+		beforebalance,
+		afterbalance,
+		lbeforebalance,
+		lafterbalance
+	    ]]>
+	</sql>
+	
+	<!-- 查询条件    -->
+	<sql id="selectWhere">
+		<if test="pd.laccount !=null and pd.laccount !=''">
+			and laccount = #{pd.laccount}
+		</if>
+		<if test="pd.pid !=null and pd.pid !=''">
+			and pid = #{pd.pid}
+		</if> 
+  		<if test="pd.startDate !=null and pd.startDate !=''">
+			and createdate >= #{pd.startDate}
+		</if>
+		<if test="pd.endDate !=null and pd.endDate !=''">
+			<![CDATA[and createdate <= #{pd.endDate}]]>
+		</if>
+	</sql>
+	
+	<!-- 查询代理转账记录 -->
+	<select id="findlistPageProxyTransferLog" resultType="ProxyTransferLog" parameterType="page">
+		SELECT <include refid="selectRow"/>
+	    <![CDATA[
+	        FROM a_proxy_transfer where 1=1
+	    ]]>
+	    <include refid="selectWhere"/>
+	    order by createdate DESC
+	</select>
+	
+	
+	
+	<!-- 新增代理转账记录 -->
+	<insert id="insertProxyTransferLog" parameterType="ProxyTransferLog">
+		 <selectKey resultType="int" keyProperty="pid" order="AFTER">  
+       	 	SELECT LAST_INSERT_ID()  
+   		</selectKey>  
+		<![CDATA[
+			INSERT INTO a_proxy_transfer 
+			(
+				pid,
+				paccount,
+				lid,
+				laccount,
+				amount,
+				createdate,
+				beforebalance,
+				afterbalance,
+				lbeforebalance,
+				lafterbalance
+			) VALUES (
+				#{pid},
+				#{paccount},
+				#{lid},
+				#{laccount},
+				#{amount},
+				#{createdate},
+				#{beforebalance},
+				#{afterbalance},
+				#{lbeforebalance},
+				#{lafterbalance}
+			)
+		]]>
+	</insert>
+
+</mapper>

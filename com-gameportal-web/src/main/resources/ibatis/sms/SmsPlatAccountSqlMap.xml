@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SmsPlatAccount">
+
+	<typeAlias alias="smsPlatAccount"
+		type="com.gameportal.web.sms.model.SmsPlatAccount" />
+
+	<resultMap id="smsPlatAccountResult" class="smsPlatAccount">
+		<result property="spaid" column="spaid" />
+		<result property="servername" column="servername" />
+		<result property="serverport" column="serverport" />
+		<result property="account" column="account" />
+		<result property="pwd" column="pwd" />
+		<result property="status" column="status" />
+		<result property="createTime" column="createtime" />
+		<result property="createName" column="createname" />
+		<result property="updateTime" column="updatetime" />
+		<result property="updateName" column="updatename" />
+	</resultMap>
+
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	spaid,
+       	servername,
+       	serverport,
+       	account,
+       	pwd,
+       	status,
+       	createtime,
+       	createname,
+       	updatetime,
+       	updatename
+	  ]]>
+	</sql>
+
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="status">
+				status = #status#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<select id="pageSelect" resultClass="smsPlatAccount">
+		select
+		<include refid="commonColumns" />
+	 	<![CDATA[
+			from sms_plat_account
+		]]>
+		<include refid="dyncmicWhere" />
+	</select>
+
+</sqlMap>

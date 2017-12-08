@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MarketingChannel">
+
+	<typeAlias alias="marketingChannel" type="com.gameportal.manage.marketing.model.MarketingChannel"/>
+	<typeAlias alias="marketAnalysis" type="com.gameportal.manage.marketing.model.MarketAnalysis"/>
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+	    	channelid,
+        	channelkey ,
+        	channelname ,
+        	channelvalue ,
+        	channelurl ,
+        	channelremark ,
+        	channelstatus ,
+        	channeltime
+	    ]]>
+	</sql>
+	
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="channelid">
+	             channelid = #channelid#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channelkey">
+	             channelkey = #channelkey#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channelname">
+	             channelname = #channelname#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channelvalue">
+	             channelvalue = #channelvalue#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channelurl">
+	             channelurl = #channelurl#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channelremark">
+	             channelremark = #channelremark#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channelstatus">
+	             channelstatus = #channelstatus#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+	<insert id="insert" parameterClass="marketingChannel">
+		<![CDATA[
+	        INSERT INTO
+	        a_marketing_channel (
+	        	channelkey ,
+	        	channelname ,
+	        	channelvalue ,
+	        	channelurl ,
+	        	channelremark ,
+	        	channelstatus ,
+	        	channeltime
+	        ) VALUES (
+	        	#channelkey# ,
+	        	#channelname# ,
+	        	#channelvalue# ,
+	        	#channelurl# ,
+	        	#channelremark# ,
+	        	#channelstatus# ,
+	        	#channeltime# 
+	        )
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterClass="marketingChannel">
+		<![CDATA[
+        UPDATE a_marketing_channel SET
+	        channelkey = #channelkey# ,
+        	channelname = #channelname# ,
+        	channelvalue = #channelvalue# ,
+        	channelurl = #channelurl# ,
+        	channelremark = #channelremark# ,
+        	channelstatus = #channelstatus# ,
+        	channeltime = #channeltime# 
+        WHERE 
+	        channelid = #channelid# 
+    	]]>
+	</update>
+	
+	<delete id="delete" parameterClass="java.lang.String">
+    <![CDATA[
+        delete from a_marketing_channel where
+         channelid = #channelid# 
+    ]]>
+    </delete>
+    
+    <select id="pageSelect" resultClass="marketingChannel">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from a_marketing_channel 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from a_marketing_channel
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <select id="selectReglist" resultClass="marketAnalysis">
+    	SELECT 
+		u.ulabel AS channel,
+		COUNT(u.uiid) AS regcount
+		FROM a_user_info u 
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="startdate">
+	             <![CDATA[u.create_date >= CONCAT(#startdate#,' 00:00:00')]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="enddate">
+	             <![CDATA[u.create_date <= CONCAT(#enddate#,' 23:59:59')]]>
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="channel">
+	             u.ulabel = #channel#
+	       </isNotEmpty>
+		</dynamic>
+		GROUP BY u.ulabel
+    </select>
+    
+    <select id="selectPaylist" resultClass="marketAnalysis">
+    	SELECT 
+		u.ulabel AS channel,
+		COUNT(DISTINCT ap.uiid) AS paycount,
+		SUM(amount) AS payamont
+		FROM a_pay_order ap LEFT JOIN a_user_info u ON ap.uiid = u.uiid
+		WHERE ap.status = 3 AND ap.paytyple=0 AND ap.ordertype=0 
+		<isNotEmpty prepend="AND" property="startdate">
+             <![CDATA[ap.deposittime >= CONCAT(#startdate#,' 00:00:00')]]>
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="enddate">
+             <![CDATA[ap.deposittime <= CONCAT(#enddate#,' 23:59:59')]]>
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="channel">
+             u.ulabel = #channel#
+       </isNotEmpty>
+		GROUP BY u.ulabel
+    </select>
+</sqlMap>

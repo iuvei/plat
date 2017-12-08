@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SystemUserRole">
+
+    <typeAlias alias="systemUserRole" type="com.gameportal.manage.system.model.SystemUserRole"/>
+
+    <resultMap id="systemUserRoleResult" class="systemUserRole">
+        <result property="userRoleId" column="user_role_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="roleId" column="role_id"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="commonColumns">
+	    <![CDATA[
+        	user_role_id ,
+        	user_id ,
+        	role_id 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterClass="systemUserRole">
+    <![CDATA[
+        INSERT INTO
+        system_user_role (
+        	user_role_id ,
+        	user_id ,
+        	role_id 
+        ) VALUES (
+        	#userRoleId# ,
+        	#userId# ,
+        	#roleId# 
+        )
+    ]]>
+    <!--
+    mysql:		type="post" SELECT  select last_insert_id()
+    sqlserver:	type="post" SELECT  @@identity  AS  ID
+    oracle:		type="pre" 	SELECT  sequenceName.nextval AS ID FROM DUAL system_user_role_SEQ.nextval AS ID FROM DUAL
+    DB2:		type="pre"	values nextval for sequenceName
+    -->
+        <selectKey resultClass="java.lang.Long" type="post" keyProperty="userRoleId" >
+           SELECT  last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="systemUserRole">
+    <![CDATA[
+        UPDATE system_user_role SET
+	        user_id = #userId# ,
+	        role_id = #roleId# 
+        WHERE 
+	        user_role_id = #userRoleId# 
+    ]]>
+    </update>
+
+    <delete id="delete" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from system_user_role where
+        user_role_id = #userRoleId# 
+    ]]>
+    </delete>
+    
+    <select id="getById" resultMap="systemUserRoleResult">
+	    select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_user_role 
+	        where 
+		        user_role_id = #userRoleId# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="AND" property="userRoleId">
+	             user_role_id = #userRoleId#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="userId">
+	             user_id = #userId#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="roleId">
+	             role_id = #roleId#
+	       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+    <select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) from system_user_role
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 #offset#,#pageSize#,#lastRows# 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="pageSelect" resultMap="systemUserRoleResult">
+    	select <include refid="commonColumns"/>
+	    <![CDATA[
+	        from system_user_role 
+	    ]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+    </select>
+
+	 <delete id="deleteByUserId" parameterClass="java.lang.Long">
+    <![CDATA[
+        delete from system_user_role where
+        user_id = #userId# 
+    ]]>
+    </delete>
+	
+</sqlMap>

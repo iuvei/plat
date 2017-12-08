@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProxyUserXimaLog">
+
+	<typeAlias alias="proxyUserXimaLog" type="com.gameportal.manage.proxy.model.ProxyUserXimaLog"/>
+	
+	<sql id="commonColumns">
+		xm.logid,
+		xm.uiid,
+		xm.account,
+		xm.uname,
+		xm.puiid,
+		xm.ximascale,
+		xm.ximamoney,
+		xm.yhmoney,
+		xm.validmoney,
+		xm.jsstarttime,
+		xm.jsendtime,
+		xm.ximatime,
+		xm.status,
+		u.account AS proxyaccount,
+		u.uname AS proxyuname
+	</sql>
+	
+	<insert id="insert" parameterClass="proxyUserXimaLog">
+		<![CDATA[
+			INSERT INTO a_proxyuser_xima_log (
+				uiid,
+				account,
+				uname,
+				puiid,
+				ximascale,
+				ximamoney,
+				yhmoney,
+				validmoney,
+				jsstarttime,
+				jsendtime,
+				ximatime,
+				status
+			) VALUES (
+				#uiid#,
+				#account#,
+				#uname#,
+				#puiid#,
+				#ximascale#,
+				#ximamoney#,
+				#yhmoney#,
+				#validmoney#,
+				#jsstarttime#,
+				#jsendtime#,
+				#ximatime#,
+				#status#
+			)
+		]]>
+	</insert>
+	
+	<update id="update" parameterClass="proxyUserXimaLog">
+		UPDATE a_proxyuser_xima_log SET 
+			uiid = #uiid#,
+			account = #account#,
+			uname = #uname#,
+			puiid = #puiid#,
+			ximascale = #ximascale#,
+			ximamoney = #ximamoney#,
+			yhmoney = #yhmoney#,
+			validmoney = #validmoney#,
+			jsstarttime = #jsstarttime#,
+			jsendtime = #jsendtime#,
+			ximatime = #ximatime#,
+			status = #status#
+		WHERE
+			logid = #logid#
+	</update>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="logid">
+				xm.logid = #logid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="account">
+				xm.account = #account#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="startDate">
+				xm.ximatime >= #startDate#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endDate">
+				<![CDATA[
+					xm.ximatime <= #endDate#
+				]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="puiid">
+				xm.puiid = #puiid#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<select id="count" resultClass="long">
+    <![CDATA[
+        select count(0) FROM a_proxyuser_xima_log xm LEFT JOIN a_user_info u ON xm.puiid = u.uiid 
+    ]]>
+		<include refid="dynamicWhere"/>    
+    </select>
+    
+	<select id="pageSelect" resultClass="proxyUserXimaLog">
+		SELECT <include refid="commonColumns"/>
+		<![CDATA[
+			FROM a_proxyuser_xima_log xm LEFT JOIN a_user_info u ON xm.puiid = u.uiid 
+		]]>
+		<include refid="dynamicWhere"/>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortColumns">$sortColumns$</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+</sqlMap>

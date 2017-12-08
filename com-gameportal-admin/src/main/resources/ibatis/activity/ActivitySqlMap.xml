@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Activity">
+	<typeAlias alias="activityEntity" type="com.gameportal.manage.pay.model.Activity"/>
+	<typeAlias alias="activityFlagEntity" type="com.gameportal.manage.pay.model.ActivityFlag"/>
+	<sql id="commonColumns">
+	  <![CDATA[
+	  	aid,
+        hdtype,
+        hdnumber,
+        hdtext,
+        hdscale,
+        multiple,
+        isxima,
+        notecontext,
+        status,
+        uptime,
+        maxmoney,
+        minmoney,
+        hdrule,
+        acgroup,
+        rewmoney
+	  ]]>
+	</sql>
+	<!--活动标示列-->
+	<sql id="acflagcoms">
+	  <![CDATA[
+	  	flagid,
+        type,
+        numbers,
+        flagtime,
+        hms,
+        uiid,
+        acid,
+        acgroup
+	  ]]>
+	</sql>
+	<sql id="dyncmicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="and" property="status">
+				status = #status#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hdnumber">
+				hdnumber = #hdnumber#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hdtype">
+				hdtype = #hdtype#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<insert id="insert" parameterClass="activityEntity">
+		<![CDATA[
+		INSERT INTO a_activity
+		(
+			aid,
+			hdtype,
+			hdnumber,
+			hdtext,
+			hdscale,
+			multiple,
+			isxima,
+			notecontext,
+			status,
+			uptime,
+			maxmoney,
+			minmoney,
+			hdrule,
+        	acgroup,
+       	    rewmoney
+		) 
+		VALUES 
+		(
+			#aid#,
+			#hdtype#,
+			#hdnumber#,
+			#hdtext#,
+			#hdscale#,
+			#multiple#,
+			#isxima#,
+			#notecontext#,
+			#status#,
+			#uptime#,
+			#maxmoney#,
+			#minmoney#,
+			#hdrule#,
+        	#acgroup#,
+        	#rewmoney#
+		)
+		]]>
+		<selectKey resultClass="java.lang.Integer" type="post" keyProperty="aid" >
+           SELECT  last_insert_id()
+        </selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="activityEntity">
+		<![CDATA[
+		UPDATE a_activity SET 
+			hdtype = #hdtype#,
+			hdnumber = #hdnumber#,
+			hdtext = #hdtext#,
+			hdscale = #hdscale#,
+			multiple = #multiple#,
+			isxima = #isxima#,
+			notecontext = #notecontext#,
+			status = #status#,
+			uptime = #uptime#,
+			maxmoney = #maxmoney#,
+			minmoney = #minmoney#,
+			hdrule = #hdrule#,
+        	acgroup = #acgroup#,
+        	rewmoney = #rewmoney#
+		WHERE
+			aid = #aid#
+		]]>
+	</update>
+	<select id="count" resultClass="Long">
+		select count(aid) <![CDATA[
+	    from a_activity
+	  ]]>
+	  <include refid="dyncmicWhere"/>
+	</select>
+	<select id="getList" resultClass="activityEntity">
+		select <include refid="commonColumns"/>
+	  <![CDATA[
+	    from a_activity
+	  ]]>
+	  <include refid="dyncmicWhere"/>
+	  <isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+	</select>
+	
+	<!--活动标示-->
+	<select id="getActivityFlag" resultClass="activityFlagEntity">
+		select <include refid="acflagcoms"/>
+	  <![CDATA[
+	    from a_activity_flag
+	  ]]>
+	  <dynamic prepend="where">
+			<isNotEmpty prepend="and" property="uiid">
+				uiid = #uiid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acid">
+				acid = #acid#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="acgroup">
+				acgroup = #acgroup#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="type">
+				type = #type#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="flagtime">
+				flagtime = #flagtime#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="hms">
+				hms = #hms#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<!--添加活动标示-->
+	<insert id="insertActivityFlag" parameterClass="activityFlagEntity">
+		<![CDATA[
+		INSERT INTO a_activity_flag
+		(
+       		type,
+        	numbers,
+       	 	flagtime,
+        	hms,
+        	uiid,
+        	acid,
+        	acgroup
+		) 
+		VALUES 
+		(
+			#type#,
+			#numbers#,
+			#flagtime#,
+			#hms#,
+			#uiid#,
+			#acid#,
+			#acgroup#
+		)
+		]]>
+		<selectKey resultClass="java.lang.Long" type="post" keyProperty="flagid" >
+           SELECT  last_insert_id()
+        </selectKey>
+	</insert>
+	
+</sqlMap>

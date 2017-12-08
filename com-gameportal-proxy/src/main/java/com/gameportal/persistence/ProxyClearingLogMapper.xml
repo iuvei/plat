@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.ProxyClearingLogMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="selectRow">
+	    <![CDATA[
+   		g.clearingid,
+		g.uiid,
+		g.clearingAmount,
+		g.clearingScale,
+		g.finalamountTotal,
+		g.validBetAmountTotal,
+		g.ximaAmount,
+		g.preferentialTotal,
+		g.realPL,
+		g.clearingType,
+		g.clearingStatus,
+		g.clearingTime,
+		g.clearingStartTime,
+		g.clearingEndTime,
+		g.clearingRemark,
+		g.upuser,
+		g.uptime,
+		g.upclient,
+		u.account,
+		u.uname
+	    ]]>
+	</sql>
+	
+	<!-- 查询条件    -->
+	<sql id="selectWhere">
+		<if test="pd.clearingid !=null and pd.clearingid !=''">
+			and g.clearingid = #{pd.clearingid}
+		</if>
+		<if test="pd.uiid !=null and pd.uiid !=''">
+			and g.uiid = #{pd.uiid}
+		</if> 
+  		<if test="pd.startDate !=null and pd.startDate !=''">
+			and g.clearingTime >= #{pd.startDate}
+		</if>
+		<if test="pd.endDate !=null and pd.endDate !=''">
+			<![CDATA[and g.clearingTime <= #{pd.endDate}]]>
+		</if>
+		<if test="pd.account !=null and pd.account !=''">
+			and u.account = #{pd.account}
+		</if>
+		<if test="pd.clearingStatus !=null and pd.clearingStatus !=''">
+			and g.clearingStatus = #{pd.clearingStatus}
+		</if>
+	</sql>
+	
+	<!-- 查询代理结算记录 -->
+	<select id="findlistPage" resultType="ProxyClearingLog" parameterType="page">
+		SELECT <include refid="selectRow"/>
+	    <![CDATA[
+	        FROM a_proxy_clearing_log g LEFT JOIN a_user_info u ON g.uiid=u.uiid where 1=1
+	    ]]>
+	    <include refid="selectWhere"/>
+	    order by g.clearingTime DESC
+	</select>
+	
+	<!-- 总计 -->
+	<select id="proxyClearingLogTotal" resultType="ProxyClearingLog" parameterType="java.util.Map">
+		SELECT IFNULL(sum(clearingAmount),'0.00') as clearingAmount,IFNULL(sum(finalamountTotal),'0.00') as finalamountTotal,IFNULL(sum(validBetAmountTotal),'0.00') as validBetAmountTotal,IFNULL(sum(ximaAmount),'0.00') as ximaAmount,IFNULL(sum(preferentialTotal),'0.00') as preferentialTotal,IFNULL(sum(realPL),'0.00') as realPL
+	    <![CDATA[
+	        FROM a_proxy_clearing_log g LEFT JOIN a_user_info u ON g.uiid=u.uiid where 1=1
+	    ]]>
+	    <if test="clearingid !=null and clearingid !=''">
+			and g.clearingid = #{clearingid}
+		</if>
+		<if test="uiid !=null and uiid !=''">
+			and g.uiid = #{uiid}
+		</if> 
+  		<if test="startDate !=null and startDate !=''">
+			and g.clearingTime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and g.clearingTime <= #{endDate}]]>
+		</if>
+		<if test="account !=null and account !=''">
+			and u.account = #{account}
+		</if>
+		<if test="clearingStatus !=null and clearingStatus !=''">
+			and g.clearingStatus = #{clearingStatus}
+		</if>
+	</select>
+	
+	<!-- 查询代理结算数据 -->
+	<select id="findByMap" resultType="ProxyClearingLog" parameterType="java.util.Map">
+		SELECT <include refid="selectRow"/>
+	    <![CDATA[
+	        FROM a_proxy_clearing_log g LEFT JOIN a_user_info u ON g.uiid=u.uiid where 1=1
+	    ]]>
+	    <if test="clearingid !=null and clearingid !=''">
+			and g.clearingid = #{clearingid}
+		</if>
+		<if test="uiid !=null and uiid !=''">
+			and g.uiid = #{uiid}
+		</if> 
+  		<if test="startDate !=null and startDate !=''">
+			and g.clearingTime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and g.clearingTime <= #{endDate}]]>
+		</if>
+		<if test="account !=null and account !=''">
+			and u.account = #{account}
+		</if>
+		<if test="clearingStatus !=null and clearingStatus !=''">
+			and g.clearingStatus = #{clearingStatus}
+		</if>
+	    order by g.clearingTime DESC
+	</select>
+	
+	<!-- 查询代理下线洗码 -->
+	<select id="selectProxyDownUserXima" resultType="betLogTotal">
+    	<![CDATA[
+    	SELECT u.uiid,u.account,u.uname,
+    	IFNULL(cx.ximascale,'0.00') AS ximascale,
+		(SELECT COUNT(1) FROM a_game_betlog g WHERE g.account=u.account
+		]]>
+   		<if test="flag !=null and flag !=''">
+			and g.flag = #{flag}
+		</if>
+   		<if test="startDate !=null and startDate !=''">
+			and g.betdate >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and g.betdate <= #{endDate}]]>
+		</if>
+   		<![CDATA[
+		) AS betTotel,
+		IFNULL(SUM(bet.betamount),'0.00') AS betAmountTotal,
+		IFNULL(SUM(bet.profitamount),'0.00') AS profitamountTotal,
+		IFNULL(-SUM(bet.finalamount),'0.00') AS finalamountTotal,
+		IFNULL(SUM(bet.validBetAmount),'0.00') AS validBetAmountTotal,
+		IFNULL((SELECT SUM(amount) FROM a_pay_order p WHERE p.uiid=u.uiid AND p.status=3 AND p.paytyple = 2
+		]]>
+		<if test="startDate !=null and startDate !=''">
+			and p.deposittime >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and p.deposittime <= #{endDate}]]>
+		</if>
+		<![CDATA[
+		AND p.ordertype IN ('1','2','4','5','6')),'0.00') AS preferentialTotal
+		FROM a_game_betlog bet LEFT JOIN a_user_info u ON u.account = bet.account 
+		]]>
+   		<if test="flag !=null and flag !=''">
+			and bet.flag = #{flag}
+		</if>
+   		<if test="startDate !=null and startDate !=''">
+			and bet.betdate >= #{startDate}
+		</if>
+		<if test="endDate !=null and endDate !=''">
+			<![CDATA[and bet.betdate <= #{endDate}]]>
+		</if>
+		<![CDATA[
+		LEFT JOIN c_user_xima_set cx ON cx.uiid = u.uiid AND cx.proxyid = #{uiid}
+		]]>
+		where 1=1
+		<if test="uiid !=null and uiid !=''">
+			and u.puiid = #{uiid}
+		</if>
+		<if test="account !=null and account !=''">
+			and u.account = #{account}
+		</if>
+		GROUP BY u.account
+    </select>
+    
+    <!-- 新增下线洗码记录 -->
+    <insert id="insertProxyUserXimaLog" parameterType="ProxyUserXimaLog">
+    	<selectKey resultType="long" keyProperty="logid" order="AFTER">  
+       	 	SELECT  
+        	LAST_INSERT_ID()  
+   		</selectKey>  
+		<![CDATA[
+			INSERT INTO a_proxyuser_xima_log (
+				uiid,
+				account,
+				uname,
+				puiid,
+				ximascale,
+				ximamoney,
+				yhmoney,
+				validmoney,
+				jsstarttime,
+				jsendtime,
+				ximatime,
+				status
+			) VALUES (
+				#{uiid},
+				#{account},
+				#{uname},
+				#{puiid},
+				#{ximascale},
+				#{ximamoney},
+				#{yhmoney},
+				#{validmoney},
+				#{jsstarttime},
+				#{jsendtime},
+				#{ximatime},
+				#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 新增代理结算记录 -->
+	<insert id="insertProxyClearingLog" parameterType="ProxyClearingLog">
+		 <selectKey resultType="int" keyProperty="clearingid" order="AFTER">  
+       	 	SELECT  
+        	LAST_INSERT_ID()  
+   		</selectKey>  
+		<![CDATA[
+			INSERT INTO a_proxy_clearing_log 
+			(
+				uiid,
+				clearingAmount,
+				clearingScale,
+				finalamountTotal,
+				validBetAmountTotal,
+				ximaAmount,
+				preferentialTotal,
+				realPL,
+				clearingType,
+				clearingStatus,
+				clearingTime,
+				clearingStartTime,
+				clearingEndTime,
+				clearingRemark,
+				upuser,
+				uptime,
+				upclient
+			) VALUES (
+				#{uiid},
+				#{clearingAmount},
+				#{clearingScale},
+				#{finalamountTotal},
+				#{validBetAmountTotal},
+				#{ximaAmount},
+				#{preferentialTotal},
+				#{realPL},
+				#{clearingType},
+				#{clearingStatus},
+				#{clearingTime},
+				#{clearingStartTime},
+				#{clearingEndTime},
+				#{clearingRemark},
+				#{upuser},
+				#{uptime},
+				#{upclient}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改代理结算记录 -->	
+	<update id="updateProxyClearingLog" parameterType="ProxyClearingLog">
+		<![CDATA[
+			UPDATE a_proxy_clearing_log SET
+				uiid = #{uiid},
+				clearingAmount = #{clearingAmount},
+				clearingScale = #{clearingScale},
+				finalamountTotal = #{finalamountTotal},
+				validBetAmountTotal = #{validBetAmountTotal},
+				ximaAmount = #{ximaAmount},
+				preferentialTotal = #{preferentialTotal},
+				realPL = #{realPL},
+				clearingType = #{clearingType},
+				clearingStatus = #{clearingStatus},
+				clearingTime = #{clearingTime},
+				clearingStartTime = #{clearingStartTime},
+				clearingEndTime = #{clearingEndTime},
+				clearingRemark = #{clearingRemark},
+				upuser = #{upuser},
+				uptime = #{uptime},
+				upclient = #{upclient}
+			WHERE
+				clearingid = #{clearingid}
+		]]>
+	</update>
+</mapper>

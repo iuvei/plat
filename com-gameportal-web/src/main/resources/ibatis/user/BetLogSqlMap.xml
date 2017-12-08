@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BetLogTotal">
+
+    <typeAlias alias="betLogTotal" type="com.gameportal.web.user.model.BetLogTotal"/>
+
+  	<select id="selectXimaBetTotal" resultClass="betLogTotal">
+    	<![CDATA[
+    		SELECT 
+    		IFNULL(u.puiid,'0') AS puiid,
+    		COUNT(1) AS betTotel,
+    		bet.account as account,u.uname as uname,
+    		platformcode,SUM(betamount) AS betAmountTotal,
+    		SUM(profitamount) AS profitamountTotal,
+    		IFNULL(SUM(validBetAmount),'0.00') AS validBetAmountTotal,
+    		bet.gamecode as gamecode,
+    		bet.gamename as gamename,
+    		bet.betdate AS betdate,
+    		(SELECT COUNT(0) FROM a_user_clearing_flag f LEFT JOIN a_user_info ub ON f.flaguiid=ub.uiid WHERE f.flaguiid=u.uiid
+    		]]>
+    		<isNotEmpty prepend="AND" property="jstime">
+    			f.flagtime = #jstime#
+    		</isNotEmpty>
+    		<isNotEmpty prepend="AND" property="platname">
+    			f.platname = bet.platformcode
+    		</isNotEmpty>
+    		<![CDATA[
+    		) AS clearingstatus 
+			FROM a_game_betlog bet LEFT JOIN a_user_info u ON bet.account = u.account 
+    	]]>
+    	<dynamic prepend="WHERE">
+    		<isNotEmpty prepend="AND" property="flag">
+              bet.flag = #flag#
+	      	 </isNotEmpty>
+    		<isNotEmpty prepend="AND" property="starttime">
+              bet.betdate >= #starttime#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="endtime">
+	      	 	  <![CDATA[
+	             bet.betdate <= #endtime#
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+              	u.account = #account#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="platformcode">
+              	<![CDATA[
+	              platformcode in $platformcode$
+	             ]]>
+	      	 </isNotEmpty>
+    	</dynamic>
+    	<dynamic prepend="GROUP BY">
+			<isNotEmpty property="groupColumns">$groupColumns$</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="limit">
+		  	<isNotEmpty property="limitParams">$limitParams$</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <!-- 洗码数据统计分页 -->
+    <select id="selectXimaBetTotalCount" resultClass="long">
+    	<![CDATA[
+	    	SELECT COUNT(DISTINCT $groupColumns$) AS ximaBetTotalCount
+			FROM a_game_betlog bet LEFT JOIN a_user_info u ON  bet.account = u.account
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="flag">
+              bet.flag = #flag#
+	      	 </isNotEmpty>
+    		<isNotEmpty prepend="AND" property="starttime">
+              bet.betdate >= #starttime#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="endtime">
+	      	 	  <![CDATA[
+	             bet.betdate <= #endtime#
+	             ]]>
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="account">
+              	u.account = #account#
+	      	 </isNotEmpty>
+	      	 <isNotEmpty prepend="AND" property="platformcode">
+              	<![CDATA[
+	              platformcode in $platformcode$
+	             ]]>
+	      	 </isNotEmpty>
+    	</dynamic>
+    </select>
+    
+    <select id="selectSum" resultClass="java.util.HashMap">
+    	<![CDATA[
+    	SELECT SUM(IFNULL(validBetAmount,'0.00')) AS betamontSum,account,platformcode,gamecode,gamename from a_game_betlog 
+    	]]>
+    	
+    	WHERE flag = 1
+    	
+    	<isNotNull prepend="AND" property="account">
+              account = #account#
+       	 </isNotNull>
+       	 <isNotNull prepend="AND" property="ymdstart">
+              betdate >= #ymdstart#
+      	 </isNotNull>
+      	 <isNotNull prepend="AND" property="ymdend">
+      	 	  <![CDATA[
+             betdate <= #ymdend#
+             ]]>
+      	 </isNotNull>
+      	 <isNotNull prepend="AND" property="platformcodeparams">
+      	 	<![CDATA[
+      	 		platformcode IN $platformcodeparams$
+      	 	]]>
+      	 </isNotNull>
+    	<![CDATA[
+    		
+		 	 GROUP BY gamecode
+		 ]]>
+    </select>
+    
+      <select id="sumBetTotalAmount" resultClass="long">
+    	<![CDATA[
+    	SELECT SUM(IFNULL(validBetAmount,'0.00')) AS betamontSum from a_game_betlog 
+    	]]>
+    	
+    	WHERE flag = 1
+    	<isNotNull prepend="AND" property="account">
+              account = #account#
+       	 </isNotNull>
+       	 <isNotNull prepend="AND" property="puiid">
+              account in (select account from a_user_info where puiid =#puiid#)
+       	 </isNotNull>
+       	 <isNotNull prepend="AND" property="startDate">
+              betdate >= CONCAT(#startDate#,' 00:00:00')
+      	 </isNotNull>
+      	 <isNotNull prepend="AND" property="endDate">
+      	 	  <![CDATA[
+             betdate <= CONCAT(#endDate#,' 23:59:59')
+             ]]>
+      	 </isNotNull>
+      	 <isNotNull prepend="AND" property="platformcodeparams">
+      	 	<![CDATA[
+      	 		platformcode IN $platformcodeparams$
+      	 	]]>
+      	 </isNotNull>
+    </select>
+    
+    <select id="selectUserClearnFlag" resultClass="long">
+    	SELECT COUNT(0) FROM a_user_clearing_flag f LEFT JOIN a_user_info ub ON f.flaguiid=ub.uiid
+    	<dynamic prepend="WHERE">
+	    	<isNotEmpty prepend="AND" property="uiid">
+	    			f.flaguiid = #uiid#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="jstime">
+	    			f.flagtime = #jstime#
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="platname">
+	    			f.platname = #platname#
+	    	</isNotEmpty>
+	    </dynamic>
+    </select>
+    
+    <select id="selectGameMemberByDate" resultClass="String">
+   		select DISTINCT(t.account) from a_game_betlog t 
+   		<dynamic prepend="WHERE">
+   			<isNotEmpty prepend="AND" property="betDate">
+   				<![CDATA[ t.betdate >= CONCAT(#betDate#,' 00:00:00') and t.betdate <=CONCAT(#betDate#,' 23:59:59')]]>
+	    	</isNotEmpty>
+   		</dynamic>
+    </select>
+    
+    <select id="selectGameMemberByWeek" resultClass="String">
+   		select DISTINCT(t.account) from a_game_betlog t WHERE flag = 1
+			<isNotEmpty prepend="AND" property="startDate">
+				<![CDATA[ t.betdate >= CONCAT(#startDate#,' 00:00:00') ]]>
+	    	</isNotEmpty>
+	    	<isNotEmpty prepend="AND" property="endDate">
+				<![CDATA[ t.betdate <=CONCAT(#endDate#,' 23:59:59') ]]>
+	    	</isNotEmpty>
+    </select>
+</sqlMap>

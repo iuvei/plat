@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gameportal.persistence.ProxyReportEntityMapper">
+	<!-- 查询代理用户信息 -->
+	<select id="getUserMsg" resultType="ProxyReportEntity">
+		SELECT 
+		u.uiid AS proxyid,
+		u.account AS proxyaccount,
+		u.uname AS proxyname,
+		pu.proxyurl AS proxydomain,
+		p.clearingtype AS clearingtype,
+		p.returnscale AS returnscale,
+		p.ximascale AS ximascale,
+		p.isximaflag AS ximaStatus,
+		(SELECT COUNT(lu.uiid) FROM a_user_info lu WHERE lu.puiid = u.uiid) AS lowerUser
+		FROM a_user_info u LEFT JOIN a_game_proxyinfo p ON u.uiid = p.uiid LEFT JOIN a_proxy_url pu ON u.uiid = pu.proxyuid
+		WHERE u.accounttype = 1
+		<if test="proxyuid !=null and proxyuid !=''">
+			and u.uiid=#{proxyuid}
+		</if>
+	</select>
+	
+	<!-- 查询代理推广数据 -->
+	<select id="getProxySpreadInfo" resultType="ProxyReportEntity">
+	SELECT * FROM (
+		SELECT
+		(SELECT COUNT(lu.uiid) FROM a_user_info lu WHERE lu.puiid = u.uiid
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and lu.create_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and lu.create_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>
+		) AS lowecCount,
+		(SELECT COUNT(DISTINCT ulog.uiid) FROM user_login_log ulog LEFT JOIN a_user_info u2 ON ulog.uiid = u2.uiid WHERE u2.puiid = u.uiid
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and ulog.logintime >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and ulog.logintime <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>
+		) AS activeUser,
+		(SELECT COUNT(DISTINCT p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=0 AND p.status = 3
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>
+		) AS payusercount,
+		(SELECT COUNT(p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=0 AND p.status = 3
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>
+		) AS paycount,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=0 AND p.status = 3
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>
+		) AS payAmountTotal,
+		(SELECT COUNT(DISTINCT p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=1 AND p.status = 3
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if> 
+		) AS atmusercount,
+		(SELECT COUNT(p.uiid) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=1 AND p.status = 3
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>  
+		) AS atmcount,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=1 AND p.status = 3
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>  
+		) AS atmAmountTotal,
+		<![CDATA[(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=2 AND p.status = 3 AND p.ordertype <>3]]>
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if> 
+		) AS preferentialTotal,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=2 AND p.status = 3 AND p.ordertype = 3
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if> 
+		) AS sdximaAmount,
+		(SELECT SUM(p.amount) FROM a_user_info u2 LEFT JOIN a_pay_order p ON u2.uiid = p.uiid WHERE u2.puiid = u.uiid AND p.paytyple=3 AND p.status = 3 AND p.ordertype = 0
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and p.update_date >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and p.update_date <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>  
+		) AS buckleAmount,
+		(SELECT SUM(px.ximamoney) FROM a_proxyuser_xima_log px WHERE px.status=1 
+		<if test="proxyuid !=null and proxyuid !=''">
+			and px.puiid=#{proxyuid}
+		</if>
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and px.ximatime >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and px.ximatime <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>  
+		) AS proxyXimaAmount,
+		(SELECT SUM(cx.total) FROM c_member_xima_main cx LEFT JOIN a_user_info u2 ON cx.uiid = u2.uiid WHERE u2.puiid = u.uiid AND cx.locked=1
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and cx.updatetime >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and cx.updatetime <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>  
+		) AS sysXimaAmount,
+		(SELECT SUM(ap.clearingAmount) FROM a_proxy_clearing_log ap WHERE ap.uiid=u.uiid AND ap.clearingStatus = 2) AS recordAmount
+		FROM
+		a_user_info u
+		WHERE u.accounttype = 1 
+		<if test="proxyuid !=null and proxyuid !=''">
+			and u.uiid=#{proxyuid}
+		</if>
+	) AS tmp
+	</select>
+	
+	<!-- 获取代理报表投注信息 -->
+	<select id="getProxyBetInfo" resultType="ProxyReportEntity">
+	SELECT 
+	COUNT(a.pdid) AS betTotel,
+	SUM(a.betamount) AS betAmountTotal,
+	SUM(a.validBetAmount) AS validBetAmountTotal,
+	SUM(a.finalamount) AS winlossTotal
+	FROM a_user_info u LEFT JOIN a_game_betlog a ON u.account = a.account
+	WHERE u.puiid = #{proxyuid}
+		<if test="startdate !=null and startdate !=''">
+			<![CDATA[and a.betdate >= CONCAT(#{startdate},' ','00:00:00')]]>
+		</if>
+		<if test="enddate !=null and enddate !=''">
+			<![CDATA[and a.betdate <= CONCAT(#{enddate},' ','23:59:59')]]>
+		</if>  
+	</select>
+</mapper>

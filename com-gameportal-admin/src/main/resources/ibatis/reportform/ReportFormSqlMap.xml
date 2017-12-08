@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ReportForm">
+
+    <typeAlias alias="reportForm" type="com.gameportal.manage.reportform.model.ReportForm"/>
+
+    <resultMap id="reportFormResult" class="reportForm">
+        <result property="registerNumber" column="registerNumber"/>
+        <result property="firstPayNumber" column="firstPayNumber"/>
+        <result property="firstPayTotalMoney" column="firstPayTotalMoney"/>
+        <result property="realBetMoney" column="realBetMoney"/>
+        <result property="platformBunko" column="platformBunko"/>
+        <result property="memberCoupon" column="memberCoupon"/>
+        <result property="proxyCoupon" column="proxyCoupon"/>
+        <result property="payMoney" column="payMoney"/>
+        <result property="pickUpMoney" column="pickUpMoney"/>
+        <result property="platformMoney" column="platformMoney"/>
+        <result property="memberXimaMoney" column="memberXimaMoney"/>
+        <result property="proxyXimaMoney" column="proxyXimaMoney"/>
+        <result property="proxyClearMoney" column="proxyClearMoney"/>
+    </resultMap>
+
+	<!-- 统计报表集合-->
+	<!--IFNULL((select sum(total) from c_member_xima_main where updatetime BETWEEN CONCAT(reporttime,' 00:00:00') AND CONCAT(reporttime,' 23:59:59') and locked=1),'0.00') as memberXimaMoney,-->
+	<select id="selectReportResult" resultClass="reportForm">
+    	<![CDATA[
+	    	SELECT 
+			adddate(#startDate#, numlist.id) as reporttime,
+			IFNULL((select sum(amount) from a_pay_order where update_date BETWEEN CONCAT(reporttime,' 00:00:00') AND CONCAT(reporttime,' 23:59:59') and paytyple='2' and ordertype='3' and status='3'),'0.00') as payOrderXimaMoney,
+			IFNULL((select sum(total) from c_proxy_xima_main where updatetime BETWEEN CONCAT(reporttime,' 00:00:00') AND CONCAT(reporttime,' 23:59:59') and locked=1),'0.00') as proxyXimaMoney,
+			IFNULL((select sum(clearingAmount) from a_proxy_clearing_log where clearingTime BETWEEN CONCAT(reporttime,' 00:00:00') AND CONCAT(reporttime,' 23:59:59') and clearingStatus=1),'0.00') as proxyClearMoney,
+			IFNULL((SELECT count(1) from a_user_info where date_format(create_date,'%Y-%m-%d') =reporttime ),'0') as registerNumber,
+			IFNULL((select COUNT(distinct uiid) from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')=reporttime and paytyple='0' and status='3' and uiid not in (select distinct uiid from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')<reporttime and paytyple='0' and status='3')),'0') as firstPayNumber,
+			IFNULL((select sum(amount)  from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')=reporttime and paytyple='0' and status='3'),'0.00') as  payMoney,
+			IFNULL((select sum(amount)  from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')=reporttime and paytyple='1' and status='3'),'0.00') as  pickUpMoney,
+			IFNULL((select count(poid)  from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')=reporttime and paytyple='0' and status='3'),'0.00') as  payMoneyCount,
+			IFNULL((select count(distinct uiid)  from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')=reporttime and paytyple='0' and status='3'),'0.00') as  payMoneyPerson,
+			IFNULL((select count(poid)  from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')=reporttime and paytyple='1' and status='3'),'0.00') as  pickUpMoneyCount,
+			IFNULL((select count(distinct uiid)  from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')=reporttime and paytyple='1' and status='3'),'0.00') as  pickUpMoneyPerson,
+			IFNULL((SELECT SUM(pay.amount) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid WHERE ub.accounttype='0' AND pay.status=3 AND pay.paytyple=2 AND DATE_FORMAT(pay.update_date,'%Y-%m-%d')=reporttime  AND pay.ordertype >0 AND pay.ordertype <> 3),'0.00') AS memberCoupon,  
+			IFNULL((SELECT SUM(pay.amount) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid WHERE ub.accounttype='1' AND pay.status=3 AND pay.paytyple=2 AND DATE_FORMAT(pay.update_date,'%Y-%m-%d')=reporttime  AND pay.ordertype >0 AND pay.ordertype <> 3 ),'0.00') AS proxyCoupon
+			from (SELECT n1.i + n10.i*10 + n100.i*100 AS id FROM num n1 cross join num as n10 cross join num as n100) as numlist where adddate(#startDate#, numlist.id) <= #endDate# order by reporttime ASC
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    <!--统计历史数据-->
+    <select id="selectHistoryReportResult" resultClass="reportForm">
+    	<![CDATA[
+	    	SELECT 
+			reporttime,
+			IFNULL(registerNumber,0) as registerNumber,
+			IFNULL(firstPayNumber,0) as firstPayNumber,
+			IFNULL(firstPayTotalMoney,0) as firstPayTotalMoney,
+			IFNULL(loginCount,0) as loginCount,
+			IFNULL(activeCount,0) as activeCount,
+			IFNULL(realBetMoney,0) as realBetMoney,
+			IFNULL(memberCoupon,0) as memberCoupon,
+			IFNULL(proxyCoupon,0) as proxyCoupon,
+			IFNULL(payOrderXimaMoney,0) as payOrderXimaMoney,
+			IFNULL(proxyXimaMoney,0) as proxyXimaMoney,
+			IFNULL(proxyClearMoney,0) as proxyClearMoney,
+			IFNULL(payMoney,0) as payMoney,
+			IFNULL(payMoneyPerson,0) as payMoneyPerson,
+			IFNULL(pickUpMoney,0) as pickUpMoney,
+			IFNULL(pickUpMoneyPerson,0) as pickUpMoneyPerson,
+			IFNULL(payMoneyCount,0) as payMoneyCount,
+			IFNULL(pickUpMoneyCount,0) as pickUpMoneyCount
+			from a_daily_report_detail where reporttime >= #startDate# and reporttime<=#endDate#
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+    
+    <!-- 统计报表总数 -->
+	<select id="selectReportCount" resultClass="long">
+    	<![CDATA[
+				select count(adddate(#startDate#, numlist.id)) as count
+				from 
+				(SELECT n1.i + n10.i*10 + n100.i*100 AS id FROM num n1 cross join num as n10 cross join num as n100) as numlist 
+				where adddate(#startDate#, numlist.id) <= #endDate#
+		]]>
+    </select>
+    
+    <!-- 查询投注金额 -->
+    <select id="selectRealBetMoney" resultClass="string">
+    	SELECT SUM(betamount)  FROM a_game_betlog 
+    	<![CDATA[
+    		WHERE 
+    		betdate >=CONCAT(#nowDate#,' ','00:00:00') AND betdate <= CONCAT(#nowDate#,' ','23:59:59')
+    	]]>
+    </select>
+    
+   	<!-- 查询活跃人数 -->
+    <select id="selectActiveCount" resultClass="long">
+    	SELECT count(DISTINCT(account))  FROM a_game_betlog 
+    	<![CDATA[
+    		WHERE 
+    		betdate >=CONCAT(#nowDate#,' ','00:00:00') AND betdate <= CONCAT(#nowDate#,' ','23:59:59')
+    	]]>
+    </select>
+    
+	<!-- 查询当前首冲总金额 -->
+	<select id="selectFirstPayMoney" resultClass="string">
+    	<![CDATA[
+			select SUM(amount) from (select amount from a_pay_order where update_date >=CONCAT(#nowDate#,' ','00:00:00') AND update_date <= CONCAT(#nowDate#,' ','23:59:59') and paytyple='0' and status='3' and uiid not in (select distinct uiid from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')<#nowDate# and paytyple='0' and status='3') group by uiid) as mon
+		]]>
+    </select>
+    
+    <!-- 注册人数集合 -->
+	<select id="selectRegisterNumberByNowDay" resultClass="java.util.HashMap">
+    	<![CDATA[
+			select account,uname,create_date FROM  a_user_info where DATE_FORMAT(create_date,'%Y-%m-%d') =#nowDate#	
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    
+      
+    <!-- 登录人数总计-->
+	<select id="selectLoginNumberCount" resultClass="long">
+    	<![CDATA[
+			select COUNT(distinct b.account) from a_user_info a LEFT JOIN user_login_log b ON a.uiid =b.uiid and a.status =2 and DATE_FORMAT(b.logintime,'%Y-%m-%d')=#nowDate#
+		]]>
+    </select>
+    
+    <!-- 注册人数总计-->
+	<select id="selectRegisterNumberCountByNowDay" resultClass="long">
+    	<![CDATA[
+			select count(1) FROM  a_user_info where DATE_FORMAT(create_date,'%Y-%m-%d') =#nowDate#	
+		]]>
+    </select>
+    
+    
+    
+    <!-- 首冲人数和金额集合 -->
+	<select id="selectFirstPayNumberByNowDay" resultClass="java.util.HashMap">
+    	<![CDATA[
+			select p.uiid as uiid,p.poid as poid,p.update_date as depotime,p.amount as amounts,u.account as acounts,u.uname as username,p.kfremarks as kfremarks,p.cwremarks as cwremarks from a_pay_order p left join a_user_info u  on p.uiid=u.uiid where DATE_FORMAT(p.update_date,'%Y-%m-%d')=#nowDate# and p.paytyple='0' and p.status='3' and p.uiid not in (select distinct uiid from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')<#nowDate# and paytyple='0' and status='3')  GROUP BY p.uiid
+		]]>
+		<isNotEmpty property="orderField">
+			order by $orderField$
+		</isNotEmpty>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 首冲人数和金额总计-->
+	<select id="selectFirstPayNumberCountByNowDay" resultClass="long">
+    	<![CDATA[
+			select count(1) from a_pay_order p left join a_user_info u  on p.uiid=u.uiid where DATE_FORMAT(p.update_date,'%Y-%m-%d')=#nowDate# and p.paytyple='0' and p.status='3' and p.uiid not in (select distinct uiid from a_pay_order where DATE_FORMAT(update_date,'%Y-%m-%d')<#nowDate# and paytyple='0' and status='3')
+		]]>
+    </select>
+    
+    
+    
+    <!-- 实际投注额集合 -->
+	<select id="selectBetMoneyByNowDay" resultClass="java.util.HashMap">
+    	<![CDATA[
+			select platformcode,sum(validBetAmount) as validBetAmount,sum(betamount) as betamounts,sum(profitamount) as profitamounts,sum(finalamount) as finalamounts,count(1) as betcount  from a_game_betlog  where DATE_FORMAT(betdate,'%Y-%m-%d')=#nowDate# group by platformcode		
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!--从平台投注统计表中查询选择日期的投注统计 -->
+    <select id="getPlatformBetStats" resultClass="java.util.HashMap">
+    	<![CDATA[
+			select platform as platformcode,valid_bet_amount as validBetAmount,bet_total as betamounts,payout_amount as profitamounts,final_amount as finalamounts,bet_num as betcount  from a_platform_bet_stats  where create_date=#nowDate# group by platformcode 		
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 实际投注额总计-->
+	<select id="selectBetMoneyCountByNowDay" resultClass="long">
+    	<![CDATA[
+			select count(distinct platformcode)  from a_game_betlog  where DATE_FORMAT(betdate,'%Y-%m-%d')=#nowDate#	
+		]]>
+    </select>
+    
+    
+    <!-- 会员/代理优惠集合 -->
+	<select id="selectMemberCouponByNowDay" resultClass="java.util.HashMap">
+    	<![CDATA[
+			SELECT pay.poid as poid,ub.account as acounts,ub.uname as username,pay.amount as amounts,pay.update_date as depotime,pay.kfremarks as kfremark,pay.cwremarks as cwremark,pay.ordertype as ordertype FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid WHERE ub.accounttype=#accountType# AND pay.status=3 AND pay.paytyple=2 AND DATE_FORMAT(pay.update_date,'%Y-%m-%d')=#nowDate#  AND pay.ordertype >0 AND pay.ordertype <>3 
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 会员/代理优惠总数 -->
+	<select id="selectMemberCouponCountByNowDay" resultClass="long">
+    	<![CDATA[
+			SELECT count(1) FROM a_pay_order pay LEFT JOIN a_user_info ub ON pay.uiid=ub.uiid WHERE ub.accounttype=#accountType# AND pay.status=3 AND pay.paytyple=2 AND DATE_FORMAT(pay.update_date,'%Y-%m-%d')=#nowDate#  AND pay.ordertype >0 AND pay.ordertype <>3
+		]]>
+    </select>
+    
+    
+    
+    <!-- 充值金额/提款金额集合 -->
+	<select id="selectPayMoneyByNowDay" resultClass="java.util.HashMap">
+    	<![CDATA[
+			select p.poid as poid,ub.account as acounts,ub.uname as username,p.amount as amounts,p.update_date as depotime,p.kfremarks as kfremarks,p.cwremarks as cwremarks  from a_pay_order p LEFT JOIN a_user_info ub ON p.uiid=ub.uiid where DATE_FORMAT(p.update_date,'%Y-%m-%d')=#nowDate# and p.paytyple=#paytyple# and p.status='3'
+		]]>
+		<isNotEmpty property="limit">
+			limit $thisPage$, $pageSize$
+		</isNotEmpty>
+    </select>
+    <!-- 充值金额/提款金额总数 -->
+	<select id="selectPayMoneyCountByNowDay" resultClass="long">
+    	<![CDATA[
+			select count(1) from a_pay_order p LEFT JOIN a_user_info ub ON p.uiid=ub.uiid where DATE_FORMAT(p.update_date,'%Y-%m-%d')=#nowDate# and p.paytyple=#paytyple# and p.status='3'
+		]]>
+    </select>
+    
+      <!-- 充值、提款、优惠统计 -->
+	<select id="getwinorlessReport" resultClass="java.util.HashMap">
+		select a.uaccount,
+		(select IFNULL(SUM(b.amount),0) from a_pay_order b where b.uiid =a.uiid and b.`status` =3 and b.paytyple=0
+		<isNotEmpty property="startDate">
+    	<![CDATA[
+    	  and b.update_date>=CONCAT(#startDate#,' 00:00:00')
+		]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+    	<![CDATA[
+    		 and b.update_date<=CONCAT(#endDate#,' 23:59:59')
+		]]>
+		</isNotEmpty>
+		) as 'deposit',
+		(select IFNULL(SUM(c.amount),0) from a_pay_order c where c.uiid =a.uiid and c.`status` =3 and c.paytyple=1
+		<isNotEmpty property="startDate">
+    	<![CDATA[
+    	  and c.update_date>=CONCAT(#startDate#,' 00:00:00')
+		]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+    	<![CDATA[
+    		 and c.update_date<=CONCAT(#endDate#,' 23:59:59')
+		]]>
+		</isNotEmpty>
+		) as 'withdrawal',
+		(select IFNULL(SUM(d.amount),0) from a_pay_order d where d.uiid =a.uiid and d.`status` =3 and d.paytyple=2
+		<isNotEmpty property="startDate">
+    	<![CDATA[
+    	  and d.update_date>=CONCAT(#startDate#,' 00:00:00')
+		]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+    	<![CDATA[
+    		 and d.update_date<=CONCAT(#endDate#,' 23:59:59')
+		]]>
+		</isNotEmpty>
+		) as 'preferential'
+		from a_pay_order a where a.`status`=3 and a.uaccount is not null 
+		<isNotEmpty property="paccount">
+			and a.uiid in (select u.uiid from a_user_info u where u.puiid =(select t.uiid from a_user_info t where t.account=#paccount#))
+		</isNotEmpty>
+		<isNotEmpty property="startDate">
+		<![CDATA[
+    	  and a.update_date>=CONCAT(#startDate#,' 00:00:00')
+		]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate">
+    	<![CDATA[
+    		 and a.update_date<=CONCAT(#endDate#,' 23:59:59')
+		]]>
+		</isNotEmpty>
+		<isNotEmpty property="account">
+			and a.uaccount =#account#
+		</isNotEmpty>
+		GROUP BY a.uaccount
+    </select>
+    
+    
+</sqlMap>

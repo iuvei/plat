@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ <sqlMap namespace="UserGrade">
+ 	<typeAlias alias="userGrade" type="com.gameportal.web.user.model.UserGrade"/>
+ 	<typeAlias alias="withdrawalcountLog" type="com.gameportal.web.user.model.WithdrawalcountLog"/>
+ 	<typeAlias alias="payOrderLog" type="com.gameportal.web.user.model.PayOrderLog" />
+ 	
+ 	<sql id="userGradeCommonColumns">
+ 		<![CDATA[
+ 			gid,
+ 			grade,
+ 			betamont,
+ 			withdrawalcount,
+ 			withdrawalquota
+ 		]]>
+ 	</sql>
+ 	
+ 	<sql id="withdrawalcountLogCommonColumns">
+ 		<![CDATA[
+	 		wid,
+	 		uiid,
+	 		daytime,
+	 		withdrawalcount
+ 		]]>
+ 	</sql>
+ 	
+ 	<insert id="insertWithdrawalcountLog" parameterClass="withdrawalcountLog">
+ 		<![CDATA[
+	 		INSERT INTO u_withdrawalcount_log (uiid,daytime,withdrawalcount) 
+	 		VALUES (
+	 			#uiid#,
+	 			#daytime#,
+	 			#withdrawalcount#
+	 		)
+ 		]]>
+ 	</insert>
+ 	
+ 	 
+   <insert id="insertPayLog" parameterClass="payOrderLog">
+    <![CDATA[
+        INSERT INTO
+        a_pay_order_log (
+        	coid ,
+        	uiid ,
+        	orderid ,
+        	amount ,
+        	walletlog ,
+        	gamelog ,
+        	type,
+        	remark ,
+        	createtime 
+        ) VALUES (
+        	#coid# ,
+        	#uiid# ,
+        	#orderid# ,
+        	#amount# ,
+        	#walletlog# ,
+        	#gamelog# ,
+        	#type#,
+        	#remark# ,
+        	#createtime#
+        )
+    ]]>
+     <selectKey resultClass="java.lang.Long" type="post" keyProperty="coid" >
+           SELECT  last_insert_id()
+     </selectKey>
+    </insert>
+ 	
+ 	<!-- 更新提款次数 -->
+ 	<update id="updateWithdrawalcountLog" parameterClass="withdrawalcountLog">
+ 		<![CDATA[
+	 		UPDATE u_withdrawalcount_log 
+	 		SET 
+	 		uiid = #uiid#,
+	 		withdrawalcount = #withdrawalcount#
+	 		WHERE wid = #wid#
+ 		]]>
+ 	</update>
+ 	
+ 
+ 	<select id="selectWithdrawalcountLog" resultClass="withdrawalcountLog">
+ 		select <include refid="withdrawalcountLogCommonColumns"/>
+ 		<![CDATA[
+ 		from u_withdrawalcount_log 
+ 		WHERE uiid = #uiid# AND daytime = #daytime#
+ 		]]>
+ 	</select>
+ 	
+ 	<select id="selectUserGrade" resultClass="userGrade">
+ 		select <include refid="userGradeCommonColumns"/>
+ 		<![CDATA[
+ 		from a_user_grade
+ 		where grade = #grade#
+ 		]]>
+ 	</select>
+ 	
+ 	<!-- 查询会员当前是否有正在审核的注单 -->
+ 	<select id="selectPayOrder" resultClass="long">
+ 		select ifnull(count(0),0) from a_pay_order 
+ 		<dynamic prepend="WHERE">
+ 			<isNotEmpty prepend="AND" property="uiid">
+ 				uiid=#uiid#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="paytyple">
+ 				paytyple=#paytyple#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="ordertype">
+ 				ordertype=#ordertype#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="paymethods">
+ 				paymethods=#paymethods#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="status">
+ 				status=#status#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="ordernumber">
+ 				ordernumber=#ordernumber#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="kfremarks">
+	             kfremarks like CONCAT('%',#kfremarks#,'%')
+	       	</isNotEmpty>
+	       	<isNotEmpty prepend="AND" property="cwremarks">
+	             cwremarks like CONCAT('%',#cwremarks#,'%')
+	       	</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="createDate">
+ 				<![CDATA[create_date>= #createDate# ]]>
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="endDate">
+ 				<![CDATA[create_date<= #endDate# ]]>
+ 			</isNotEmpty>
+ 		</dynamic>
+ 	</select>
+ 	
+ 	<!-- 查询会员当前是否有正在审核的注单 -->
+ 	<select id="sumPayOrderAmount" resultClass="long">
+ 		select ifnull(sum(amount),0) from a_pay_order 
+ 		<dynamic prepend="WHERE">
+ 			<isNotEmpty prepend="AND" property="uiid">
+ 				uiid=#uiid#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="paytyple">
+ 				paytyple=#paytyple#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="ordertype">
+ 				ordertype=#ordertype#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="paymethods">
+ 				paymethods=#paymethods#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="status">
+ 				status=#status#
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="hdnumber">
+ 				<![CDATA[ hdnumber <> #hdnumber# ]]>
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="createDate">
+ 				<![CDATA[update_date >= CONCAT(#createDate#,' 00:00:00') ]]>
+ 			</isNotEmpty>
+ 			<isNotEmpty prepend="AND" property="endDate">
+ 				<![CDATA[update_date <= CONCAT(#endDate#,' 23:59:59')]]>
+ 			</isNotEmpty>
+ 		</dynamic>
+ 	</select>
+ </sqlMap>

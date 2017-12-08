@@ -1,0 +1,13 @@
+@charset "utf-8";
+/* CSS Document */
+.notice{ color:#fff; font-size:16px; padding:18px 0;}
+.qipai_h{ height:90px; background:url(../images/h05.png) no-repeat;}
+.qipai_h .fl{ font-size:30px; color:#331f00; padding:12px 0 0 45px;}
+.qipai_h .fl span{ font-size:18px; display:block;}
+.qipai_h .fl span i{ color:#ffc05c; font-style:normal; font-size:12px;}
+.qipai_h .fr{ width:740px; text-align:center; line-height:90px; color:#fff; font-size:36px;}
+.qipai_h .fr span{ color:#c4222e;}
+
+.sportIframe{ padding-top:24px;}
+
+

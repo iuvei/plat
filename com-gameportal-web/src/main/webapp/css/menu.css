@@ -1,0 +1,79 @@
+* {margin:0px; padding:0px;}
+em {font-style:normal;}
+
+.container {margin:0 auto; width:987px;}
+.nav {height:101px; position:relative; z-index:100;}
+.nav .container {background:url(../images/menu/vline.jpg) no-repeat right center; height:101px;}
+
+.nav_in {width:141px; float:left; height:101px; background:url(../images/menu/vline.jpg) no-repeat left center;}
+.nav_in .par_a {position:relative; text-align:center; width:142px; display:inline-block; height:110px; cursor:pointer; z-index:1001;}
+.nav_in .par_a span {text-align:center; width:142px; display:inline-block; background-repeat:no-repeat; background-position:center 15px; font-size:16px; padding-top:52px;}
+
+.nav_in1 .par_a span {color:#006d04;}
+.nav_in1 .par_a em {color:#999999;}
+
+.nav_in .par_a:hover {background:url(../images/menu/submenu.png) no-repeat center top;}
+.nav_in_hover .par_a {background:url(../images/menu/submenu.png) no-repeat center top;}
+.n_hover .par_a {background:url(../images/menu/submenu.png) no-repeat center top;}
+
+.nav_in .par_a:hover span {color:#1d1d1d;}
+.nav_in_hover .par_a span {color:#1d1d1d;}
+.n_hover .par_a span {color:#1d1d1d;}
+
+.nav_in .par_a:hover em {color:#ffffff;}
+.nav_in_hover .par_a em {color:#ffffff;}
+.n_hover .par_a em {color:#ffffff;}
+
+.nav_in .pa1 span {background-image:url(../images/menu/home.png);}
+.nav_in .pa1:hover span {background-image:url(../images/menu/homea.png);}
+.nav_in_hover .pa1 span {background-image:url(../images/menu/homea.png);}
+.n_hover .pa1 span {background-image:url(../images/menu/homea.png);}
+
+.nav_in .pa2 span {background-image:url(../images/menu/client.png);}
+.nav_in .pa2:hover span {background-image:url(../images/menu/clienta.png);}
+.nav_in_hover .pa2 span {background-image:url(../images/menu/clienta.png);}
+.n_hover .pa2 span {background-image:url(../images/menu/client.png);}
+
+.nav_in .pa3 span {background-image:url(../images/menu/live.png);}
+.nav_in .pa3:hover span {background-image:url(../images/menu/livea.png);}
+.nav_in_hover .pa3 span {background-image:url(../images/menu/livea.png);}
+.n_hover .pa3 span {background-image:url(../images/menu/livea.png);}
+
+.nav_in .pa4 span {background-image:url(../images/menu/lottery.png);}
+.nav_in .pa4:hover span {background-image:url(../images/menu/lotterya.png);}
+.nav_in_hover .pa4 span {background-image:url(../images/menu/lotterya.png);}
+.n_hover .pa4 span {background-image:url(../images/menu/lotterya.png);}
+
+.nav_in .pa5 span {background-image:url(../images/menu/egames.png);}
+.nav_in .pa5:hover span {background-image:url(../images/menu/egamesa.png);}
+.nav_in_hover .pa5 span {background-image:url(../images/menu/egamesa.png);}
+.n_hover .pa5 span {background-image:url(../images/menu/egamesa.png);}
+
+.nav_in .pa6 span {background-image:url(../images/menu/sports.png);}
+.nav_in .pa6:hover span {background-image:url(../images/menu/sportsa.png);}
+.nav_in_hover .pa6 span {background-image:url(../images/menu/sportsa.png);}
+.n_hover .pa6 span {background-image:url(../images/menu/sportsa.png);}
+
+.nav_in .pa7 span {background-image:url(../images/menu/prom.png);}
+.nav_in .pa7:hover span {background-image:url(../images/menu/proma.png);}
+.nav_in_hover .pa7 span {background-image:url(../images/menu/proma.png);}
+.n_hover .pa7 span {background-image:url(../images/menu/proma.png);}
+
+.nav_in .pa8 span {background-image:url(../images/menu/agenticon1.png);}
+.nav_in .pa8:hover span {background-image:url(../images/menu/agenticon2.png);}
+.nav_in_hover .pa8 span {background-image:url(../images/menu/agenticon2.png);}
+.n_hover .pa8 span {background-image:url(../images/menu/agenticon2.png);}
+
+.nav_in .nav_slide {width:100%; position:absolute; display:none; background:url(../images/menu/sublistbg.jpg) repeat-x left top; height:190px; top:101px; left:0px; z-index:900;}
+.nav_slide .container {background:none transparent scroll repeat 0% 0%;}
+.nav_slide1 .fs {text-align:center; width:200px; float:left; height:190px;}
+.nav_slide1 .fs dt {background-repeat:no-repeat; background-position:center center; height:140px;}
+.nav_slide1 .fs dd {color:#006d04; font-size:18px; padding-top:5px;}
+
+.nav_slide1 .list {text-align:center; width:190px; float:left; height:190px; cursor:pointer;}
+.nav_slide1 .list dl {height:190px;}
+.nav_slide1 .list dt {background-repeat:no-repeat; background-position:center bottom; height:120px;}
+.nav_slide1 .list dd {line-height:30px; height:30px; color:#666666; font-size:18px;}
+.nav_slide1 .list dd a {color:#666666; text-decoration:none; font-size:18px;}
+.nav_slide1 .list dd a:hover {color:#006d04; font-size:18px;}
+.nav_slide1 .list_hover {background-color:#cccccc;}

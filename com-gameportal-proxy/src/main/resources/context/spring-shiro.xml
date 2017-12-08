@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+			
+
+		<!-- 項目自定义的Realm -->
+	    <bean id="ShiroRealm" class="com.gameportal.interceptors.shiro.ShiroRealm" ></bean>
+		
+		<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+			<property name="realm" ref="ShiroRealm" />
+		</bean>
+		
+		<!-- Shiro Filter -->
+		<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+			<property name="securityManager" ref="securityManager" />
+			<property name="loginUrl" value="/" />
+			
+			<property name="successUrl" value="/main/index" />
+			
+			<property name="unauthorizedUrl" value="/login/view" />
+			<property name="filterChainDefinitions">
+				<value>
+				/static/login/** 	= anon
+				/static/js/** 		= anon
+	           	/code.do 			= anon
+	           	/login/view		 	= anon
+	           	/app**/** 			= anon
+	           	/**					= authc
+				</value>
+			</property>
+		</bean>
+	<!-- ================ Shiro end ================ -->
+</beans>
