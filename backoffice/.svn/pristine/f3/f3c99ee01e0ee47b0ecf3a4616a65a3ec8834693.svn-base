@@ -1,0 +1,179 @@
+<br>
+<div class="table-responsive">
+<table class="table table-bordered table-striped table-condensed table-hover table-sm">
+  <thead>
+  <tr>
+    <th>{{ 'businessManager.hierarchy' | translate }}：</th>
+    <th colspan="7">{{path}}</th>
+    <th class="text-center">
+      <a href="javascript:void(0)" (click)="searchChild()" tooltip="'common.refresh' | translate" ><i class="fa fa-refresh" aria-hidden="true"></i></a>&nbsp;&nbsp;
+      <a href="javascript:void(0)" (click)="close()" tooltip="'common.close' | translate" ><i class="fa fa-times" aria-hidden="true"></i></a>
+    </th>
+  </tr>
+  <tr>
+    <th>{{ 'businessManager.merchantIdentify' | translate }}</th>
+    <th>{{ 'businessManager.merchantNo' | translate }}</th>
+    <th>{{ 'businessManager.merchantDesc' | translate }}</th>
+    <th>{{ 'businessManager.merchantKey' | translate }}</th>
+    <th>{{ 'businessManager.relevanceAgentAccount' | translate }}</th>
+    <th>{{ 'businessManager.availableCredit' | translate }}</th>
+    <!--<th>{{ 'businessManager.singleMaxRecharge' | translate }}</th>-->
+    <th class="hidden-md-down">{{ 'common.createTime' | translate }}</th>
+    <!--<th class="hidden-md-down">{{ 'common.modifyTime' | translate }}</th>-->
+    <th>{{ 'common.status' | translate }}</th>
+    <th>{{ 'businessManager.merchantCreate' | translate }}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let item of userBusinessList">
+    <td><a href="javascript:void(0)"  (click)="expend(item)"><i class="fa fa-caret-down" aria-hidden="true"></i> {{item.merchantPrefix}}</a></td>
+    <td>{{item.number}}</td>
+    <td>
+      <a *ngIf="item.parentId == currentUser.id || item.id == currentUser.id || currentUser.id ==2" href="javascript:void(0)" (click)="initEditBuDialog(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+      {{item.remark}}
+    </td>
+    <td>{{item.privateKey}}</td>
+    <td>{{item.loginName}}</td>
+    <td>
+      <a *ngIf="item.parentId == currentUser.id || currentUser.id ==2" href="javascript:void(0)" (click)="initCtrlBalanceDialog(item)"><i class="fa fa-pencil-square-o"></i>{{item.balance}}</a>
+      <font *ngIf="item.parentId != currentUser.id && currentUser.id !=2" >{{item.balance}}</font>
+    </td>
+    <!--<td>{{item.maxdepositlimit}}</td>-->
+    <td  class="hidden-md-down">{{item.createTime}}</td>
+    <!--<td  class="hidden-md-down">{{item.updatedatetime}}</td>-->
+    <td>
+      <a *ngIf="(item.parentId == currentUser.id || currentUser.id ==2) && item.status==1" href="javascript:void(0)" (click)="changeStatus(item,2)">{{ 'businessManager.disable' | translate }}</a>
+      <a *ngIf="(item.parentId == currentUser.id || currentUser.id ==2) && item.status==2" href="javascript:void(0)" (click)="changeStatus(item,1)">{{ 'businessManager.enable' | translate }}</a>
+      <font *ngIf="item.parentId != currentUser.id && currentUser.id !=2" >{{ 'businessManager.enable' | translate }}</font>
+    </td>
+    <td class="text-center">
+      <a *ngIf="(item.id == currentUser.id || item.parentId == currentUser.id || currentUser.id ==2) && item.merchantType == 1" href="javascript:void(0)" (click)="initCreateBuDialog(item)"><i class="fa fa-plus"></i></a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</div>
+
+
+<!--调整点数对话框-->
+<div bsModal #ctrlBalance="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'businessManager.adjustPoint' | translate }}</h4>
+        <button type="button" class="close" (click)="ctrlBalance.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="modifyCtrlBalance()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="currBalance" class="form-control-label">{{ 'businessManager.current' | translate }}:</label>
+            <div id="currBalance">{{ctrlBalanceModel.currBalance}}</div>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label">{{ 'common.type' | translate }}:</label>
+            <div class="radio-inline" *ngFor="let item of transferType">
+              <label class="radio-inline">
+                <input type="radio" name="type" [(ngModel)]="ctrlBalanceModel.accountRecordType" [value]="item.value">
+                {{item.name}}
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputBalance" class="form-control-label">{{ 'common.point' | translate }}:</label>
+            <input type="number" class="form-control" id="inputBalance" name="inputBalance" [(ngModel)]="ctrlBalanceModel.balance" required>
+          </div>
+          <div class="form-group">
+            <label for="groupID" class="form-control-label" >{{ 'common.remark' | translate }}:</label>
+            <textarea class="form-control" id="groupID" rows="3" name="memo" [(ngModel)]="ctrlBalanceModel.remark"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="ctrlBalance.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--创建商户对话框-->
+<div bsModal #createSysBu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">{{ 'businessManager.merchantCreate' | translate }}</h6>
+        <button type="button" class="close" (click)="createSysBu.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="save()">
+        <div class="modal-body">
+            <div class="row">
+              <div class="col-5">
+                <div class="form-group">
+                  <label for="merchantPrefix" class="form-control-label">{{ 'businessManager.merchantIdentify' | translate }}</label>
+                  <input type="text" class="form-control" id="merchantPrefix" name="merchantPrefix" [(ngModel)]="createBuModel.merchantPrefix" [readonly]="merchantPrefixReadonlyFlag" required>
+                </div>
+                <div class="form-group">
+                  <label for="remark" class="form-control-label" >{{ 'businessManager.merchantDesc' | translate }}</label>
+                  <textarea class="form-control" id="remark" rows="1" name="remark" [(ngModel)]="createBuModel.remark"></textarea>
+                </div>
+                <div class="form-group" *ngIf="createBuModel.oldIntoPercentage==null">
+                <label for="intoPercentage" class="form-control-label">{{ 'businessManager.intoPercentage' | translate }}:</label>
+                <div class="input-group" >
+                  <input type="number" class="form-control" id="intoPercentage" name="intoPercentage" [(ngModel)]="createBuModel.intoPercentage" required min="0">
+                  <div class="input-group-addon">% / {{createBuModel.agentHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+                </div>
+                </div>
+                <div class="form-group" *ngIf="createBuModel.oldIntoPercentage!=null">
+                  <label for="intoPercentage1" class="form-control-label">{{ 'businessManager.intoPercentage' | translate }}:</label>
+                  <div class="input-group" >
+                    <input disabled type="number" class="form-control" id="intoPercentage1" name="intoPercentage1" [(ngModel)]="createBuModel.oldIntoPercentage" required >
+                    <div class="input-group-addon">% / {{createBuModel.agentHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="merchantType" class="form-control-label">{{ 'businessManager.addLowerLevel' | translate }}</label>
+                  <select [(ngModel)]="createBuModel.merchantType" id="merchantType" name="merchantType" class="form-control" required>
+                    <option value="">{{ 'common.plsSelect' | translate }}</option>
+                    <option value=1 >{{ 'businessManager.LineOperator' | translate }}</option>
+                    <option value=2 >{{ 'businessManager.merchant' | translate }}</option>
+                  </select>
+                </div>
+                <div class="form-group" *ngIf="initBalanceFlag" >
+                  <label for="useBalance" class="form-control-label">{{ 'businessManager.availableCredit' | translate }}</label>
+                  <input type="number" class="form-control" id="useBalance" name="useBalance" [(ngModel)]="createBuModel.balance" required min="0">
+                </div>
+                <div class="form-group">
+                  <label for="useBalance" class="form-control-label">{{ 'account.vipPackage' | translate }}</label>
+                  <input type="number" class="form-control" id="roomMember" name="roomMember" [(ngModel)]="createBuModel.roomMember" required min="0">
+                </div>
+                <div class="form-group">
+                  <label for="returnURL" class="form-control-label" >{{ 'businessManager.returnURL' | translate }}</label>
+                  <textarea class="form-control" id="returnURL" rows="2" name="returnURL" [(ngModel)]="createBuModel.returnURL"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="allowIpList" class="form-control-label" >{{ 'businessManager.addIpList' | translate }}</label>
+                  <textarea class="form-control" id="allowIpList" rows="2" name="allowIpList" [(ngModel)]="createBuModel.allowIpList"></textarea>
+                </div>
+              </div>
+              <div class="col-7">
+                <label class="form-control-label">{{ 'businessManager.chipsChoose' | translate }} </label>
+                <p-tree [value]="limitRedData.data" selectionMode="checkbox" [(selection)]="selectLimitRedData" [style]="{'max-height':'500px','width':'100%','overflow':'auto'}"></p-tree>
+                <br>
+                <label style="color: red;">{{ 'businessManager.resetPwdTip' | translate }}</label>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+            <button type="button" class="btn btn-secondary" (click)="createSysBu.hide()">{{ 'common.close' | translate }}</button>
+          </div>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<p-growl [value]="msgs"></p-growl>
+

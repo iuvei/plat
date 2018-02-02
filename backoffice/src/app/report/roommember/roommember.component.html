@@ -1,0 +1,70 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> <div [innerHTML]="title"></div>
+  </div>
+  <div class="card-block" >
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="searchModel.startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="searchModel.endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchLoginName">{{ 'roomMember.searchName' | translate }}</label>
+        <input [(ngModel)]="searchModel.loginName" id="searchLoginName" name="searchLoginName" type="text" pInputText [placeholder]="'roomMember.searchName' | translate">
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="margin-left9 btn btn-primary">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+    <br>
+
+    <table *ngIf="roomTableList != null" class="table table-bordered table-striped table-condensed mytable" style="width: 100%; font-size: 14px; overflow-y: auto;">
+      <thead>
+        <tr>
+          <th>{{ 'roomMember.loginName' | translate }}</th>
+          <th>{{ 'roomMember.nickName' | translate }}</th>
+         <!-- <th>{{ 'roomMember.liveUserType' | translate }}</th>-->
+          <th>{{ 'roomMember.tradeTime' | translate }}</th>
+          <th>{{ 'roomMember.amountBetting' | translate }}</th>
+          <th>{{ 'roomMember.winLostAmount' | translate }}</th>
+          <!--<th>{{ 'roomMember.bankTotal' | translate }}</th>-->
+          <!--<th>{{ 'roomMember.playerTotal' | translate }}</th>-->
+          <th>{{ 'roomMember.washBetting' | translate }}</th>
+          <th>{{ 'roomMember.washPercentage' | translate }}</th>
+          <th>{{ 'roomMember.washAmount' | translate }}</th>
+          <th>{{ 'roomMember.proxyTotalAmount' | translate }}</th>
+          <th>{{ 'roomMember.winloSepercentage' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of roomTableList" style="line-height: 0.5rem" >
+          <td>{{item.loginName}}</td>
+          <td>{{item.nickName}}</td>
+        <!--  <td>{{item.liveUserType | DictPipe:'login_type'}}</td>-->
+          <td>{{item.tradeTime}}</td>
+          <td align="right">{{item.amountBetting | number:'1.2'}}</td>
+          <td align="right"> <money [value]="item.winLostAmount"></money></td>
+          <!--<td align="right">{{item.bankTotal | number:'1.2'}}</td>-->
+          <!--<td align="right">{{item.playerTotal | number:'1.2'}}</td>-->
+          <td align="right">{{item.washBetting | number:'1.2'}}</td>
+          <td align="right">{{item.washPercentage*100| number:'1.0-4' }}%</td>
+          <td align="right">{{item.washAmount | number:'1.2-2'}}</td>
+          <td align="right"><money [value]="item.winLostAmount+item.washAmount"></money></td>
+          <td align="right"><money [value]="item.winloSepercentage*100"></money>%</td>
+        </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false" [maxSize]="maxSize"
+                  [totalItems]="totalItems" [itemsPerPage]="searchModel.pageSize" [(ngModel)]="searchModel.currentPage" (numPages)="numPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+

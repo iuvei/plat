@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IBetOrderMapper">
+	<sql id="dynamicWhere">
+		<where>
+            br.`status` IN (3,0) AND br.parent_id != 418
+            <if test="path!=null and path!=''"> AND br.`user_parent_path` like CONCAT(#{path},'%')</if>
+            <if test="paths!=null and paths!=''"> AND (br.`user_parent_path` like CONCAT('/2/6/10/','%') OR br.`user_parent_path` like CONCAT('/2/5/11/','%'))</if>
+            <if test="startTime!=null and endTime!=null"> AND br.bet_time BETWEEN #{startTime} AND #{endTime}</if>
+            <!--<if test="parentId != null "> and br.parent_id = #{parentId} </if>-->
+            <if test="userId != null "> AND br.user_id  = #{userId} </if>
+            <if test="multipleFlag != null"> AND gt.is_many=#{multipleFlag} </if>
+            <if test="counterfeitFlag != null"> AND gt.is_beging_mi=#{counterfeitFlag} </if>
+            <if test="gameId != null and gameId>=0"> AND g.id=#{gameId} </if>
+            <if test="betNo != null and betNo !='' "> AND br.id=#{betNo} </if>
+            <if test="tableId != null and tableId >0 "> AND br.virtualgametable_id=#{tableId} </if>
+            <if test="roundId != null and roundId >0 "> AND br.round_id=#{roundId} </if>
+            <if test="playId != null and playId >0 "> AND br.play_id=#{playId} </if>
+            <if test="lastUpdateTimeStart != null"> AND br.last_update_time>=#{lastUpdateTimeStart}</if>
+            <if test="lastUpdateTimeEnd != null"> AND br.last_update_time &lt; #{lastUpdateTimeEnd}</if>
+		</where>
+	</sql>
+
+    <sql id="selectBet">
+        SELECT
+        g.`name` AS gameName,
+        gt.`name` AS gameTable,
+        br.boots_num AS bootsNum,
+        br.round_num AS roundNum,
+        br.bet_rate AS settleRate,
+        br.user_pre_balance AS preBalance,
+        br.bet_time AS betTime,
+        br.amount,
+        br.settle_time AS settleTime,
+        pu.login_name AS agentName,
+        br.`login_name` AS userName,
+        br.`user_id` AS userId,
+        br.game_table_id AS tableId,
+        br.virtualgametable_id AS vTableId,
+        br.table_type AS tableType,
+        br.id AS betId,
+        br.game_id AS gameId,
+        br.round_id AS roundId,
+        br.round_result AS roundResult,
+        bt.`key` AS itemKey,
+        bt.`name` AS itemName,
+        bt.id AS itemId,
+        bt.addition,
+        br.bet_type AS betTypeId,
+        br.valid_amount AS validAmount,
+        br.modified_user_balance AS modifiedUserBalance,
+        br.win_lost_status AS winLostStatus,
+        br.win_lost_amount AS winLostAmount,
+        br.bet_ip AS betIp,
+        br.device_type AS deviceType
+        FROM
+        bet_order br
+        JOIN game g ON g.id = br.`game_id`
+        JOIN gametable gt ON gt.id = br.`game_table_id`
+        JOIN trade_item bt ON br.trade_item_id = bt.id
+        JOIN USER pu ON pu.id = br.`parent_id`
+    </sql>
+	
+	<!-- 交易记录报表 -->
+    <select id="queryBetOrderByPage" resultType="com.na.manager.bean.vo.BetOrderVO">
+        <include refid="selectBet"/>
+        <include refid="dynamicWhere" />  
+        ORDER BY br.id DESC 
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+    
+    <select id="queryBetOrderByPageTotal" resultType="java.util.HashMap">
+        SELECT
+        sum(br.amount) as 'totalBetMoney',
+		sum(br.win_lost_amount) as 'totalWinLostMoney'
+        FROM
+        bet_order br
+        JOIN game g ON g.id = br.`game_id`
+        JOIN gametable gt ON gt.id = br.`game_table_id`
+        JOIN trade_item bt ON br.trade_item_id = bt.id
+        JOIN USER pu ON pu.id = br.`parent_id`
+        <include refid="dynamicWhere" />  
+        ORDER BY br.id DESC 
+    </select>
+
+    <select id="findBetOrderDetail" resultType="com.na.manager.bean.vo.BetOrderVO">
+        <include refid="selectBet"/>
+        WHERE
+          br.`user_parent_path` LIKE CONCAT(#{path},'%')
+          AND br.id=#{betId}
+    </select>
+    
+    <select id="getBetOrderCount" resultType="Long">
+        SELECT
+          count(1)
+        FROM
+        bet_order br
+        JOIN game g ON g.id = br.`game_id`
+        JOIN gametable gt ON gt.id = br.`game_table_id`
+        JOIN trade_item bt ON br.trade_item_id = bt.id
+        JOIN USER pu ON pu.id = br.`parent_id`
+        <include refid="dynamicWhere" />
+    </select>
+
+    <select id="queryBaccartLiveInfo" resultType="com.na.manager.bean.BaccaratLiveBean">
+        <![CDATA[
+            SELECT
+            r1.`game_id` gameId,
+            r1.`id` roundId,
+            r1.`gametable_id` gameTableId,
+            r1.`boot_id` bootId,
+            r1.`round_number` roundNum,
+            r1.`Status` roundStatus,
+            COUNT(DISTINCT bo.`user_id`) userNum,
+            SUM(IF(bo.`trade_item_key`='b',bo.`amount`,0)) bMoney,
+            SUM(IF(bo.`trade_item_key`='p',bo.`amount`,0)) pMoney,
+            SUM(IF(bo.`trade_item_key`='t',bo.`amount`,0)) tMoney,
+            SUM(IF(bo.`trade_item_key`='bd',bo.`amount`,0)) bdMoney,
+            SUM(IF(bo.`trade_item_key`='pd',bo.`amount`,0)) pdMoney,
+            SUM(IF(bo.`trade_item_key`='bc',bo.`amount`,0)) bcMoney,
+            SUM(IF(bo.`trade_item_key`='pc',bo.`amount`,0)) pcMMoney,
+            SUM(IF(bo.`trade_item_key`='n6',bo.`amount`,0)) n6Money,
+            SUM(IF(bo.`trade_item_key`='b27',bo.`amount`,0)) b27Money
+            FROM ROUND r1
+            JOIN (SELECT MAX(r2.`id`) roundId FROM ROUND r2 WHERE r2.`game_id`=1 AND r2.`Status` < 6 GROUP BY r2.`gametable_id`) t ON r1.`id`=t.roundId
+            JOIN bet_order bo ON bo.`round_id`=r1.`id`
+            WHERE bo.`user_parent_path` LIKE CONCAT(#{path},'%')
+            GROUP BY bo.`round_id`
+         ]]>
+    </select>
+
+    <select id="queryRouletteLiveInfo" resultType="com.na.manager.bean.RouletteLiveBetBean">
+        <![CDATA[
+            SELECT
+
+            r1.`game_id` gameId,
+            r1.`id` roundId,
+            r1.`gametable_id` gameTableId,
+            r1.`boot_id` bootId,
+            r1.`round_number` roundNum,
+            r1.`Status` roundStatus,
+            COUNT(DISTINCT bo.`user_id`) userNum,
+            SUM(IF(bo.`trade_item_key`='one',bo.`amount`,0)) oneMoney,
+            SUM(IF(bo.`trade_item_key`='TWO',bo.`amount`,0)) twoMoney,
+            SUM(IF(bo.`trade_item_key`='STR',bo.`amount`,0)) strMoney,
+            SUM(IF(bo.`trade_item_key`='THR',bo.`amount`,0)) thrMoney,
+            SUM(IF(bo.`trade_item_key`='LIN',bo.`amount`,0)) linMoney,
+            SUM(IF(bo.`trade_item_key`='col',bo.`amount`,0)) colMoney,
+            SUM(IF(bo.`trade_item_key`='fig',bo.`amount`,0)) figMoney,
+            SUM(IF(bo.`trade_item_key`='ang',bo.`amount`,0)) angMoney,
+            SUM(IF(bo.`trade_item_key`='for',bo.`amount`,0)) forMoney,
+            SUM(IF(bo.`trade_item_key`='big',bo.`amount`,0)) bigMoney,
+            SUM(IF(bo.`trade_item_key`='sma',bo.`amount`,0)) smaMoney,
+            SUM(IF(bo.`trade_item_key`='odd',bo.`amount`,0)) oddMoney,
+            SUM(IF(bo.`trade_item_key`='eve',bo.`amount`,0)) eveMoney,
+            SUM(IF(bo.`trade_item_key`='bla',bo.`amount`,0)) blaMoney,
+            SUM(IF(bo.`trade_item_key`='red',bo.`amount`,0)) redMoney
+            FROM ROUND r1
+            JOIN (SELECT MAX(r2.`id`) roundId FROM ROUND r2 WHERE r2.`game_id`=3 AND r2.`Status`<6 GROUP BY r2.`gametable_id`) t ON r1.`id`=t.roundId
+            JOIN bet_order bo ON bo.`round_id`=r1.`id`
+            WHERE bo.`user_parent_path` LIKE CONCAT(#{path},'%')
+            GROUP BY bo.`round_id`
+        ]]>
+    </select>
+
+    <select id="countLive" resultType="int">
+        SELECT COUNT(DISTINCT u.`user_id`) liveUserNum
+        FROM loginstatus s
+        JOIN live_user u ON u.`user_id`=s.`Uid`
+        WHERE u.`parent_path` LIKE  CONCAT(#{path},'%')
+    </select>
+
+    <select id="queryTopBet" resultType="com.na.manager.bean.LiveBetOrder">
+        SELECT
+        u.`Login_name` agentName,
+        o.`login_name` loginName,
+        GROUP_CONCAT(t.`name` SEPARATOR '、') tradeItemNames,
+        GROUP_CONCAT(t.`id` SEPARATOR '、') tradeItemIds,
+        GROUP_CONCAT(FORMAT(o.`amount`,2) SEPARATOR '、') amounts,
+        GROUP_CONCAT(DISTINCT o.bet_ip SEPARATOR '、') betIps,
+        GROUP_CONCAT(o.`id` SEPARATOR '、') betOrderIds,
+        o.`user_id` userId
+        FROM bet_order o
+        JOIN USER u ON o.`parent_id`=u.`id`
+        JOIN trade_item t ON t.`id`=o.`trade_item_id`
+        WHERE
+        o.`round_id`=#{roundId}
+        AND o.`user_parent_path` LIKE CONCAT(#{path},'%')
+        GROUP BY o.`user_id`
+        ORDER BY SUM(o.`amount`) DESC
+        LIMIT 0,50
+    </select>
+
+    <update id="updateModifiedUserBalance">
+        UPDATE bet_order o
+        JOIN (
+        SELECT bo.id FROM bet_order bo WHERE bo.`user_id`=#{userId} AND bo.`status`=2 ORDER BY bo.`id` DESC LIMIT 1
+        ) b ON o.`id`=b.id
+        JOIN USER u ON o.`user_id`=u.id
+
+        SET o.modified_user_balance = u.balance
+    </update>
+        
+</mapper>

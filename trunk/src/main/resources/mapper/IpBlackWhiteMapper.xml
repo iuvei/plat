@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IIpBlackWhiteMapper">
+
+	<sql id="dynicWhere">
+		<where>
+			<if test="startNum !=null and startNum !=''"><![CDATA[ and start_num <=#{startNum} and end_num >=#{startNum}]]></if>
+			<if test="platType !=null and platType !='' and platType !=-1">and plat_type =#{platType}</if>
+			<if test="ipType !=null and ipType !='' and ipType !=-1">and ip_type =#{ipType}</if>
+		</where>
+	</sql>
+	
+	<select id="queryListByPage" resultType="com.na.manager.entity.IpBlackWhiteAddr">
+		select * from ip_black_white_addr
+		<include refid="dynicWhere" />
+		order by create_time desc
+		limit #{startRow},#{pageSize}
+	</select>
+	
+	<select id="list" resultType="com.na.manager.entity.IpBlackWhiteAddr">
+		select * from ip_black_white_addr
+		<include refid="dynicWhere" />
+	</select>
+
+	<select id="count" resultType="long">
+		select count(*) from ip_black_white_addr
+		<include refid="dynicWhere" />
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		keyColumn="id">
+		INSERT INTO `ip_black_white_addr` (
+		`start`,
+		`end`,
+		`start_num`,
+		`end_num`,
+		`create_time`,
+		`create_by`,
+		`plat_type`,
+		`ip_type`,
+		`remark`,
+		`area`
+		)
+		VALUES 
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{item.start},
+			#{item.end},
+			#{item.startNum},
+			#{item.endNum},
+			#{item.createTime},
+			#{item.createBy},
+			#{item.platType},
+			#{item.ipType},
+			#{item.remark},
+			#{item.area}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="list">
+		DELETE FROM ip_black_white_addr WHERE id in (
+		<foreach collection="list" item="item" index="index" separator=",">
+			#{item}
+		</foreach>
+		)
+	</delete>
+</mapper>

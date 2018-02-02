@@ -1,0 +1,118 @@
+
+<header class="app-header navbar">
+  <button class="navbar-toggler mobile-sidebar-toggler hidden-lg-up" type="button">&#9776;</button>
+  <a class="logo" href="javascript:void(0);" (click)="goPage()"></a>
+
+  <ul class="nav navbar-nav hidden-md-down">
+    <li class="nav-item">
+      <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
+    </li>
+  </ul>
+  <ul class="nav navbar-nav ml-auto">
+    <li class="nav-item">
+      <a class="nav-link" href="javascript:void(0)" (click)="zoomBig()"><span class="icon-magnifier-add icons font-2xl"></span></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="javascript:void(0)" (click)="zoomSmall()"><span class="icon-magnifier-remove icons font-2xl"></span></a>
+    </li>
+
+    <li class="nav-item dropdown" dropdown (onToggle)="toggled($event)">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" dropdownToggle>
+        <img src="assets/img/avatars/6.jpg" class="img-avatar" >
+        <span class="hidden-md-down">{{currentUser?.user?.loginName}}</span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" dropdownMenu aria-labelledby="simple-dropdown">
+        <button type="button" class="dropdown-item" data-toggle="modal" (click)="passwordModal.show()"><i class="fa fa-shield"></i> {{ 'common.modifyPassword' | translate }}</button>
+        <a class="dropdown-item" href="javascript:void(0)" (click)="logout()"><i class="fa fa-lock"></i> {{ 'layout.exit' | translate }}</a>
+      </div>
+    </li>
+  </ul>
+
+</header>
+
+<div class="app-body">
+  <div class="sidebar">
+    <nav class="sidebar-nav">
+      <ul class="nav">
+        <li class="nav-item">
+          <a href="javascript:void(0);" class="nav-link" routerLinkActive="active" (click)="goPage()"><i class="icon-speedometer"></i> {{ 'layout.homePage' | translate }} </a>
+        </li>
+
+        <li class="divider"></li>
+
+          <li class="nav-item nav-dropdown" routerLinkActive="open"  *ngFor="let item of _menu_data">
+            <a class="nav-link nav-dropdown-toggle fistmenu" href="#"><i class="{{item.menuCls | translate}}"></i> {{item.menuName | translate}} </a>
+            <ul class="nav-dropdown-items" >
+              <ng-container *ngFor="let permission of _permissions">
+                <li class="nav-item" *ngIf="permission.permissionType==1 && permission.groupID==item.id">
+                  <a class="nav-link" routerLinkActive="active" [routerLink]="[permission.permissionUrl]" style="margin-left: 10px;"><i class="{{permission.cls!=null ? permission.cls : 'fa fa-align-justify'}}"></i> {{permission.permissionDesc}}</a>
+                </li>
+              </ng-container>
+            </ul>
+          </li>
+
+
+        <li class="divider"></li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Main content -->
+  <main class="main" >
+
+    <!-- Breadcrumb -->
+    <ol class="breadcrumb">
+      <breadcrumbs></breadcrumbs>
+    </ol>
+
+    <div class="container-fluid" [ngClass]="['container-fluid',currentZoom]">
+      <router-outlet></router-outlet>
+    </div><!-- /.conainer-fluid -->
+  </main>
+</div>
+
+<footer class="app-footer">
+  Copyright 2016 New Asia. All Rights Reserved
+  <span class="float-right">Powered by <a href="http://na77.com" target="_blank">NA GROUP</a></span>
+</footer>
+
+<!--密码修改对话框-->
+<div bsModal #passwordModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'common.modifyPassword' | translate }}</h4>
+        <button type="button" class="close" (click)="passwordModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="modifyPassword()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="oldPwd" class="form-control-label">{{ 'common.oldPassword' | translate }}:</label>
+            <input type="password" class="form-control" id="oldPwd" name="oldPwd" [(ngModel)]="oldPwd" autofocus required>
+          </div>
+          <div class="form-group">
+            <label for="newPwd" class="form-control-label">{{ 'common.newPassword' | translate }}:</label>
+            <input type="password" class="form-control" id="newPwd" name="newPwd" [(ngModel)]="newPwd" required minlength="6" maxlength="15">
+          </div>
+          <div class="form-group">
+            <label for="receptPwd" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+            <input type="password" class="form-control" id="receptPwd" name="receptPwd" [(ngModel)]="receptPwd" required minlength="6" maxlength="15">
+          </div>
+          <div [hidden]="newPwd==receptPwd" class="alert alert-danger">{{ 'common.confirmPasswordFailure' | translate }}</div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="passwordModal.hide()">{{ 'common.close' | translate }}</button>
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<toaster-container [toasterconfig]="toasterconfig"></toaster-container>
+<p-confirmDialog icon="fa fa-question-circle" [header]="'common.tips' | translate" [acceptLabel]="'common.confirm' | translate" [rejectLabel]="'common.cancel' | translate"></p-confirmDialog>
+<!--<toaster-container></toaster-container>-->
+<loading-animate></loading-animate>

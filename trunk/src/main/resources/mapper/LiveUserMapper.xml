@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.ILiveUserMapper">
+	
+	<sql id="condtion">
+        <where>
+            and u.user_type=4
+            <if test="type">and l.type = #{type}</if>
+            <if test="id">and u.id = #{id}</if>
+            <if test="loginName != '' and loginName != null ">and u.login_name LIKE CONCAT('%',#{loginName},'%')</if>
+            <if test="userStatus != null and userStatus != 0 ">and u.user_status=#{userStatus}</if>
+            <if test="parentId">and l.parent_id=#{parentId}</if>
+            <if test="parentPath">and l.parent_path LIKE CONCAT(#{parentPath},'%') </if>
+        </where>
+    </sql>
+
+    <select id="search" resultType="com.na.manager.bean.vo.AccountVO">
+        select 
+        	l.*,u.*,
+        	(case when ls.id is null then false when ls.id is not null then true end) as isOnline
+        from live_user l
+        join user u on u.id = l.user_id
+        left join loginstatus ls on ls.uid = l.user_id
+        <include refid="condtion"/>
+        order by u.create_time desc
+    </select>
+    
+    <select id="findByParentId" resultType="com.na.manager.bean.vo.AccountVO">
+        select 
+        	l.*,u.*,
+        	(case when ls.id is null then false when ls.id is not null then true end) as isOnline
+        from live_user l
+        join user u on u.id = l.user_id
+        left join loginstatus ls on ls.uid = l.user_id
+        <where>
+        	user_type = 4 and parent_id = #{parentId}
+        </where>
+        order by u.create_time desc
+    </select>
+    
+    <select id="findLiveUserByParentIdForPage" resultType="com.na.manager.bean.vo.AccountVO">
+    	select 
+    		l.*,u.*,
+        	(case when ls.id is null then false when ls.id is not null then true end) as isOnline
+    	from live_user l
+    	join user u on u.id = l.user_id 
+    	left join loginstatus ls on ls.uid = l.user_id
+    	<where>
+    		parent_id=#{parentId} 
+    	</where>
+    	order by u.balance desc
+    	limit #{startRow},#{pageSize}
+    </select>
+    
+    <select id="findOnlineAllUserByParentId" resultType="com.na.manager.bean.vo.AccountVO">
+        select 
+        	l.*,u.*,
+        	(case when ls.id is null then false when ls.id is not null then true end) as isOnline
+        from live_user l
+        join user u on u.id = l.user_id
+        left join loginstatus ls on ls.uid = l.user_id
+        <where>
+        	user_type = 4 and parent_path LIKE CONCAT(#{parentPath},'%')
+        </where>
+        order by u.create_time desc
+    </select>
+	
+    <insert id="add">
+    	INSERT INTO `live_user` (
+    	  `user_id`,
+          `is_bet`,
+          `room_member`,
+          `source`,
+          `type`,
+          `parent_id`,
+          `parent_path`,
+          `wash_percentage`,
+          `into_percentage`,
+          `win_money`,
+          `biggest_win_money`,
+          `biggest_balance`,
+          `chips`
+        )
+        VALUES
+          (
+            #{userId},
+            #{isBet},
+            #{roomMember},
+            #{source},
+            #{type},
+            #{parentId},
+            #{parentPath},
+            #{washPercentage},
+            #{intoPercentage},
+            #{winMoney},
+            #{biggestWinMoney},
+            #{biggestBalance},
+            #{chips}
+          )
+    </insert>
+    
+    <update id="update">
+        UPDATE
+          `live_user`
+        <set>
+            <if test="isBet">`is_bet` = #{isBet},</if>
+            <if test="roomMember">`room_member` = #{roomMember},</if>
+            <if test="source">`source` = #{source},</if>
+            <if test="type">`type` = #{type},</if>
+            <if test="parentId">`parent_id` = #{parentId},</if>
+            <if test="parentPath">`parent_path` = #{parentPath},</if>
+            <if test="winMoney">`win_money` = #{winMoney},</if>
+            <if test="washPercentage !=null">`wash_percentage` = #{washPercentage},</if>
+            <if test="intoPercentage !=null">`into_percentage` = #{intoPercentage},</if>
+            <if test="biggestWinMoney != null">`biggest_win_money` = #{biggestWinMoney},</if>
+            <if test="biggestBalance != null">`biggest_balance` = #{biggestBalance},</if>
+            <if test="chips">`chips` = #{chips},</if>
+        </set>
+        WHERE `user_id` = #{id}
+    </update>
+    
+    <update id="modifyStatus">
+        UPDATE
+          `user`
+        <set>
+            `user_status` = #{userStatus}
+        </set>
+        <where>
+        	id in ( 
+        	select user_id from live_user 
+        	<where>
+	        	<if test="parentPath != null">
+			        and parent_path LIKE CONCAT(#{parentPath},'%') 
+	        	</if>
+	        	<if test="id != null">
+	        		or `user_id` = #{id}
+	        	</if>
+        	</where>
+        	)
+        </where> 
+    </update>
+    
+    <update id="modifyBetStatus">
+        UPDATE
+          `live_user`
+        <set>
+            `is_bet` = #{isBet}
+        </set>
+        <where>
+        	<if test="parentPath != null">
+		        and parent_path LIKE CONCAT(#{parentPath},'%') 
+        	</if>
+        	<if test="id != null">
+        		or `user_id` = #{id}
+        	</if>
+        </where> 
+    </update>
+    
+</mapper>

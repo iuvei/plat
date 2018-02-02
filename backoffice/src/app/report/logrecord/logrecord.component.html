@@ -1,0 +1,83 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}：</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="searchModel.startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="searchModel.endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchState">{{ 'common.loginType' | translate }}：</label>
+        <!--<select [(ngModel)]="searchModel.loginType" id="loginType" name="loginType" class="form-control"  >
+          <option value="-1">{{ 'common.all' | translate }}</option>
+         &lt;!&ndash; <option value="0">{{ 'logrecord.delear' | translate }}</option>&ndash;&gt;
+          <option value="1">{{ 'logrecord.agent' | translate }}</option>
+          <option value="2">{{ 'logrecord.user' | translate }}</option>
+        </select>-->
+        <dict-control id="loginType" name="loginType"  d-class="form-control" dict-type="login_type"  [(val)]="searchModel.loginType" default-info="全部"></dict-control>
+      </div>
+      <div class="form-group">
+        <label for="searchState">{{ 'common.status' | translate }}：</label>
+        <!--<select [(ngModel)]="searchModel.state" id="searchState" name="searchState" class="form-control"  >
+          <option value="-1">{{ 'common.all' | translate }}</option>
+          <option value="0">{{ 'logrecord.loginSuccess' | translate }}</option>
+          <option value="1">{{ 'logrecord.loginFailure' | translate }}</option>
+        </select>-->
+        <dict-control id="searchState" name="searchState"  d-class="form-control" dict-type="login_status"  [(val)]="searchModel.state" default-info="全部"></dict-control>
+      </div>
+      <div class="form-group">
+        <label for="searchUserName">{{ 'common.userName' | translate }}：</label>
+        <input [(ngModel)]="searchModel.userName" id="searchUserName" name="searchUserName" type="text" pInputText  [placeholder]="'common.userName' | translate">
+      </div>
+      <div class="form-group">
+        <label for="searchIP">IP：</label>
+        <input [(ngModel)]="searchModel.ip" id="searchIP" name="searchIP" type="text" pInputText  placeholder="IP">
+      </div>
+      &nbsp;&nbsp;
+      <div class="btn-group">
+        <button type="submit" class="margin-left9 btn btn-primary">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+      <tr>
+        <th>{{ 'common.userName' | translate }}</th>
+        <th>{{ 'common.nickName' | translate }}</th>
+        <th>{{ 'logrecord.loginTime' | translate }}</th>
+        <th>{{ 'logrecord.loginIp' | translate }}</th>
+        <th>{{ 'common.status' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of tableList">
+        <td>{{item.loginName}}</td>
+        <td>
+          {{item.nickName}}
+        </td>
+        <td>{{item.loginDate}}</td>
+        <td>{{item.ipAddr}}</td>
+        <td>
+          <span *ngIf="item.loginStatus == 0" >{{ 'logrecord.loginSuccess' | translate }}</span>
+          <span *ngIf="item.loginStatus == 1" >{{ 'logrecord.loginFailure' | translate }}</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+

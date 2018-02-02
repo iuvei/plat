@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IStatisticsUserMapper">
+	 <!-- 查询在线人数 -->
+	 <!-- select sum(online_number_user),DATE_FORMAT(create_time,'%m-%d %H') as createTime from statistics_user s -->
+	 <!-- where agent_parent_path REGEXP '/2/' GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d %H') ORDER BY create_time DESC; -->
+	 <select id="selectOnlineNumberNow" resultType="Long">
+	 	select COUNT(*) from loginstatus a JOIN live_user b on a.Uid =b.user_id and b.parent_path 
+	 	REGEXP CONCAT('/',#{userId},'/') and b.parent_id !=418 and b.parent_id !=7
+	 </select>
+	 
+	  <!-- 注册人数(最近7天) -->
+	 <select id="selectRegisterNumberByDay" resultType="HashMap">
+	 	select t.registerNumber,DATE_FORMAT(t.staDate,'%m-%d') as staDate from (select sum(s.register_number_user) as registerNumber,DATE_FORMAT(create_time,'%Y-%m-%d') as staDate from statistics_user s 
+	 	where agent_parent_path REGEXP CONCAT('/',#{userId},'/') and s.agent_id!=418 and s.agent_id !=7 AND DATE_FORMAT(s.create_time, '%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+	 	GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d') ORDER BY create_time DESC LIMIT 0,7) t ORDER BY t.staDate ASC
+	 </select>
+	 
+	 <!-- 投注人数(最近7天) -->
+	 <select id="selectBetNumberByDay" resultType="HashMap">
+	 	select t.betNumber,DATE_FORMAT(t.staDate,'%m-%d') as staDate from (select sum(s.bet_number_user) as betNumber,DATE_FORMAT(create_time,'%Y-%m-%d') as staDate from statistics_user s 
+	 	where agent_parent_path REGEXP CONCAT('/',#{userId},'/') and s.agent_id!=418 and s.agent_id !=7 AND DATE_FORMAT(s.create_time, '%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+	 	GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d') ORDER BY create_time DESC LIMIT 0,7) t ORDER BY t.staDate ASC
+	 </select>
+	 
+	 <!-- 投注量(最近7天) -->
+	 <select id="selectBetTotalByDay" resultType="HashMap">
+	 	select t.betTotal,DATE_FORMAT(t.staDate,'%m-%d') as staDate from (select sum(s.bet_number_total) as betTotal,DATE_FORMAT(create_time,'%Y-%m-%d') as staDate from statistics_user s 
+	 	where agent_parent_path REGEXP CONCAT('/',#{userId},'/') and s.agent_id!=418 and s.agent_id !=7 AND DATE_FORMAT(s.create_time, '%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+	 	GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d') ORDER BY create_time DESC LIMIT 0,7) t ORDER BY t.staDate ASC
+	 </select>
+	 
+	 <!-- 查询投注排行 -->
+	  <select id="selectBetTotalRankByDay" resultType="HashMap">
+	 	select sum(s.bet_number_total) as betTotal,b.aname as agentName,DATE_FORMAT(s.create_time,'%m-%d') as staDate from statistics_user s 
+	 	JOIN (
+			select DISTINCT a.agent_id as aId,a.agent_name as aname,a.agent_parent_path as apth from statistics_user a
+			where a.agent_parent_path REGEXP CONCAT('/',#{userId},'/',a.agent_id,'/') and a.agent_id!=418 and a.agent_id !=7 
+		) b
+		ON s.agent_parent_path REGEXP CONCAT('/',b.aId,'/') AND DATE_FORMAT(s.create_time, '%Y-%m-%d') &lt; DATE_FORMAT(NOW(),'%Y-%m-%d')
+		GROUP BY b.aname,DATE_FORMAT(s.create_time,'%Y-%m-%d') ORDER BY s.create_time ASC LIMIT 0,31
+	 </select>
+	 
+     <insert id="add" useGeneratedKeys="true" keyColumn="id">
+    	INSERT INTO `statistics_user` (
+          `agent_id`,
+          `agent_name`,
+          `agent_parent_path`,
+          `online_number_user`,
+          `register_number_user`,
+          `bet_number_user`,
+          `bet_number_total`,
+          `create_time`
+        )
+        SELECT 
+			a.user_id, 
+			a.login_name, 
+			a.parent_path, 
+			IFNULL(b.number,0) as online_number_user,
+			IFNULL(c.number,0) as register_number_user,
+			IFNULL(d.numer_user,0) as bet_number_user,
+			IFNULL(d.number_bet,0) as bet_number_total,
+			NOW()
+		FROM
+		(	
+			SELECT 
+				u.id AS `user_id`,
+				l.parent_path,
+				u.login_name 
+			FROM live_user l
+			JOIN  `user` u ON u.id = l.user_id
+			WHERE (l.`type` = 1 or l.`type` = 3)
+		) a
+		LEFT JOIN 
+		(
+			SELECT l.parent_id, COUNT(1) AS number FROM loginstatus ls JOIN live_user l ON l.user_id = ls.uid
+			GROUP BY l.parent_id
+		) b ON b.parent_id = a.user_id
+		LEFT JOIN
+		(
+			SELECT l.parent_id, COUNT(1)  as number
+			FROM live_user l 
+			JOIN user u on u.id = l.user_id
+			WHERE l.`type` = 2 AND u.create_time BETWEEN #{beginTime} AND #{endTime}
+			GROUP BY l.parent_id
+		) c ON c.parent_id = a.user_id
+		LEFT JOIN 
+		(
+			SELECT l.parent_id, COUNT(distinct b.user_id) as numer_user, sum(b.amount) as number_bet FROM bet_order b 
+			LEFT JOIN live_user l ON b.user_id = l.user_id 
+			WHERE b.`bet_time` BETWEEN #{beginTime} AND #{endTime}
+			GROUP BY l.parent_id
+		) d on d.parent_id = a.user_id
+		ORDER BY a.user_id ASC
+    </insert>
+    
+</mapper>

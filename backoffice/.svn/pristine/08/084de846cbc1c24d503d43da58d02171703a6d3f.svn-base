@@ -1,0 +1,351 @@
+import {AfterViewInit, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewRef} from "@angular/core";
+
+import {AccountService} from "./account.service";
+import {AccountAddTableDirective} from "./account-add-table.directive";
+import {AccountForm} from "./accountfrom";
+import {AccountComponent} from "./account.component";
+import {isUndefined} from "util";
+import {TranslateService} from "@ngx-translate/core";
+import {ToasterService} from "angular2-toaster";
+import {ModalDirective} from "ng2-bootstrap";
+import {PercentageConfig} from "app/account/percentageconfig";
+
+@Component({
+  templateUrl: 'account-table.component.html'
+})
+export class AccountTableComponent implements OnInit, AfterViewInit {
+
+  // query param
+  form: AccountForm = new AccountForm();
+
+  public dataList: any[] = [];
+
+  //
+  @ViewChild(AccountAddTableDirective)
+  public addTableView: AccountAddTableDirective;
+  @ViewChild('addPercentageConfig')
+  public addPercentageConfig: ModalDirective;
+  viewRef: ViewRef;
+
+  _parent: AccountComponent;
+
+  currentUser: any;
+
+  cars:PercentageConfig[];
+  displayDialog: boolean;
+  car: PercentageConfig = new PercentageConfig();
+  selectedCar: PercentageConfig;
+  newCar: boolean;
+  deleteFlag:boolean=false;
+  nowUser:any;
+
+  // 下级路径
+  public path: string = '/';
+  // 刷新表格使用
+  refreshForm: AccountForm;
+
+  constructor(private accountService: AccountService,
+              private _componentFactoryResolver: ComponentFactoryResolver,
+              private _toaster: ToasterService,
+              private _translate: TranslateService) {
+  }
+
+  ngOnInit() {
+    const user = JSON.parse(localStorage.getItem('loginUser'));
+    this.currentUser = user.user;
+  }
+
+  checkHasPermission(name:string){
+    let flag =false;
+    for(let item of this.currentUser.permissions){
+      if(item.permissionName == name){
+        flag = true;
+        break;
+      }
+    }
+    return flag;
+  }
+
+  ngAfterViewInit() {
+    if (!isUndefined(this.form) && this.form !== null && !isUndefined(this.form.parentId)) {
+      this.refreshForm = new AccountForm();
+      this.refreshForm.parentId = this.form.parentId;
+      this.getLowerUser();
+    } else {
+      if (!isUndefined(this.form) && this.form !== null && !isUndefined(this.form.id)) {
+        this.refreshForm = new AccountForm();
+        this.refreshForm.id = this.form.id;
+      }
+      this.search();
+    }
+  }
+
+  openSetPercentageConfig(item: any){
+    this.nowUser = item;
+    this.accountService.searchPercentageConfig(item.id).subscribe(
+      data => {
+        //this.cars = data.data;
+        //let i_offset: number = data.data.length;
+
+        let temp = data.data.data as PercentageConfig[];
+        this.cars = [].concat(temp);
+        this.addPercentageConfig.show();
+      },
+      err => {
+        console.log(err);
+      });
+
+  }
+
+  showDialogToAdd() {
+    this.newCar = true;
+    this.deleteFlag=false;
+    this.car = new PercentageConfig();
+    this.displayDialog = true;
+  }
+  onRowSelect(event) {
+    this.newCar = false;
+    this.deleteFlag=true;
+    this.car = this.cloneCar(event.data);
+    this.displayDialog = true;
+  }
+  cloneCar(c: PercentageConfig): PercentageConfig {
+    let car = new PercentageConfig();
+    for(let prop in c) {
+      car[prop] = c[prop];
+    }
+    return car;
+  }
+  save() {
+    //let cars = [...this.cars];
+    if( this.car.waterPercentage < 0 || this.car.waterPercentage >1){
+      this._toaster.pop('error', this._translate.instant('common.warning'),'打水占成在0~1之间');
+      return;
+    }
+    if(this.car.hedgePercentage < 0 || this.car.hedgePercentage >1){
+      this._toaster.pop('error', this._translate.instant('common.warning'),'余量占成在0~1之间');
+      return;
+    }
+    if(this.car.noHedgePercentage < 0 || this.car.noHedgePercentage >1){
+      this._toaster.pop('error', this._translate.instant('common.warning'),'和对占成在0~1之间');
+      return;
+    }
+    this.car.userId = this.nowUser.id;
+    if(this.newCar){
+      this.accountService.addPercentageConfig(this.car).subscribe(
+        data => {
+          this.accountService.searchPercentageConfig(this.nowUser.id).subscribe(
+            data => {
+              let temp = data.data.data as PercentageConfig[];
+              this.cars = [].concat(temp);
+              //this.addPercentageConfig.show();
+            },
+            err => {
+              console.log(err);
+            });
+        },
+        err => {
+          console.log(err);
+        });
+    }else{
+      this.accountService.updatePercentageConfig(this.car).subscribe(
+        data => {
+          this.accountService.searchPercentageConfig(this.nowUser.id).subscribe(
+            data => {
+              let temp = data.data.data as PercentageConfig[];
+              this.cars = [].concat(temp);
+              //this.addPercentageConfig.show();
+            },
+            err => {
+              console.log(err);
+            });
+        },
+        err => {
+          console.log(err);
+        });
+    }
+    //cars[this.findSelectedCarIndex()] = this.car;*/
+    //this.cars = cars;
+    this.car = null;
+    this.displayDialog = false;
+  }
+
+  delete() {
+    /*let index = this.findSelectedCarIndex();
+    this.cars = this.cars.filter((val,i) => i!=index);*/
+    this.accountService.deletePercentageConfig(this.car.id).subscribe(
+      data => {
+        this.accountService.searchPercentageConfig(this.nowUser.id).subscribe(
+          data => {
+            let temp = data.data.data as PercentageConfig[];
+            this.cars = [].concat(temp);
+            //this.addPercentageConfig.show();
+          },
+          err => {
+            console.log(err);
+          });
+      },
+      err => {
+        console.log(err);
+      });
+    this.car = null;
+    this.displayDialog = false;
+  }
+
+  findSelectedCarIndex(): number {
+    return this.cars.indexOf(this.selectedCar);
+  }
+
+  searchUser(item: any) {
+    const tempData: AccountForm = new AccountForm();
+    tempData.parentId = item.id;
+    // 清除下级表格
+    const a = this.addTableView.viewContainerRef.indexOf(this.viewRef);
+    const length = this.addTableView.viewContainerRef.length;
+    for (let i = length - 1 ; i > a ; i-- ) {
+      this.addTableView.viewContainerRef.remove(i);
+      this._parent.tabeleComponentArray.pop();
+    }
+    this.loadComponent(tempData);
+  }
+
+  loadComponent(data: AccountForm, index?: number) {
+    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(AccountTableComponent);
+    const viewContainerRef = this.addTableView.viewContainerRef;
+    let componentRef;
+    if (typeof(index) !== 'undefined') {
+      const tempViewRef = viewContainerRef.detach(viewContainerRef.length - 1);
+      componentRef = viewContainerRef.createComponent(componentFactory, 0);
+      viewContainerRef.insert(tempViewRef);
+      const tempTable = this._parent.tabeleComponentArray.pop();
+      this._parent.tabeleComponentArray.push((<AccountTableComponent>componentRef.instance));
+      this._parent.tabeleComponentArray.push(tempTable);
+    } else {
+      componentRef = viewContainerRef.createComponent(componentFactory);
+      this._parent.tabeleComponentArray.push((<AccountTableComponent>componentRef.instance));
+    }
+    (<AccountTableComponent>componentRef.instance).viewRef = componentRef.hostView;
+    (<AccountTableComponent>componentRef.instance).form = data;
+    (<AccountTableComponent>componentRef.instance).addTableView = this.addTableView;
+    (<AccountTableComponent>componentRef.instance)._parent = this._parent;
+  }
+
+  getLowerUser() {
+    this.accountService.getLowerUser({
+      'parentId' : this.refreshForm.parentId
+    }).subscribe(
+      data => {
+        const rootData = data.data;
+        this.dataList = rootData.list;
+        this.path = rootData.parentPathName;
+        // const form: AccountForm = new AccountForm();
+        // form.id = data.data[0].parentId;
+        // this.loadComponent(form, 0);
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  search() {
+    this.accountService.search(this.form).subscribe(
+      data => {
+        if (data.status === 0) {
+          const rootData = data.data.list;
+          this.dataList = rootData;
+          this.path = data.data.parentPathName;
+          this.refreshForm = new AccountForm();
+          this.refreshForm.id = rootData[0].id;
+          if (this.currentUser.userType !== 3 && rootData[0].id !== this.currentUser.id && rootData[0].parentId !== null ) {
+            const form: AccountForm = new AccountForm();
+            form.id = rootData[0].parentId;
+            this.loadComponent(form, 0);
+          }
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('common.notFindData'));
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  refreshTableData() {
+    if (isUndefined(this.refreshForm)) {
+      return ;
+    }
+    this.accountService.search(this.refreshForm).subscribe(
+      data => {
+        this.dataList = data.data.list;
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  openModifyBalanceModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.openModifyBalanceModal();
+  }
+
+  openModifyAllAccountStatusModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.modifyAllAccountStatusModalFlag = true;
+  }
+
+  openModifyAllBatStatusModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.modifyAllBetStatusModalFlag = true;
+  }
+
+  openModifyAllActiveTitleModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.modifyAllActiveTitleModalFlag = true;
+  }
+
+  openAddAccountModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.openAddAccountModal();
+  }
+
+  openModifyAccountModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.openModifyAccountModal();
+  }
+
+  openModifyCashAccountModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.openModifyCashAccountModal();
+  }
+
+  openModifyPasswordModal(item: any) {
+    this._parent.selectRowData = item;
+    this._parent.openModifyPasswordModal();
+  }
+
+  modifyBetStatus(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.modifyBetStatus();
+  }
+
+  modifyActiveTitle(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.modifyActiveTitle();
+  }
+
+  modifyAccountStatus(item: any) {
+    this._parent.selectRowData = item;
+    this._parent._childTable = this;
+    this._parent.modifyAccountStatus();
+  }
+
+}

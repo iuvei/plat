@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IPermissionMapper">
+
+    <select id="findPermissionByUserId" resultType="com.na.manager.entity.Permission">
+        SELECT DISTINCT * FROM (
+            SELECT
+              p.*
+            FROM
+              permission p
+              JOIN role_permission rp
+                ON p.`PERMISSION_ID` = rp.`PERMISSION_ID`
+              JOIN user_role ur
+                ON ur.`ROLE_ID` = rp.`role_ID`
+              JOIN role r
+                ON r.`ROLE_ID` = ur.`ROLE_ID` AND r.`STATUS`=1
+            WHERE ur.`USER_ID` = #{userID}
+
+            UNION ALL
+
+            SELECT
+              p.*
+            FROM
+              permission p
+              JOIN user_permission up
+                ON p.`PERMISSION_ID` = up.`PERMISSION_ID`  AND up.status=1
+            WHERE up.`USER_ID` = #{userID}
+        ) per ORDER BY per.PERMISSION_ORDER ASC
+    </select>
+
+    <insert id="addPermissionByRoleId">
+        <foreach close="" collection="permissionIds" index="index" item="item" open="" separator=";">
+            INSERT INTO `role_permission` (
+            `PERMISSION_ID`,
+            `role_ID`
+            )
+            VALUES
+            (
+            #{item},
+            #{roleId}
+            )
+        </foreach>
+    </insert>
+    
+    <insert id="addUserPermission">
+    	INSERT INTO `user_permission` (
+    	  `PERMISSION_ID`,
+          `USER_ID`,
+          `STATUS`
+        )
+        VALUES
+          (
+            #{permissionId},
+            #{userId},
+            TRUE
+          )
+    </insert>
+
+    <select id="findPermissionByRolePermission" resultType="com.na.manager.entity.Permission">
+        SELECT
+            *
+        FROM
+            permission
+        WHERE
+            PERMISSION_ID IN (
+                SELECT
+                    rpermission.PERMISSION_ID
+                FROM
+                    live_user luser
+                LEFT JOIN user_role urole on urole.USER_ID = luser.user_id
+                LEFT JOIN role_permission  rpermission on rpermission.role_ID = urole.ROLE_ID
+                WHERE
+                    luser.user_id = #{userId}
+            )
+        AND STATUS = TRUE 
+    </select>
+    
+    
+    
+</mapper>

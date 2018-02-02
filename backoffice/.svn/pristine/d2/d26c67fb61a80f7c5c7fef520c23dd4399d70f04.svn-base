@@ -1,0 +1,314 @@
+///<reference path="bet/bet.component.ts"/>
+import {BrowserModule} from "@angular/platform-browser";
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule, ViewRef} from "@angular/core";
+import {DatePipe, HashLocationStrategy, LocationStrategy} from "@angular/common";
+
+import {AppComponent} from "./app.component";
+import {DropdownModule} from "ng2-bootstrap/dropdown";
+import {TabsModule} from "ng2-bootstrap/tabs";
+import {NAV_DROPDOWN_DIRECTIVES} from "./shared/nav-dropdown.directive";
+
+import {ChartsModule} from "ng2-charts/ng2-charts";
+import {SIDEBAR_TOGGLE_DIRECTIVES} from "./shared/sidebar.directive";
+import {AsideToggleDirective} from "./shared/aside.directive";
+import {BreadcrumbsComponent} from "./shared/breadcrumb.component";
+import {LoginComponent} from "./login/login.component";
+import {GameResultComponent} from "./game/gameresult/gameresult.component";
+import {TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {Http, HttpModule, RequestOptions, XHRBackend} from "@angular/http";
+import {FormsModule} from "@angular/forms";
+import {DatepickerModule, ModalModule, PaginationModule} from "ng2-bootstrap";
+// Routing Module
+import {AppRoutingModule} from "./app.routing";
+// Layouts
+import {FullLayoutComponent} from "./layouts/full-layout.component";
+import {PermissionComponent} from "./permission/permission.component";
+import {RoleService} from "./role/role.service";
+import {RoleComponent} from "./role/role.component";
+import {UserComponent} from "./user/user.component";
+import {AuthGuard} from "./auth.guard";
+
+import {TableWinLostComponent} from "./report/tablewinlost/tablewinlost.component";
+import {TableWinLostService} from "./report/tablewinlost/tablewinlost.service";
+import {BetService} from "./bet/bet.service";
+import {LogRecordService} from "./report/logrecord/logrecord.service";
+import {PointInOutService} from "./report/pointinout/pointinout.service";
+import {TransRecordService} from "./report/transrecord/transrecord.service";
+import {LogRecordComponent} from "./report/logrecord/logrecord.component";
+import {PointInOutComponent} from "./report/pointinout/pointinout.component";
+import {TransRecordComponent} from "./report/transrecord/transrecord.component";
+import {AccountComponent} from "./account/account.component";
+import {AccountService} from "./account/account.service";
+import {AccountTableComponent} from "./account/account-table.component";
+import {AccountAddTableDirective} from "./account/account-add-table.directive";
+import {AccountTopAddTableDirective} from "./account/account-top-add-table.directive";
+import {
+  CalendarModule,
+  CheckboxModule,
+  ConfirmationService,
+  ConfirmDialogModule,
+  DataListModule,
+  DataTableModule,
+  DialogModule,
+  FileUploadModule,
+  GalleriaModule,
+  GrowlModule,
+  InputTextModule,
+  LightboxModule,
+  RadioButtonModule,
+  SelectButtonModule,
+  SharedModule,
+  TabViewModule,
+  TreeModule,
+  TreeTableModule
+} from "primeng/primeng";
+import {DictPipe} from "./components/dict.pipe";
+import {CustomHttp} from "./components/customhttp";
+import {MyRequestOptions} from "./components/MyRequestOptions";
+import {PubSubService} from "./components/pubsup.service";
+import {ToasterModule} from "angular2-toaster";
+import {BusinessManageComponent} from "./business-manage/business-manage.component";
+import {BusinessTableComponent} from "./business-manage/business-table.component";
+import {ManyTypeUserComponent} from "./many-type-user/many-type-user.component";
+import {WinLostComponent} from "./report/winlost/winlost.component";
+import {WinLostService} from "./report/winlost/winlost.service";
+import {SubAccountComponent} from "./subaccount/subaccount.component";
+import {TigerReportComponent} from "./report/tigereport/tigereport.component";
+import {BetComponent} from "./bet/bet.component";
+import {AccountStatusPipe} from "./account/status.pipe";
+import {AccountBetStatusPipe} from "./account/bet-status.pipe";
+import {ResourceComponent} from "./resource/resource.component";
+import {ResourceService} from "./resource/resource.service";
+import {GameTableComponent} from "./game/gametable/gametable.component";
+import {GameTableService} from "./game/gametable/gametable.service";
+import {HabaBetRecordComponent} from "./report/hababetrecord/hababetrecord.component";
+import {HabaBetRecordService} from "app/report/hababetrecord/hababetrecord.service";
+import {AbnormalTableComponent} from "./abnormaltable/abnormaltable.component";
+import {AbnormalTableService} from "./abnormaltable/abnormaltable.service";
+import {ApiLogComponent} from "./apilog/apilog.component";
+import {ApiLogService} from "./apilog/apilog.service";
+import {IpBlackListComponent} from "./ipblacklist/ipblacklist.component";
+import {IpBlackListService} from "./ipblacklist/ipblacklist.service";
+import {GameConfigComponent} from "./game/gameconfig/gameconfig.component";
+import {GameOddsComponent} from "./game/gameodds/gameodds.component";
+import {VoiceUserComponent} from "./voiceuser/voiceuser.component";
+import {LoadingAnimateModule, LoadingAnimateService} from "ng2-loading-animate";
+import {ChatService} from "./common/chat-service";
+import {TopBetTableComponent} from "./bet/top-bet-table.component";
+import {WindowRef} from "./common/window-ref";
+import {SysAnnounceComponent} from "./sysannounce/sysannounce.component";
+import {AccountIsActiveTitlePipe} from "./account/isactivetitle.pipe";
+import {BetLevelComponent} from "./betlevel/betlevel.component";
+import {BetLevelService} from "app/betlevel/betlevel.service";
+import {WinLostTableComponent} from "./report/winlost/winlost-table.component";
+import {Router} from "@angular/router";
+import {ButtonModule} from "primeng/components/button/button";
+import {DictComponent} from "./components/dict.component";
+import {AnnounceSerice} from "./sysannounce/sysannounce.service";
+import {FundManagerComponent} from "./fund-manager/fund-manager.component";
+import {AccountRecordComponent} from "./account-record/account-record.component";
+import {MoneyComponent} from "./components/money.component";
+import {AdvertiseComponent} from "./advertise/advertise.component";
+import {RobotComponent} from "./robot/robot.component";
+import {RobotService} from "app/robot/robot.service";
+import {RoomMemberComponent} from "./report/roommember/roommember.component";
+import {RoomMemberService} from "./report/roommember/roommember.service";
+import {RoomSerice} from "./room/room.service";
+import {RoomWinLostService} from "./report/roomwinlost/roomwinlost.service";
+import {RoomComponent} from "app/room/room.component";
+import {RoomWinLostComponent} from "./report/roomwinlost/roomwinlost.component";
+import {RoomWinLostTableComponent} from "./report/roomwinlost/roomwinlost-table.component";
+import {MonitorSerice} from "./monitor/monitor.service";
+import {MonitorComponent} from "./monitor/monitor.component";
+import {RoomNoHedgeService} from "app/report/roomnohedge/roomnohedge.service";
+import {RoomHedgeService} from "./report/roomhedge/roomhedge.service";
+import {RoomYLService} from "./report/roomyl/roomyl.service";
+import {RoomHedgeComponent} from "./report/roomhedge/roomhedge.component";
+import {RoomHedgeTableComponent} from "./report/roomhedge/roomhedge-table.component";
+import {RoomNoHedgeComponent} from "./report/roomnohedge/roomnohedge.component";
+import {RoomNoHedgeTableComponent} from "./report/roomnohedge/roomnohedge-table.component";
+import {RoomYLTableComponent} from "./report/roomyl/roomyl-table.component";
+import {RoomYLComponent} from "./report/roomyl/roomyl.component";
+import {UrlConfigComponent} from "./game/urlconfig/urlconfig.component";
+import {DealerClassRecordComponent} from "./dealer-class-record/dealer-class-record.component";
+import {VGameTableComponent} from "./virtual-game-table/virtual-game-table.component";
+import {VGameTableSerice} from "./virtual-game-table/virtual-game-table.service";
+
+
+export function HttpLoaderFactory(http: Http) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
+export function CustomHttpFactory(backend: XHRBackend, options: RequestOptions, pubsub: PubSubService,
+                                  _loadingSvc: LoadingAnimateService, _translate: TranslateService, router: Router,confirmDialog:ConfirmationService) {
+  return new CustomHttp(backend, options, pubsub, _loadingSvc, _translate, router,confirmDialog);
+}
+
+@NgModule({
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    DropdownModule.forRoot(),
+    TabsModule.forRoot(),
+    ChartsModule,
+    PaginationModule.forRoot(),
+    HttpModule,
+    PaginationModule.forRoot(),
+    ModalModule.forRoot(),
+    DatepickerModule.forRoot(),
+    TreeModule,
+    TabViewModule,
+    DialogModule,
+    ConfirmDialogModule,
+    GrowlModule,
+    TreeTableModule,
+    SharedModule,
+    FileUploadModule,
+    SelectButtonModule,
+    CheckboxModule,
+    InputTextModule,
+    ButtonModule,
+    DataListModule,
+    LightboxModule,
+    GalleriaModule,
+    DataTableModule,
+    RadioButtonModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [Http]
+      }
+    }),
+    ToasterModule,
+    CalendarModule,
+    LoadingAnimateModule.forRoot(),
+  ],
+  declarations: [
+    AppComponent,
+    FullLayoutComponent,
+    NAV_DROPDOWN_DIRECTIVES,
+    BreadcrumbsComponent,
+    SIDEBAR_TOGGLE_DIRECTIVES,
+    AsideToggleDirective,
+    LoginComponent,
+    PermissionComponent,
+    GameResultComponent,
+    BetComponent,
+    RoleComponent,
+    UserComponent,
+    LogRecordComponent,
+    PointInOutComponent,
+    TableWinLostComponent,
+    TransRecordComponent,
+    BusinessManageComponent,
+    BusinessTableComponent,
+    AccountAddTableDirective,
+    AccountTopAddTableDirective,
+    DictPipe,
+    AccountComponent,
+    AccountTableComponent,
+    ManyTypeUserComponent,
+    SubAccountComponent,
+    TigerReportComponent,
+    WinLostComponent,
+    WinLostTableComponent,
+    AccountStatusPipe,
+    AccountBetStatusPipe,
+    ResourceComponent,
+    GameTableComponent,
+    HabaBetRecordComponent,
+    AbnormalTableComponent,
+    GameConfigComponent,
+    GameOddsComponent,
+    VoiceUserComponent,
+    ApiLogComponent,
+    IpBlackListComponent,
+    AbnormalTableComponent,
+    TopBetTableComponent,
+    BetLevelComponent,
+    SysAnnounceComponent,
+    TopBetTableComponent,
+    TopBetTableComponent,
+    AccountIsActiveTitlePipe,
+    DictComponent,
+    FundManagerComponent,
+    AccountRecordComponent,
+    MoneyComponent,
+    AdvertiseComponent,
+    RoomWinLostComponent,
+    RoomWinLostTableComponent,
+    RoomHedgeComponent,
+    RoomHedgeTableComponent,
+    RoomNoHedgeComponent,
+    RoomNoHedgeTableComponent,
+    RoomYLComponent,
+    RoomYLTableComponent,
+    RoomComponent,
+    RoomMemberComponent,
+    RobotComponent,
+    MonitorComponent,
+    UrlConfigComponent,
+    DealerClassRecordComponent,
+    VGameTableComponent
+  ],
+  entryComponents: [
+    BusinessTableComponent,
+    AccountTableComponent,
+    WinLostTableComponent,
+    RoomWinLostTableComponent,
+    RoomHedgeTableComponent,
+    RoomNoHedgeTableComponent,
+    RoomYLTableComponent
+  ],
+  providers: [[
+    RoleService,
+    AuthGuard,
+    LogRecordService,
+    PointInOutService,
+    TableWinLostService,
+    BetService,
+    TransRecordService,
+    AccountService,
+    ConfirmationService,
+    CustomHttp,
+    MyRequestOptions,
+    PubSubService,
+    ViewRef,
+    WinLostService,
+    ResourceService,
+    GameTableService,
+    HabaBetRecordService,
+    AbnormalTableService,
+    DatePipe,
+    ApiLogService,
+    IpBlackListService,
+    LoadingAnimateService,
+    ChatService,
+    WindowRef,
+    BetLevelService,
+    AnnounceSerice,
+    RoomWinLostService,
+    RoomSerice,
+    RoomHedgeService,
+    RoomNoHedgeService,
+    RoomYLService,
+    RoomMemberService,
+    RobotService,
+    MonitorSerice,
+    VGameTableSerice
+  ],
+    {provide: RequestOptions, useClass: MyRequestOptions},
+    {
+      provide: CustomHttp,
+      useFactory: CustomHttpFactory,
+      deps: [XHRBackend, RequestOptions, PubSubService, LoadingAnimateService, TranslateService, Router,ConfirmationService]
+    }, {provide: LocationStrategy, useClass: HashLocationStrategy}],
+  bootstrap: [ AppComponent ],
+  schemas:  [
+    CUSTOM_ELEMENTS_SCHEMA
+  ]
+})
+export class AppModule { }

@@ -1,0 +1,622 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchUserName">{{ 'account.userName' | translate }}</label>
+        <input [(ngModel)]="searchUserName" id="searchUserName" name="searchUserName" type="text" class="form-control input-xlarge"  [placeholder]="'account.userNamelike' | translate">
+      </div>
+      <!--<div class="form-group">-->
+        <!--<label for="searchUserLevel">{{ 'account.userLevel' | translate }}</label>-->
+        <!--<select [(ngModel)]="searchUserLevel" id="searchUserLevel" name="searchUserLevel" class="form-control"  >-->
+          <!--<option [selected]="true" value="0">{{ 'common.all' | translate }}</option>-->
+          <!--&lt;!&ndash;<option value="1">{{ 'account.ceo' | translate }}</option>&ndash;&gt;-->
+          <!--&lt;!&ndash;<option value="2">{{ 'account.company' | translate }}</option>&ndash;&gt;-->
+          <!--&lt;!&ndash;<option value="3">{{ 'account.hell' | translate }}</option>&ndash;&gt;-->
+          <!--&lt;!&ndash;<option value="4">{{ 'account.shareHolder' | translate }}</option>&ndash;&gt;-->
+          <!--<option value="5">{{ 'account.generalAgent' | translate }}</option>-->
+          <!--<option value="6">{{ 'account.agent' | translate }}</option>-->
+          <!--&lt;!&ndash;<option value="7">{{ 'account.vipMember' | translate }}</option>&ndash;&gt;-->
+          <!--<option value="8">{{ 'account.member' | translate }}</option>-->
+        <!--</select>-->
+      <!--</div>-->
+      <!--<div class="form-group">-->
+        <!--<label for="searchAccountStatus">{{ 'account.accountStatus' | translate }}</label>-->
+        <!--<select [(ngModel)]="searchAccountStatus" id="searchAccountStatus" name="searchAccountStatus" class="form-control"  >-->
+          <!--<option value="0">{{ 'common.all' | translate }}</option>-->
+          <!--<option value="1">{{ 'common.normal' | translate }}</option>-->
+          <!--<option value="3">{{ 'common.locked' | translate }}</option>-->
+          <!--<option value="2">{{ 'common.disable' | translate }}</option>-->
+        <!--</select>-->
+      <!--</div>-->
+      <!--<div class="form-group">-->
+        <!--<label for="searchBetStatus">{{ 'account.betStatus' | translate }}</label>-->
+        <!--<select [(ngModel)]="searchBetStatus" id="searchBetStatus" name="searchBetStatus" class="form-control"  >-->
+          <!--<option [selected]="true" value="0">{{ 'common.all' | translate }}</option>-->
+          <!--<option value="1">{{ 'common.normal' | translate }}</option>-->
+          <!--<option value="2">{{ 'common.disable' | translate }}</option>-->
+        <!--</select>-->
+      <!--</div>-->
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+  </div>
+
+  <template account-add-table ></template>
+</div>
+
+<div bsModal #addAccountModal="bs-modal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width:800px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'account.createAccount' | translate }}</h4>
+        <button type="button" class="close" (click)="closeAddAccountModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="create()" >
+        <div class="modal-body container" >
+          <div style="width:30%;float: left;" class="form-group">
+            <div  class="form-group">
+              <label for="addType" class="form-control-label text-danger">{{ 'common.type' | translate }}:</label>
+              <select [(ngModel)]="createAccount.type" (change)="onChangeUserType()" id="addType" name="addType" class="form-control" autofocus required>
+                <option *ngFor="let userType of userTypeList" [value]="userType.lid">
+                {{userType.levelname}}
+              </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="addLoginName" class="form-control-label text-danger">{{ 'common.userName' | translate }}:</label>
+              <input type="text" class="form-control" name="addLoginName" [(ngModel)]="createAccount.loginName" id="addLoginName" required>
+            </div>
+            <div class="form-group">
+              <label for="addNickName" >{{ 'common.nickName' | translate }}:</label>
+              <input type="text" class="form-control" name="addNickName" [(ngModel)]="createAccount.nickName" id="addNickName" >
+            </div>
+            <div class="form-group">
+              <label for="addCustomer" class="form-control-label">{{ 'account.customerService' | translate }}:</label>
+              <input type="text" class="form-control" name="addCustomer" [(ngModel)]="createAccount.customerService" id="addCustomer" >
+            </div>
+            <div class="form-group">
+              <label for="addTelNumber" class="form-control-label">{{ 'common.tel' | translate }}:</label>
+              <input type="text" class="form-control" name="addTelNumber" [(ngModel)]="createAccount.telNumber" id="addTelNumber" >
+            </div>
+            <div class="form-group">
+              <label for="addEmail" class="form-control-label">{{ 'common.email' | translate }}:</label>
+              <input type="text" class="form-control" name="addEmail" [(ngModel)]="createAccount.email" id="addEmail" >
+            </div>
+            <div class="form-group">
+              <label for="addPassword" class="form-control-label text-danger">{{ 'common.password' | translate }}:</label>
+              <input type="password" class="form-control" name="addPassword" [(ngModel)]="createAccount.password" id="addPassword" >
+            </div>
+            <div class="form-group">
+              <label for="addRePassword" class="form-control-label text-danger">{{ 'common.confirmPassword' | translate }}:</label>
+              <input type="password" class="form-control" name="addRePassword" [(ngModel)]="createAccount.repwd" id="addRePassword" >
+            </div>
+            <div *ngIf="createModalConfig.title" class="form-group">
+              <label for="addTitle" class="form-control-label">{{ 'account.title' | translate }}:</label>
+              <input type="text" class="form-control" name="addTitle" [(ngModel)]="createAccount.title" id="addTitle" pattern="^[\u4E00-\u9FA5a-zA-Z0-9]{0,10}$" oninvalid="setCustomValidity('格式不正确, 10位字符允许包含英文,数字和汉字');" >
+              <input type="checkbox" name="addIsAutoTitle" [(ngModel)]="createAccount.isAutoTitle" >{{ 'account.isAutoTitle' | translate }}
+            </div>
+            <div class="form-group">
+              <label for="addBalance" class="form-control-label">{{ 'account.pointLimit' | translate }}:</label>
+              <input type="text" class="form-control" name="addBalance" [(ngModel)]="createAccount.balance" id="addBalance" >
+              <label>{{ 'account.noMoreThan' | translate }}{{createModalConfig.balance}}</label>
+            </div>
+
+            <div *ngIf="createModalConfig.washCode" class="form-group">
+              <label for="addWashCode" class="form-control-label text-danger">{{ 'account.washCode' | translate }}:</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" name="addWashCode" [(ngModel)]="createAccount.washPercentage" id="addWashCode" required >
+                <div class="input-group-addon">% / {{createModalConfig.washCodeMaxPercent}}%</div>
+              </div>
+            </div>
+            <!--
+            <div *ngIf="createModalConfig.vipPackage" class="form-group">
+              <label for="addVipPackage" class="form-control-label">{{ 'account.vipPackage' | translate }}:</label>
+              <input type="checkbox" class="form-control" name="addVipPackage" [(ngModel)]="createAccount.isPackage" id="addVipPackage" (click)="createOnClickVipPackage($event)" >
+            </div>
+            -->
+            <div *ngIf="createModalConfig.agentHold" class="form-group">
+              <label for="addAgentHold" class="form-control-label">{{ 'account.agentHold' | translate }}:</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" name="addAgentHold" [(ngModel)]="createAccount.intoPercentage" id="addAgentHold" >
+                <div class="input-group-addon">% / {{createModalConfig.agentHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+              </div>
+            </div>
+            <div *ngIf="createModalConfig.vipPackageHold" class="form-group">
+              <label for="addVipPackageHold" class="form-control-label">VIP包台占成:</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" name="addVipPackageHold" [(ngModel)]="createAccount.coPercentage" id="addVipPackageHold" >
+                <div class="input-group-addon">% / {{createModalConfig.vipPackageHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+              </div>
+            </div>
+            <div *ngIf="createModalConfig.maxWin" class="form-group">
+              <label for="addMaxWin" class="form-control-label text-danger">{{ 'account.maxBalance' | translate }}:</label>
+              <input type="text" class="form-control" name="addMaxWin" [(ngModel)]="createAccount.biggestBalance" id="addMaxWin" >
+              <label>{{ 'account.maxWinTip' | translate }}</label>
+            </div>
+            <!--<div *ngIf="createModalConfig.maxWin" class="form-group">-->
+              <!--<label for="addMaxWin" class="form-control-label text-danger">{{ 'account.maxWin' | translate }}:</label>-->
+              <!--<input type="text" class="form-control" name="addMaxWin" [(ngModel)]="createAccount.biggestWinMoney" id="addMaxWin" >-->
+              <!--<label>{{ 'account.maxWinTip' | translate }}</label>-->
+            <!--</div>-->
+            <!--
+            <div style="border:1px solid #d8d8d8" class="form-group">
+              <p-tabView>
+                <p-tabPanel [header]="'account.real' | translate">
+                  <div *ngIf="createModalConfig.washCode" class="form-group">
+                    <label for="addWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addWashCode" [(ngModel)]="createAccount.sPercentage" id="addWashCode" required >
+                      <div class="input-group-addon">% / {{createModalConfig.washCodeMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.vipPackage" class="form-group">
+                    <label for="addVipPackage" class="form-control-label">{{ 'account.vipPackage' | translate }}:</label>
+                    <input type="checkbox" class="form-control" name="addVipPackage" [(ngModel)]="createAccount.isPackage" id="addVipPackage" (click)="createOnClickVipPackage($event)" >
+                  </div>
+                  <div *ngIf="createModalConfig.agentHold" class="form-group">
+                    <label for="addAgentHold" class="form-control-label">{{ 'account.agentHold' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addAgentHold" [(ngModel)]="createAccount.oPercentage" id="addAgentHold" >
+                      <div class="input-group-addon">% / {{createModalConfig.agentHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.vipPackageHold" class="form-group">
+                    <label for="addVipPackageHold" class="form-control-label">VIP包台占成:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addVipPackageHold" [(ngModel)]="createAccount.coPercentage" id="addVipPackageHold" >
+                      <div class="input-group-addon">% / {{createModalConfig.vipPackageHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.maxWin" class="form-group">
+                    <label for="addMaxWin" class="form-control-label">{{ 'account.maxWin' | translate }}:</label>
+                    <input type="text" class="form-control" name="addMaxWin" [(ngModel)]="createAccount.maxLimit" id="addMaxWin" >
+                    <label>{{ 'account.maxWinTip' | translate }}</label>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'account.voice' | translate">
+                  <div *ngIf="createModalConfig.voice" class="form-group">
+                    <label for="addVoice" class="form-control-label">{{ 'account.voice' | translate }}:</label>
+                    <input type="checkbox" class="form-control" name="addVoice" [(ngModel)]="createAccount.isPhone" id="addVoice" (click)="createOnClickVoice($event)" >
+                  </div>
+                  <div *ngIf="createModalConfig.voiceWashCode" class="form-group">
+                    <label for="addVoiceWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addVoiceWashCode" [(ngModel)]="createAccount.sPercentage3" id="addVoiceWashCode" >
+                      <div class="input-group-addon">% / {{createModalConfig.voiceWashCodeMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.voiceHold" class="form-group">
+                    <label for="addVoiceHold" class="form-control-label">{{ 'account.hold' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addVoiceHold" [(ngModel)]="createAccount.oPercentage3" id="addVoiceHold" >
+                      <div class="input-group-addon">% / {{createModalConfig.voiceHoldMaxPercent}}%</div>
+                    </div>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'account.hold' | translate">
+                  <div *ngIf="createModalConfig.tiger" class="form-group">
+                    <label for="addTiger" class="form-control-label">{{ 'account.tiger' | translate }}:</label>
+                    <input type="checkbox" class="form-control" name="addTiger" [(ngModel)]="createAccount.isTiger" id="addTiger" (click)="createOnClickTiger($event)" >
+                  </div>
+                  <div *ngIf="createModalConfig.tigerWashCode" class="form-group">
+                    <label for="addTigerWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addTigerWashCode" [(ngModel)]="createAccount.tigersPercentage" id="addTigerWashCode" >
+                      <div class="input-group-addon">% / {{createModalConfig.ticketWashCodeMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.tigerHold" class="form-group">
+                    <label for="addTigerHold" class="form-control-label">{{ 'account.hold' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addTigerHold" [(ngModel)]="createAccount.tigeroPercentage" id="addTigerHold" >
+                      <div class="input-group-addon">% / {{createModalConfig.tigerHoldMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.tigerRechargeMoney" class="form-group">
+                    <label for="addTigerRechargeMoney" class="form-control-label">{{ 'account.rechargeMoney' | translate }}充值金额:</label>
+                    <input type="text" class="form-control" name="addTigerRechargeMoney" [(ngModel)]="createAccount.slotDepositAmount" id="addTigerRechargeMoney" >
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'account.ticket' | translate">
+                  <div *ngIf="createModalConfig.ticket" class="form-group">
+                    <label for="addTicket" class="form-control-label">{{ 'account.ticket' | translate }}:</label>
+                    <input type="checkbox" class="form-control" name="addTicket" [(ngModel)]="createAccount.isTicket" id="addTicket" (click)="createOnClickTicket($event)" >
+                  </div>
+                  <div *ngIf="createModalConfig.ticketWashCode" class="form-group">
+                    <label for="addTicketWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addTicketWashCode" [(ngModel)]="createAccount.ticketsPercentage" id="addTicketWashCode" >
+                      <div class="input-group-addon">% / {{createModalConfig.ticketWashCodeMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.ticketHold" class="form-group">
+                    <label for="addTicketHold" class="form-control-label">{{ 'account.hold' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="addTicketHold" [(ngModel)]="createAccount.ticketoPercentage" id="addTicketHold" >
+                      <div class="input-group-addon">% / {{createModalConfig.ticketHoldMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="createModalConfig.ticketLimit" class="form-group">
+                    <label for="addTicketLimit" class="form-control-label">{{ 'account.limitMoney' | translate }}:</label>
+                    <input type="text" class="form-control" name="addTicketLimit" [(ngModel)]="createAccount.ticketLimit" id="addTicketLimit" >
+                  </div>
+                </p-tabPanel>
+              </p-tabView>
+            </div>
+            -->
+
+          </div>
+          <div style="width:60%;float: right;" class="form-group">
+            <div class="form-group">
+              <label for="addType" class="form-control-label text-danger">{{ 'account.limitChips' | translate }}:</label>
+              <p-tree [style]="{'max-height':'870px','width':'100%','overflow':'auto'}" [value]="limitTreeData" selectionMode="checkbox" [(selection)]="selectedLimitTreeData" (onNodeSelect)="limitTreeSelect($event)" ></p-tree>
+            </div>
+          </div>
+          <div style="clear: both;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeAddAccountModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div bsModal #modifyAccountModal="bs-modal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width:800px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'account.modifyAccount' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyAccountModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="modify()" >
+        <div class="modal-body" >
+          <div style="width:40%;float: left;" class="form-group">
+            <!--
+            <div class="form-group">
+              <label for="modifyType" class="form-control-label">{{ 'common.type' | translate }}:</label>
+              <select disabled [(ngModel)]="modifyAccount.levelId" (change)="onChangeUserType()" id="modifyType" name="modifyType" class="form-control" autofocus required>
+                <option *ngFor="let userType of userTypeList" [ngValue]="userType.lid"  >
+                  {{userType.levelname}}
+                </option>
+              </select>
+            </div>
+            -->
+            <div class="form-group">
+              <label for="modifyLoginName" class="form-control-label">{{ 'common.userName' | translate }}:</label>
+              <input disabled type="text" class="form-control" name="modifyLoginName" [(ngModel)]="modifyAccount.loginName" id="modifyLoginName" required>
+            </div>
+            <div class="form-group">
+              <label for="modifyNickName" class="form-control-label" >{{ 'common.nickName' | translate }}:</label>
+              <input type="text" class="form-control" name="modifyNickName" [(ngModel)]="modifyAccount.nickName" id="modifyNickName">
+            </div>
+            <div class="form-group">
+              <label for="modifyCustomer" class="form-control-label">{{ 'account.customerService' | translate }}:</label>
+              <input type="text" class="form-control" name="modifyCustomer" [(ngModel)]="modifyAccount.customerService" id="modifyCustomer" >
+            </div>
+            <div class="form-group">
+              <label for="modifyTelNumber" class="form-control-label">{{ 'common.tel' | translate }}:</label>
+              <input type="text" class="form-control" name="modifyTelNumber" [(ngModel)]="modifyAccount.telNumber" id="modifyTelNumber" >
+            </div>
+            <div class="form-group">
+              <label for="modifyEmail" class="form-control-label">{{ 'common.email' | translate }}:</label>
+              <input type="text" class="form-control" name="modifyEmail" [(ngModel)]="modifyAccount.email" id="modifyEmail" >
+            </div>
+            <div *ngIf="modifyModalConfig.title" class="form-group">
+              <label for="modifyTitle" class="form-control-label">{{ 'account.title' | translate }}:</label>
+              <input type="text" class="form-control" name="modifyTitle" [(ngModel)]="modifyAccount.title" id="modifyTitle" pattern="^[\u4E00-\u9FA5a-zA-Z0-9]{0,10}$" oninvalid="setCustomValidity('格式不正确, 10位字符允许包含英文,数字和汉字');" >
+              <input type="checkbox" name="modifyIsAutoTitle" [(ngModel)]="modifyAccount.isAutoTitle" >{{ 'account.isAutoTitle' | translate }}
+            </div>
+            <div class="form-group">
+              <label for="modifyBalance" class="form-control-label">{{ 'account.pointLimit' | translate }}:</label>
+              <input disabled type="text" class="form-control" name="modifyBalance" [(ngModel)]="modifyAccount.balance" id="modifyBalance" >
+            </div>
+            <!--
+            <div class="form-group">
+              <label for="modifyMtigerBalance" class="form-control-label">{{ 'account.ticketBalance' | translate }}:</label>
+              <input disabled type="text" class="form-control" name="modifyMtigerBalance" [(ngModel)]="modifyAccount.mtigerbalance" id="modifyMtigerBalance" >
+            </div>
+            -->
+            <div *ngIf="modifyModalConfig.washCode" class="form-group">
+              <label for="modifyRealWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" name="modifyRealWashCode" [(ngModel)]="modifyAccount.washPercentage" id="modifyRealWashCode" required disabled>
+                <div class="input-group-addon">% / {{modifyModalConfig.washCodeMaxPercent}}%</div>
+              </div>
+            </div>
+            <!--
+            <div *ngIf="modifyModalConfig.vipPackage" class="form-group">
+              <label for="modifyVipPackage" class="form-control-label">{{ 'account.vipPackage' | translate }}:</label>
+              <input type="checkbox" class="form-control form-check" name="modifyVipPackage" [(ngModel)]="modifyAccount.isPackage" id="modifyVipPackage"  (click)="modifyOnClickVipPackage($event)" >
+            </div>
+            -->
+            <div *ngIf="modifyModalConfig.agentHold" class="form-group">
+              <label for="modifyAgentHold" class="form-control-label">{{ 'account.agentHold' | translate }}:</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" name="modifyAgentHold" [(ngModel)]="modifyAccount.intoPercentage" id="modifyAgentHold" disabled>
+                <div class="input-group-addon">% / {{modifyModalConfig.agentHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+              </div>
+            </div>
+            <div *ngIf="modifyModalConfig.vipPackageHold" class="form-group">
+              <label for="modifyVipPackageHold" class="form-control-label">{{ 'account.vipPackageHold' | translate }}:</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" name="modifyVipPackageHold" [(ngModel)]="modifyAccount.coPercentage" id="modifyVipPackageHold" >
+                <div class="input-group-addon">% / {{modifyModalConfig.vipPackageHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+              </div>
+            </div>
+            <div *ngIf="modifyModalConfig.maxWin" class="form-group">
+              <label for="addMaxWin" class="form-control-label text-danger">{{ 'account.maxBalance' | translate }}:</label>
+              <input type="text" class="form-control" name="addMaxWin" [(ngModel)]="modifyAccount.biggestBalance" id="addMaxWin" >
+              <label>{{ 'account.maxWinTip' | translate }}</label>
+            </div>
+            <!--<div *ngIf="modifyModalConfig.maxWin" class="form-group">-->
+            <!--<label for="modifyMaxWin" class="form-control-label">{{ 'account.maxWin' | translate }}:</label>-->
+            <!--<input type="text" class="form-control" name="modifyMaxWin" [(ngModel)]="modifyAccount.biggestWinMoney" id="modifyMaxWin" >-->
+            <!--<label>{{ 'account.maxWinTip' | translate }}</label>-->
+            <!--</div>-->
+            <!--
+            <div style="border:1px solid #d8d8d8" class="form-group">
+              <p-tabView [styleClass]="ui-tabview" >
+                <p-tabPanel [header]="'account.real' | translate">
+
+                </p-tabPanel>
+                <p-tabPanel [header]="'account.voice' | translate">
+                  <div *ngIf="modifyModalConfig.voice" class="form-group">
+                    <label for="modifyVoice" class="form-control-label">{{ 'account.voice' | translate }}:</label>
+                    <input type="checkbox" class="form-control" name="modifyVoice" [(ngModel)]="modifyAccount.isPhone" id="modifyVoice" (click)="modifyOnClickVoice($event)" >
+                  </div>
+                  <div *ngIf="modifyModalConfig.voiceWashCode" class="form-group">
+                    <label for="modifyVoiceWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="modifyVoiceWashCode" [(ngModel)]="modifyAccount.sPercentage3" id="modifyVoiceWashCode" >
+                      <div class="input-group-addon">% / {{modifyModalConfig.voiceWashCodeMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="modifyModalConfig.voiceHold" class="form-group">
+                    <label for="modifyVoiceHold" class="form-control-label">{{ 'account.hold' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="modifyVoiceHold" [(ngModel)]="modifyAccount.oPercentage3" id="modifyVoiceHold" >
+                      <div class="input-group-addon">% / {{modifyModalConfig.voiceHoldMaxPercent}}%</div>
+                    </div>
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'account.tiger' | translate">
+                  <div *ngIf="modifyModalConfig.tiger" class="form-group">
+                    <label for="modifyTiger" class="form-control-label">{{ 'account.tiger' | translate }}:</label>
+                    <input type="checkbox" class="form-control" name="modifyTiger" [(ngModel)]="modifyAccount.isTiger" id="modifyTiger" (click)="modifyOnClickTiger($event)" >
+                  </div>
+                  <div *ngIf="modifyModalConfig.tigerWashCode" class="form-group">
+                    <label for="modifyTigerWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="modifyTigerWashCode" [(ngModel)]="modifyAccount.tigersPercentage" id="modifyTigerWashCode" >
+                      <div class="input-group-addon">% / {{modifyModalConfig.tigerWashMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="modifyModalConfig.tigerHold" class="form-group">
+                    <label for="modifyTigerHold" class="form-control-label">{{ 'account.hold' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="modifyTigerHold" [(ngModel)]="modifyAccount.tigeroPercentage" id="modifyTigerHold" >
+                      <div class="input-group-addon">% / {{modifyModalConfig.tigerHoldMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="modifyModalConfig.tigerRechargeMoney" class="form-group">
+                    <label for="modifyTigerRechargeMoney" class="form-control-label">{{ 'account.rechargeMoney' | translate }}:</label>
+                    <input type="text" class="form-control" name="modifyTigerRechargeMoney" [(ngModel)]="modifyAccount.slotDepositAmount" id="modifyTigerRechargeMoney" >
+                  </div>
+                </p-tabPanel>
+                <p-tabPanel [header]="'account.ticket' | translate">
+                  <div *ngIf="modifyModalConfig.ticket" class="form-group">
+                    <label for="modifyTicket" class="form-control-label">{{ 'account.ticket' | translate }}:</label>
+                    <input type="checkbox" class="form-control" name="modifyTicket" [(ngModel)]="modifyAccount.isTicket" id="modifyTicket" (click)="modifyOnClickTicket($event)" >
+                  </div>
+                  <div *ngIf="modifyModalConfig.ticketWashCode" class="form-group">
+                    <label for="modifyTicketWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="modifyTicketWashCode" [(ngModel)]="modifyAccount.ticketsPercentage" id="modifyTicketWashCode" >
+                      <div class="input-group-addon">% / {{modifyModalConfig.ticketWashCodeMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="modifyModalConfig.ticketHold" class="form-group">
+                    <label for="modifyTicketHold" class="form-control-label">{{ 'account.hold' | translate }}:</label>
+                    <div class="input-group" >
+                      <input type="text" class="form-control" name="modifyTicketHold" [(ngModel)]="modifyAccount.ticketoPercentage" id="modifyTicketHold" >
+                      <div class="input-group-addon">% / {{modifyModalConfig.ticketHoldMaxPercent}}%</div>
+                    </div>
+                  </div>
+                  <div *ngIf="modifyModalConfig.ticketLimit" class="form-group">
+                    <label for="modifyTicketLimit" class="form-control-label">{{ 'account.limitMoney' | translate }}:</label>
+                    <input type="text" class="form-control" name="modifyTicketLimit" [(ngModel)]="modifyAccount.ticketLimit" id="modifyTicketLimit" >
+                  </div>
+                </p-tabPanel>
+              </p-tabView>
+            </div>
+
+            <div>
+              <label>{{ 'account.allHoldModifyTips' | translate }}</label>
+            </div>
+            -->
+          </div>
+          <div style="width:50%;float: right;" class="form-group">
+            <label for="addType" class="form-control-label">{{ 'account.limitChips' | translate }}:</label>
+            <p-tree [style]="{'width':'100%','height':'100%'}" [value]="limitTreeData" selectionMode="checkbox" [(selection)]="selectedLimitTreeData" (onNodeSelect)="limitTreeSelect($event)" ></p-tree>
+          </div>
+          <div style="clear: both;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyAccountModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div bsModal #modifyCashAccountModal="bs-modal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width:800px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'account.modifyAccount' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyCashAccountModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="modify()" >
+        <div class="modal-body" >
+            <div class="form-group">
+              <label for="modifyRealWashCode" class="form-control-label">{{ 'account.washCode' | translate }}:</label>
+              <div class="input-group">
+                  <input *ngIf="!modifyModalConfig.washCode" type="text" class="form-control" name="modifyRealWashCode" [(ngModel)]="modifyAccount.washPercentage"  disabled>
+                  <input *ngIf="modifyModalConfig.washCode" type="text" class="form-control" name="modifyRealWashCode" [(ngModel)]="modifyAccount.washPercentage"  required>
+                <div class="input-group-addon">% / {{modifyModalConfig.washCodeMaxPercent}}%</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="modifyAgentHold" class="form-control-label">{{ 'account.agentHold' | translate }}:</label>
+              <div class="input-group">
+                  <input *ngIf="!modifyModalConfig.agentHold" type="text" class="form-control" name="modifyAgentHold" [(ngModel)]="modifyAccount.intoPercentage" disabled>
+                  <input *ngIf="modifyModalConfig.agentHold" type="text" class="form-control" name="modifyAgentHold" [(ngModel)]="modifyAccount.intoPercentage" required>
+                <div class="input-group-addon">% / {{modifyModalConfig.agentHoldMaxPercent}}%({{ 'account.normalTable' | translate }})</div>
+              </div>
+            </div>
+          <div class="form-group">
+            <label for="addType" class="form-control-label">{{ 'account.limitChips' | translate }}:</label>
+            <p-tree [style]="{'width':'100%','height':'100%'}" [value]="limitTreeData" selectionMode="checkbox" [(selection)]="selectedLimitTreeData" (onNodeSelect)="limitTreeSelect($event)" ></p-tree>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyCashAccountModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div bsModal #modifyPasswordModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'common.modifyPassword' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyPasswordModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="modifyPassword()" >
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="modifyNewPassword" class="form-control-label">{{ 'account.newPassword' | translate }}:</label>
+            <input type="password" name="modifyNewPassword" class="form-control" [(ngModel)]="newPassword" id="modifyNewPassword" autofocus required>
+          </div>
+          <div class="form-group">
+            <label for="modifyConfirmPassword" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+            <input type="password" class="form-control" name="modifyConfirmPassword" [(ngModel)]="confirmPassword" id="modifyConfirmPassword" required >
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyPasswordModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div bsModal #modifyBalanceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'account.modifyRemainPoint' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyBalanceModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="modifyBalance()" >
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-control-label">{{ 'account.currentBalance' | translate }}:{{selectRowData?.balance}}</label>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label">{{ 'common.type' | translate }}:</label>
+            <div class="radio-inline" *ngFor="let item of transferType">
+              <label class="radio-inline">
+                <input type="radio" [(ngModel)]="modifyBalanceType" name="modifyBalanceType" [value]="item.value">
+                {{item.name}}
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="modifyBalancePoint" class="form-control-label">{{ 'account.point' | translate }}:</label>
+            <input type="number" autocomplete="off" auclass="form-control" name="modifyBalancePoint" [(ngModel)]="modifyBalancePoint" id="modifyBalancePoint" >
+          </div>
+          <div class="form-group">
+            <label for="modifyBalanceNote" class="form-control-label">{{ 'common.remark' | translate }}:</label>
+            <textarea class="form-control" name="modifyBalanceNote" [(ngModel)]="modifyBalanceNote" id="modifyBalanceNote" ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyBalanceModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<p-dialog [header]=" 'account.modifyAllAccountStatus' | translate " [(visible)]="modifyAllAccountStatusModalFlag" modal="modal" responsive="true">
+  <label for="modifyAllAccountStatus">{{ 'common.status' | translate }}</label>
+  <select [(ngModel)]="allAccountStatus" id="modifyAllAccountStatus" name="modifyAllAccountStatus" class="form-control"  >
+    <option value="">{{ 'common.plsSelect' | translate }}</option>
+    <option value="1">{{ 'account.enableAll' | translate }}</option>
+    <option value="2">{{ 'account.disableAll' | translate }}</option>
+  </select>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="modifyAllAccountStatusModalFlag=false" [label]="'common.cancel' | translate"></button>
+      <button type="button" pButton icon="fa-check" (click)="modifyAllAccountStatus()" [label]="'common.confirm' | translate"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'account.modifyAllBetStatus' | translate" [(visible)]="modifyAllBetStatusModalFlag" modal="modal" responsive="true">
+  <label for="modifyAllBetStatus">{{ 'common.type' | translate }}</label>
+  <select [(ngModel)]="allBetStatus" id="modifyAllBetStatus" name="modifyAllBetStatus" class="form-control"  >
+    <option value="">{{ 'common.plsSelect' | translate }}</option>
+    <option value="1">{{ 'account.enableAll' | translate }}</option>
+    <option value="2">{{ 'account.disableAll' | translate }}</option>
+  </select>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="modifyAllBetStatusModalFlag=false" [label]="'common.cancel' | translate"></button>
+      <button type="button" pButton icon="fa-check" (click)="modifyAllBetStatus()" [label]="'common.confirm' | translate"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'account.modifyAllActiveTitle' | translate" [(visible)]="modifyAllActiveTitleModalFlag" modal="modal" responsive="true">
+  <label for="modifyAllActiveTitle">{{ 'common.type' | translate }}</label>
+  <select [(ngModel)]="allActiveTitle" id="modifyAllActiveTitle" name="modifyAllActiveTitle" class="form-control"  >
+    <option value="">{{ 'common.plsSelect' | translate }}</option>
+    <option value="true" >{{ 'account.activeAll' | translate }}</option>
+    <option value="false" >{{ 'account.inactiveAll' | translate }}</option>
+  </select>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="modifyAllActiveTitleModalFlag=false" [label]="'common.cancel' | translate"></button>
+      <button type="button" pButton icon="fa-check" (click)="modifyAllActiveTitle()" [label]="'common.confirm' | translate"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+
+
+

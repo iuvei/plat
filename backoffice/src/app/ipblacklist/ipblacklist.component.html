@@ -1,0 +1,258 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchIP">IP:</label>
+        <input [(ngModel)]="searchForm.ip" id="searchIP" name="searchIP" type="text" class="form-control input-xlarge"  placeholder="IP">
+      </div>
+      &nbsp;
+      <div class="form-group">
+        <label for="platType">{{ 'common.plat' | translate }}:</label>
+        <dict-control id="platType" name="platType"  d-class="form-control" dict-type="ipblacklist_platform"  [(val)]="searchForm.platType" default-info="全部"></dict-control>
+      </div>
+
+      <div class="form-group">
+        <label for="type">{{ 'common.type' | translate }}:</label>
+        <dict-control id="type" name="type"  d-class="form-control" dict-type="ipblacklist_type"  [(val)]="searchForm.ipType" default-info="全部"></dict-control>
+      </div>
+      &nbsp;&nbsp;
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="createModal.show();">{{ 'ipBlackList.addBlackList' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="batchCreateModalShow();">{{ 'ipBlackList.importBlackList' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="openRemoveMultipleModal()">{{ 'ipBlackList.batchRemoveBlackList' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+        <tr>
+          <th>{{ 'ipBlackList.start' | translate }}</th>
+          <th>{{ 'ipBlackList.end' | translate }}</th>
+          <th>{{ 'common.createTime' | translate }}</th>
+          <th>{{ 'common.creator' | translate }}</th>
+          <th>{{ 'ipBlackList.ipScope' | translate }}</th>
+          <th>{{ 'ipBlackList.ipType' | translate }}</th>
+          <th>{{ 'ipBlackList.remark' | translate }}</th>
+          <th>{{ 'common.operation' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of dataList">
+          <td>{{item.start}}</td>
+          <td>{{item.end}}</td>
+          <td>{{item.createTime}}</td>
+          <td>{{item.createBy}}</td>
+          <td [ngSwitch]="item.platType" >
+            <template [ngSwitchCase]="0" >{{ 'ipBlackList.dealer' | translate }}</template>
+            <template [ngSwitchCase]="1" >{{ 'ipBlackList.gameFront' | translate }}</template>
+            <template [ngSwitchCase]="2" >{{ 'ipBlackList.managerBack' | translate }}</template>
+            <template [ngSwitchCase]="3" >{{ 'ipBlackList.agentBack' | translate }}</template>
+            <template ngSwitchDefault >{{ 'ipBlackList.ApiService' | translate }}</template>
+          </td>
+          <td [ngSwitch]="item.ipType" >
+            <template [ngSwitchCase]="1" >{{ 'ipBlackList.ipWhite' | translate }}</template>
+            <template [ngSwitchCase]="2" >{{ 'ipBlackList.ipBlack' | translate }}</template>
+          </td>
+          <td>{{item.remark}}</td>
+          <td>
+            <a href="javascript:void(0);" (click)="remove(item);" ><i class="fa fa-trash"></i>{{ 'common.delete' | translate }}</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+
+<div bsModal #createModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'ipBlackList.addBlackList' | translate }}</h4>
+        <button type="button" class="close" (click)="closeCreateModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="create()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label for="ipType">{{ 'common.type' | translate }}:</label>
+                <select [(ngModel)]="form.ipType" id="ipType" name="ipType" class="form-control"  required>
+                  <option value="1">{{ 'ipBlackList.ipWhite' | translate }}</option>
+                  <option value="2">{{ 'ipBlackList.ipBlack' | translate }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="addIpScope" class="form-control-label">{{ 'ipBlackList.ipScope' | translate }}:</label>
+                <select [(ngModel)]="form.platType" id="addIpScope" name="addIpScope" class="form-control" required >
+                  <option value="0">{{ 'ipBlackList.dealer' | translate }}</option>
+                  <option value="1">{{ 'ipBlackList.gameFront' | translate }}</option>
+                  <option value="2">{{ 'ipBlackList.managerBack' | translate }}</option>
+                  <option value="3">{{ 'ipBlackList.agentBack' | translate }}</option>
+                  <option value="4">{{ 'ipBlackList.ApiService' | translate }}</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="startIp" class="form-control-label">{{ 'ipBlackList.start' | translate }}:</label>
+                <input type="text" class="form-control" name="startIp" [(ngModel)]="form.start" id="startIp" required>
+              </div>
+              <div class="form-group">
+                <label for="endIp" class="form-control-label">{{ 'ipBlackList.end' | translate }}:</label>
+                <input type="text" class="form-control" name="endIp" [(ngModel)]="form.end" id="endIp" required>
+              </div>
+              <div class="form-group">
+                <label for="remark" class="form-control-label">{{ 'ipBlackList.remark' | translate }}:</label>
+                <input type="text" class="form-control" name="remark" [(ngModel)]="form.remark" id="remark">
+              </div>
+              <!--
+              <div>
+                <label class="form-control-label">{{ 'ipBlackList.addIpTip' | translate }}</label>
+              </div>
+              -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.add' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #batchCreateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'ipBlackList.importBlackList' | translate }}</h4>
+        <button type="button" class="close" (click)="closeBatchCreateModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="batchCreate()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label for="ipBatchType">{{ 'common.type' | translate }}:</label>
+                <select [(ngModel)]="form.ipType" id="ipBatchType" name="ipBatchType" class="form-control" required>
+                  <option value="1">{{ 'ipBlackList.ipWhite' | translate }}</option>
+                  <option value="2">{{ 'ipBlackList.ipBlack' | translate }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="batchIpScope" class="form-control-label">{{ 'ipBlackList.ipScope' | translate }}:</label>
+                <select [(ngModel)]="form.platType" id="batchIpScope" name="batchIpScope" class="form-control" required >
+                  <option value="0">{{ 'ipBlackList.dealer' | translate }}</option>
+                  <option value="1">{{ 'ipBlackList.gameFront' | translate }}</option>
+                  <option value="2">{{ 'ipBlackList.managerBack' | translate }}</option>
+                  <option value="3">{{ 'ipBlackList.agentBack' | translate }}</option>
+                  <option value="4">{{ 'ipBlackList.ApiService' | translate }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">{{ 'ipBlackList.choose' | translate }}</label>
+                <p-fileUpload name="Filedata" url="{{uploadurl}}" (onUpload)="onUpload($event)" chooseLabel="{{'ipBlackList.choose' | translate }}" uploadLabel="{{'ipBlackList.upload' | translate }}">
+                  <template pTemplate type="content">
+                    <ul *ngIf="uploadedFiles.length">
+                      <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                    </ul>
+                  </template>
+                </p-fileUpload>
+                <span style="color: red;">{{'ipBlackList.picformat' | translate }}</span>
+              </div>
+
+              <div class="form-group">
+                <label for="batchArea" class="form-control-label">{{ 'ipBlackList.area' | translate }}:</label>
+                <!--<select [(ngModel)]="form.area" id="batchArea" name="batchArea" class="form-control" required >-->
+                  <!--<option *ngFor="let area of areaList" [value]="area.code">-->
+                    <!--{{area.name}}-->
+                  <!--</option>-->
+                <!--</select>-->
+                <dict-control id="batchArea" name="batchArea"  d-class="form-control" dict-type="ip_area"  [(val)]="form.area" default-info=""></dict-control>
+              </div>
+
+              <div class="form-group">
+                <label for="batchRemark" class="form-control-label">{{ 'ipBlackList.remark' | translate }}:</label>
+                <input type="text" class="form-control" name="batchRemark" [(ngModel)]="form.remark" id="batchRemark">
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.add' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeBatchCreateModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #removeMultipleModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width:580px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'ipBlackList.batchRemoveBlackList' | translate }}</h4>
+        <button type="button" class="close" (click)="closeRemoveMultipleModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="removeMultiple()">
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <table border="0" cellspacing="0" cellpadding="0"  class="table table-bordered dchannel-table">
+                <tbody>
+                <tr class="item-default">
+                  <td align="right" style="width:47%;padding:0;height: 100%">
+                    <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">{{ 'ipBlackList.ipBlack' | translate }}</h3>
+                    <select style="height:345px;width:100%" name="selectBlackList" [(ngModel)]="selectedUnRemoveBlack" multiple >
+                      <option *ngFor="let menu of unRemoveBlackList" [value]="menu.id">
+                        {{menu.start}}-{{menu.end}}
+                      </option>
+                    </select>
+                  </td>
+                  <td style="width: 6%; padding: 0;" valign="middle">
+                    <button style="width: 100%;margin-bottom: 3px;margin-top: 110px;" type="button" class="btn btn-primary" (click)="addBlack()">  <  </button>
+                    <button style="width: 100%;margin-bottom: 3px;" type="button" class="btn btn-primary" (click)="addAllBlack()"> << </button>
+                    <button style="width: 100%;margin-bottom: 3px;" type="button" class="btn btn-primary" (click)="removeBlack()">  >  </button>
+                    <button style="width: 100%;margin-bottom: 3px;" type="button" class="btn btn-primary" (click)="removeAllBlack()"> >> </button>
+                  </td>
+                  <td style="width:47%;padding:0;height: 100%">
+                    <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">{{ 'ipBlackList.stayRemoveIpBlack' | translate }}</h3>
+                    <select style="height:345px;width:100%" name ="selectRemoveBlackList" [(ngModel)]="selectedRemoveBlack"  multiple>
+                      <option *ngFor="let menu of removeBlackList" [value]="menu.id ">
+                        {{menu.start}}-{{menu.end}}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.remove' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeRemoveMultipleModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

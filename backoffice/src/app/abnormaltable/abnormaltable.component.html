@@ -1,0 +1,213 @@
+<style>
+  .calendar-form-control {
+    padding: 0px;
+  }
+</style>
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchGameType">{{ 'abnormaltable.gameType' | translate }}</label>
+        <select [(ngModel)]="searchForm.gameId" id="searchGameType" name="searchGameType" class="form-control"  >
+          <option value=null>{{ 'common.plsSelect' | translate }}</option>
+          <option *ngFor="let item of gameTypeList" [value]="item.id">
+            {{item.name}}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="searchGameCN">{{ 'abnormaltable.gameName' | translate }}:</label>
+        <input [(ngModel)]="searchForm.name" id="searchGameCN" name="searchGameCN" type="text" class="form-control input-xlarge"  [placeholder]="'abnormaltable.gameName' | translate" >
+      </div>
+
+
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+    <p-treeTable [value]="dataList" (onNodeExpand)="loadNode($event)">
+      <p-column field="gameName" [header]=" 'abnormaltable.gameName' | translate "></p-column>
+      <p-column field="id" [header]=" 'abnormaltable.tableNo' | translate "></p-column>
+      <p-column field="status" [header]=" 'abnormaltable.tableStatus' | translate "></p-column>
+      <p-column field="opt" [header]=" 'common.operation' | translate ">
+        <template let-node="rowData" pTemplate="body">
+          <a *ngIf="node?.leaf !== false" href="javascript:void(0);" (click)="openModifyModal(node.data)" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.viewDetail' | translate }}</a>
+        </template>
+      </p-column>
+    </p-treeTable>
+
+  </div>
+</div>
+
+<div bsModal #modifyModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div  style="width: 633px;" class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'abnormaltable.modifyGameTable' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="onSubmit()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label for="modifyRNum" class="form-control-label">{{ 'abnormaltable.roundNumber' | translate }}:</label>
+                <input disabled type="text" class="form-control" id="modifyRNum" name="modifyRNum" [(ngModel)]="form.rid" >
+              </div>
+              <div class="form-group">
+                <label for="modifyBNum" class="form-control-label">{{ 'abnormaltable.bootNumber' | translate }}:</label>
+                <input disabled type="text" class="form-control" id="modifyBNum" name="modifyBNum" [(ngModel)]="form.bootId" >
+              </div>
+              <div class="form-group">
+                <label for="modifyStartTime" class="form-control-label">{{ 'common.startTime' | translate }}:</label>
+                <input disabled type="text" class="form-control" id="modifyStartTime" name="modifyStartTime" [(ngModel)]="form.startTime" >
+              </div>
+
+              <br/>
+              <!--<div class="form-group">
+                <label for="modifyEndTime" class="form-control-label">{{ 'common.entTime' | translate }}:</label>
+                <p-calendar id="modifyEndTime"  name="modifyEndTime" styleClass="form-control" inputStyleClass="form-control calendar-form-control" name="modifyEndTime" [(ngModel)]="form.endTime" [showTime]="true" dateFormat="yy-mm-dd" ></p-calendar>
+              </div>-->
+
+              <div class="form-group">
+                <div style="width:50%;float: left;" class="form-group" >
+
+                  <div class="form-group">
+                    <label for="bankCard1Mode" class="form-control-label">{{ 'abnormaltable.BankCard1Mode' | translate }}:</label>
+                    <p-selectButton id="bankCard1Mode" name="bankCard1Mode" [options]="cardColors" [(ngModel)]="form.bankCard1Mode"  ngDefaultControl></p-selectButton>
+                    <br/>
+                    <label for="BankCard1Num" class="form-control-label">{{ 'abnormaltable.BankCard1Num' | translate }}:</label>
+                    <p-selectButton id="BankCard1Num" name="BankCard1Num" styleClass="form-control" [options]="cardNumbers" [(ngModel)]="form.bankCard1Number" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <button type="button" (click)="clear(11)" pButton icon="fa-close" label="Clear"></button>
+                  </div>
+                  <div class="form-group">
+                    <label for="bankCard2Mode" class="form-control-label">{{ 'abnormaltable.BankCard2Mode' | translate }}:</label>
+                    <p-selectButton id="bankCard2Mode" name="bankCard2Mode" [options]="cardColors" [(ngModel)]="form.bankCard2Mode" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <label for="BankCard2Num" class="form-control-label">{{ 'abnormaltable.BankCard2Num' | translate }}:</label>
+                    <p-selectButton id="BankCard2Num" name="BankCard2Num" styleClass="form-control" [options]="cardNumbers" [(ngModel)]="form.bankCard2Number" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <button type="button" (click)="clear(12)" pButton icon="fa-close" label="Clear"></button>
+                  </div>
+                  <div class="form-group">
+                    <label for="bankCard3Mode" class="form-control-label">{{ 'abnormaltable.BankCard3Mode' | translate }}:</label>
+                    <p-selectButton id="bankCard3Mode" name="bankCard3Mode" [options]="cardColors" [(ngModel)]="form.bankCard3Mode" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <label for="BankCard3Num" class="form-control-label">{{ 'abnormaltable.BankCard3Num' | translate }}:</label>
+                    <p-selectButton id="BankCard3Num" name="BankCard3Num" styleClass="form-control" [options]="cardNumbers" [(ngModel)]="form.bankCard3Number" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <button type="button" (click)="clear(13)" pButton icon="fa-close" label="Clear"></button>
+                  </div>
+
+                </div>
+
+                <div style="width:50%;float: right;" class="form-group" >
+                  <div class="form-group">
+                    <label for="playerCard1Mode" class="form-control-label">{{ 'abnormaltable.PlayerCard1Mode' | translate }}:</label>
+                    <p-selectButton id="playerCard1Mode" name="playerCard1Mode" [options]="cardColors" [(ngModel)]="form.playerCard1Mode" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <label for="playerCard1Num" class="form-control-label">{{ 'abnormaltable.PlayerCard1Num' | translate }}:</label>
+                    <p-selectButton id="playerCard1Num" name="playerCard1Num" styleClass="form-control" [options]="cardNumbers" [(ngModel)]="form.playerCard1Number" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <button type="button" (click)="clear(21)" pButton icon="fa-close" label="Clear"></button>
+                  </div>
+                  <div class="form-group">
+                    <label for="playerCard2Mode" class="form-control-label">{{ 'abnormaltable.PlayerCard2Mode' | translate }}:</label>
+                    <p-selectButton id="playerCard2Mode" name="playerCard2Mode" [options]="cardColors" [(ngModel)]="form.playerCard2Mode" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <label for="playerCard2Num" class="form-control-label">{{ 'abnormaltable.PlayerCard2Num' | translate }}:</label>
+                    <p-selectButton id="playerCard2Num" name="playerCard2Num" styleClass="form-control" [options]="cardNumbers" [(ngModel)]="form.playerCard2Number" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <button type="button" (click)="clear(22)" pButton icon="fa-close" label="Clear"></button>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="playerCard3Mode" class="form-control-label">{{ 'abnormaltable.PlayerCard3Mode' | translate }}:</label>
+                    <p-selectButton id="playerCard3Mode" name="playerCard3Mode" [options]="cardColors" [(ngModel)]="form.playerCard3Mode" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <label for="playerCard3Num" class="form-control-label">{{ 'abnormaltable.PlayerCard3Num' | translate }}:</label>
+                    <p-selectButton id="playerCard3Num" name="playerCard3Num" styleClass="form-control" [options]="cardNumbers" [(ngModel)]="form.playerCard3Number" ngDefaultControl></p-selectButton>
+                    <br/>
+                    <button type="button" (click)="clear(23)" pButton icon="fa-close" label="Clear"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="modifyStatus" class="form-control-label">{{ 'common.status' | translate }}:</label>
+                <input disabled type="text" class="form-control" id="modifyStatus" name="modifyStatus" [(ngModel)]="form.showStatus" >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button [disabled]="!modalConfig.saveBtn" type="submit" class="btn btn-primary" (click)="onSubmitFlag = 1" >{{ 'abnormaltable.fillRecordSave' | translate }}</button>
+          <button [disabled]="!modalConfig.resultBtn" type="submit" class="btn btn-primary" (click)="onSubmitFlag = 2" >{{ 'abnormaltable.sendPrice' | translate }}</button>
+          <button [disabled]="!modalConfig.cancleBetBtn" type="submit" class="btn btn-primary" (click)="onSubmitFlag = 3" >{{ 'abnormaltable.cancelOrder' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #rouletteModifyModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div  style="width: 633px;" class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'abnormaltable.modifyGameTable' | translate }}</h4>
+        <button type="button" class="close" (click)="closeRouttleModifyModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="onSubmit()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label for="modifyRNum" class="form-control-label">{{ 'abnormaltable.roundNumber' | translate }}:</label>
+                <input disabled type="text" class="form-control" id="modifyRNum" name="modifyRNum" [(ngModel)]="form.rid" >
+              </div>
+
+              <div class="form-group">
+                <label for="modifyStartTime" class="form-control-label">{{ 'common.startTime' | translate }}:</label>
+                <input disabled type="text" class="form-control" id="modifyStartTime" name="modifyStartTime" [(ngModel)]="form.startTime" >
+              </div>
+
+              <!--<div class="form-group">
+                <label for="modifyEndTime" class="form-control-label">{{ 'common.entTime' | translate }}:</label>
+                <p-calendar id="modifyEndTime"  name="modifyEndTime" styleClass="form-control" inputStyleClass="form-control calendar-form-control" name="modifyEndTime" [(ngModel)]="form.endTime" [showTime]="true" dateFormat="yy-mm-dd" required ></p-calendar>
+              </div>-->
+
+              <div class="form-group">
+                <label for="rouletteResult" class="form-control-label">{{ 'abnormaltable.RouletteResult' | translate }}:</label>
+                <p-selectButton id="rouletteResult" name="rouletteResult" [options]="rouletteNumbers" [(ngModel)]="form.result" ngDefaultControl></p-selectButton>
+                <br/>
+                <button type="button" (click)="clear(88)" pButton icon="fa-close" label="Clear"></button>
+              </div>
+
+              <div class="form-group">
+                <label for="modifyStatus" class="form-control-label">{{ 'common.status' | translate }}:</label>
+                <input disabled type="text" class="form-control" id="modifyStatus" name="modifyStatus" [(ngModel)]="form.showStatus" >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button [disabled]="!modalConfig.saveBtn" type="submit" class="btn btn-primary" (click)="onSubmitFlag = 1" >{{ 'abnormaltable.fillRecordSave' | translate }}</button>
+          <button [disabled]="!modalConfig.resultBtn" type="submit" class="btn btn-primary" (click)="onSubmitFlag = 2" >{{ 'abnormaltable.sendPrice' | translate }}</button>
+          <button [disabled]="!modalConfig.cancleBetBtn" type="submit" class="btn btn-primary" (click)="onSubmitFlag = 3" >{{ 'abnormaltable.cancelOrder' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeRouttleModifyModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

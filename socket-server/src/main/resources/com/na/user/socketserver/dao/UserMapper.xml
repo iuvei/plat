@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+       Copyright 2015-2016 the original author or authors.
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.user.socketserver.dao.IUserMapper">
+
+    <select id="findByUserChipsByIds" resultType="com.na.user.socketserver.entity.UserChipsPO">
+        select * from chip where id in
+        <foreach item="item" index="id" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by game_id,min,max
+    </select>
+
+<!--     <update id="batchUpdateBalance" parameterType="java.util.List">   -->
+<!--         <foreach close="" collection="list" index="index" item="item" open="" separator=";">   -->
+<!-- 			UPDATE `user` SET -->
+<!-- 				`balance` = #{item.balance,jdbcType=DOUBLE} -->
+<!--             WHERE  -->
+<!--             	id = #{item.id,jdbcType=BIGINT}   -->
+<!--         </foreach>   -->
+<!--     </update> -->
+    
+    <update id="batchUpdateBalance" parameterType="java.util.List">
+	    update `user`
+	    <trim prefix="set" suffixOverrides=",">
+	    	<trim prefix="`balance` =case" suffix="end,">
+	        	<foreach collection="list" item="i" index="index">
+	            	<if test="i.balance != null">
+	                	when id=#{i.id} then `balance` + #{i.balance}
+	                </if>
+	  			</foreach>
+	      	</trim>
+	   	</trim>
+	    where
+	    <foreach collection="list" separator="or" item="i" index="index" >
+	      id=#{i.id}
+	  	</foreach>
+	</update>
+    
+<!--     <update id="batchUpdateWinMoney" parameterType="java.util.List">   -->
+<!--         <foreach close="" collection="list" index="index" item="item" open="" separator=";">   -->
+<!-- 			UPDATE `live_user` SET -->
+<!-- 				`win_money` = #{item.winMoney,jdbcType=DOUBLE} -->
+<!--             WHERE  -->
+<!--             	user_id = #{item.id,jdbcType=BIGINT}   -->
+<!--         </foreach>   -->
+<!--     </update> -->
+    
+    <update id="batchUpdateWinMoney" parameterType="java.util.List">
+	    update `live_user`
+	    <trim prefix="set" suffixOverrides=",">
+	    	<trim prefix="`win_money` =case" suffix="end,">
+	        	<foreach collection="list" item="i" index="index">
+	            	<if test="i.winMoney != null">
+	                	when user_id=#{i.id} then `win_money` + #{i.winMoney}
+	                </if>
+	  			</foreach>
+	      	</trim>
+	   	</trim>
+	    where
+	    <foreach collection="list" separator="or" item="i" index="index" >
+	      user_id=#{i.id}
+	  	</foreach>
+	</update>
+    
+    <select id="listUserIdByParentPath" resultType="java.lang.Long">
+        select user_id from live_user where
+        <foreach item="item" index="id" collection="array"  separator=" or " >
+            parent_path REGEXP CONCAT('/' ,#{item}, '/')
+        </foreach>
+    </select>
+    
+    <select id="listUserIdBySuperiorID" resultType="java.lang.Long">
+        select user_id from live_user where
+        <foreach item="item" index="id" collection="array"  separator=" or " >
+            parent_id = #{item}
+        </foreach>
+    </select>
+    
+    <update id="demoUpdate" parameterType="com.na.user.socketserver.entity.UserPO">  
+			UPDATE `user` SET
+				`password` = #{password,jdbcType=VARCHAR},
+				`nick_name` = #{nickName,jdbcType=VARCHAR},
+				`balance` = #{balance,jdbcType=DOUBLE}
+            WHERE 
+            	id = #{id,jdbcType=BIGINT}
+    </update>
+    
+    <update id="modifyUserInfo" parameterType="com.na.user.socketserver.entity.UserPO">  
+			UPDATE `user` SET
+				`password` = #{password,jdbcType=VARCHAR},
+				`nick_name` = #{nickName,jdbcType=VARCHAR},
+				`head_pic` = #{headPic,jdbcType=VARCHAR}
+            WHERE 
+            	id = #{id,jdbcType=BIGINT}  
+    </update>
+    
+    <update id="updateStatus" parameterType="com.na.user.socketserver.entity.UserPO">  
+			UPDATE `user` SET
+				`user_status` = #{userStatus}
+            WHERE 
+            	id = #{id,jdbcType=BIGINT}  
+    </update>
+
+</mapper>

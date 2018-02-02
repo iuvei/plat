@@ -1,0 +1,67 @@
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> {{title}}
+    </div>
+  <p-growl [value]="msgs" sticky="sticky"></p-growl>
+    <div class="card-block">
+        <table class="table table-bordered table-striped table-condensed table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>{{ 'urlConfig.key' | translate }}</th>
+                <th>{{ 'urlConfig.url' | translate }}</th>
+                <th>{{ 'common.remark' | translate }}</th>
+                <th>{{ 'common.operation' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of dataList;">
+                <td>{{item.id}}</td>
+                <td>{{item.key}}</td>
+                <td>{{item.url}}</td>
+                <td>{{item.remark}}</td>
+                <td>
+                    <a (click)="goUpdateGameConfig(item)" href="javascript:void(0);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.modify' | translate }}</a>&nbsp;&nbsp;
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--update-->
+<div bsModal #updateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ 'gameConfig.updateGameConfig' | translate }}</h4>
+                <button type="button" class="close" (click)="updateModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="updateGameConfig()">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="user1" class="form-control-label">{{ 'urlConfig.urlConfigId' | translate }}:</label>
+                        <input type="text" class="form-control" id="user1" name="userName1"
+                               [(ngModel)]="updateData.id" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user3" class="form-control-label">{{ 'urlConfig.url' | translate }}:</label>
+                        <input type="text" class="form-control" id="user3" name="userName3"
+                               [(ngModel)]="updateData.url" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
+                  <button type="button" class="btn btn-secondary" (click)="updateModal.hide()">{{ 'common.close' | translate }}</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

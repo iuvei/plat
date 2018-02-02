@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.gate.dao.IAccountSyncRecordMapper">
+    <insert id="batchAdd">
+	      INSERT INTO `account_sync_record` (
+	    	  `user_id`,
+	          `id`,
+	          `sync_time`
+	        )
+	        VALUES
+        <foreach close="" collection="list" index="index" item="item" open="" separator=",">
+          (
+            #{item.userId},
+            #{item.id},
+            #{item.syncTime}
+          )
+   		</foreach>
+    </insert>
+</mapper>

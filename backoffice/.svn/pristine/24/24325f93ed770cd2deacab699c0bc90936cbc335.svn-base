@@ -1,0 +1,9 @@
+/**
+ * Created by admin on 2017/9/24.
+ */
+export class SearchForm {
+  public roomName:string = '';
+  public searchRoomStatus:string='';
+  public startTime:Date=new Date();
+  public endTime:Date=new Date();
+}

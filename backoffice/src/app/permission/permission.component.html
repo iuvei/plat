@@ -1,0 +1,97 @@
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> {{title}}
+        </div>
+        <div class="card-block">
+          <form class="form-inline" (ngSubmit)="search()">
+            <div class="form-group">
+              <label for="exampleInputName2">{{ 'permission.permissionName' | translate }}</label>
+              <input type="text" class="form-control input-xlarge" id="exampleInputName2" [(ngModel)]="searchPermission.perName" name="perName" [placeholder]="'permission.permissionName' | translate">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail2">{{ 'common.status' | translate }}</label>
+              <select id="exampleInputEmail2" class="form-control input-lg" [(ngModel)]="searchPermission.status" name="status">
+                <option *ngFor="let item of statusList" [value]="item.value">{{item.name}}</option>
+              </select>
+            </div>
+            &nbsp;&nbsp;
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+                <button type="button" class="btn btn-success" style="display: none">{{ 'common.create' | translate }}</button>
+            </div>
+          </form>
+          <br>
+          <table class="table table-bordered table-striped table-condensed table-hover">
+            <thead>
+            <tr>
+              <th>{{ 'permission.no' | translate }}</th>
+              <th>{{ 'permission.permissionName' | translate }}</th>
+              <th>{{ 'permission.permissionUrl' | translate }}</th>
+              <th>{{ 'permission.functionGroup' | translate }}</th>
+              <th>{{ 'permission.describe' | translate }}</th>
+              <th>{{ 'common.status' | translate }}</th>
+              <th>{{ 'common.operation' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of permissionList">
+              <td>{{item.permissionOrder}}</td>
+              <td>{{item.permissionName}}</td>
+              <td>{{item.permissionUrl}}</td>
+              <td>{{item.groupID}}</td>
+              <td>{{item.permissionDesc}}</td>
+              <td>{{item.status | DictPipe : statusList}}</td>
+              <td>
+                <!--<a class=""  href="javascript:void(0)" (click)="initModifyDialog(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.modify' | translate }}</a>-->
+                <a class="" *ngIf="item.status==0" href="javascript:void(0)" (click)="updatePermissionStatus(item.permissionID,1)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.enable' | translate }}</a>
+                <a class="" *ngIf="item.status==1" href="javascript:void(0)" (click)="updatePermissionStatus(item.permissionID,2)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.disable' | translate }}</a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                      [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                      [totalItems]="totalItems" [itemsPerPage]="searchPermission.pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="numPages = $event"
+                      (pageChanged)="pageChanged($event)"></pagination>
+        </div>
+      </div>
+
+
+      <!--密码修改对话框-->
+      <div bsModal #modifyModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">{{ 'permission.modifyPermissionInfo' | translate }}</h4>
+              <button type="button" class="close" (click)="modifyModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form (ngSubmit)="updatePermission(modifyPermission)">
+              <div class="modal-body">
+
+                <div class="form-group">
+                  <label for="permissionName" class="form-control-label">{{ 'permission.permissionName' | translate }}:</label>
+                  <input type="text" class="form-control" id="permissionName" name="permissionName" [(ngModel)]="modifyPermission.permissionName" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="permissionUrl" class="form-control-label">{{ 'permission.permissionUrl' | translate }}:</label>
+                  <input type="text" class="form-control" id="permissionUrl" name="permissionUrl" [(ngModel)]="modifyPermission.permissionUrl" required>
+                </div>
+                <div class="form-group">
+                  <label for="groupID" class="form-control-label" >{{ 'permission.permissionGroup' | translate }}:</label>
+                  <input type="text" class="form-control" id="groupID" name="groupID" [(ngModel)]="modifyPermission.groupID" required>
+                </div>
+                <div class="form-group">
+                  <label for="permissionDesc" class="form-control-label">{{ 'permission.describe' | translate }}:</label>
+                  <input type="text" class="form-control" id="permissionDesc" name="permissionDesc" [(ngModel)]="modifyPermission.permissionDesc">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+                <button type="button" class="btn btn-secondary" (click)="modifyModal.hide()">{{ 'common.close' | translate }}</button>
+              </div>
+            </form>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->

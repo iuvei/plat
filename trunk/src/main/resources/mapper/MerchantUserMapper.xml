@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IMerchantUserMapper">
+	
+	<sql id="dynamicWhere">
+		<where>
+			and l.source != 1
+			and u.user_type=4
+			<if test="type">
+			 	and l.type = #{type}
+			</if>
+			<if test="parentId">
+			 	and l.parent_id = #{parentId}
+			</if>
+			<if test="parentPath">
+			 	and l.parent_path LIKE CONCAT(#{parentPath},'%')
+			</if>
+			<if test="number != null and number != '' ">
+			 	and m.number = #{number}
+			</if>
+			<if test="id">
+			 	and m.user_id = #{id}
+			</if>
+		</where>
+	</sql>
+    
+    <select id="search" resultType="com.na.manager.entity.MerchantUser" parameterType="Map">
+     SELECT
+		*
+	 FROM merchant_user m
+	 JOIN live_user l ON l.user_id = m.user_id
+	 JOIN user u ON u.id = m.user_id
+	 <include refid="dynamicWhere" />
+    </select>
+	
+    <insert id="add">
+    	INSERT INTO `merchant_user` (
+    	  `user_id`,
+          `number`,
+          `private_key`,
+          `merchant_type`,
+          `return_url`,
+          `merchant_prefix`,
+          `allow_ip_list`,
+          `remark`,
+          `status`
+        )
+        VALUES
+          (
+            #{userId},
+            #{number, jdbcType=CHAR},
+            #{privateKey},
+            #{merchantType},
+            #{returnUrl, jdbcType=VARCHAR},
+            #{merchantPrefix},
+            #{allowIpList, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR},
+            #{status}
+          )
+    </insert>
+    
+    <update id="update">
+        UPDATE
+          `merchant_user`
+        <set>
+            <if test="number">`number` = #{number},</if>
+            <if test="privateKey">`private_key` = #{privateKey},</if>
+            <if test="remark">`remark` = #{remark},</if>
+            <if test="merchantPrefix">`merchant_prefix` = #{merchantPrefix},</if>
+            <if test="allowIpList">`allow_ip_list` = #{allowIpList},</if>
+            <if test="status">`status` = #{status},</if>
+        </set>
+        WHERE `user_id` = #{id}
+    </update>
+    
+</mapper>

@@ -1,0 +1,176 @@
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> {{title}}
+
+    </div>
+  <p-growl [value]="msgs" sticky="sticky"></p-growl>
+    <div class="card-block">
+       <!-- <form class="form-inline" (ngSubmit)="search()">
+
+            <div class="form-group">
+                <label for="exampleInputEmail2">{{ 'gameConfig.gameType' | translate }}:</label>
+                <select id="exampleInputEmail2" class="form-control input-lg" [(ngModel)]="gid" name="status">
+                    <option *ngFor="let game of gameTypeList " [value]="game.lid">{{game.levelName}}</option>
+                </select>
+            </div>
+            &nbsp;
+            <div class="form-group">
+                <label for="exampleInputEmail">{{ 'gameConfig.gameType' | translate }}:</label>
+                <input id="exampleInputEmail" type="text" class="form-control input-xlarge" [(ngModel)]="keyname"
+                       name="exampleInputEmail" placeholder="{{ 'gameConfig.plsInputKey' | translate }}">
+            </div>
+            &nbsp;
+            <div class="form-group">
+                <label for="exampleInputEmai2">{{ 'gameConfig.gameType' | translate }}:</label>
+                <input id="exampleInputEmai2" type="text" class="form-control input-xlarge" [(ngModel)]="keyname"
+                       name="exampleInputEmai2" placeholder="{{ 'gameConfig.plsInputValue' | translate }}">
+            </div>
+            &nbsp;
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">{{ 'common.search' | translate }}</button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-success" (click)="createModal.show()">{{ 'gameConfig.createGameConfig' | translate }}</button>
+            </div>
+        </form>
+
+        <br>-->
+        <table class="table table-bordered table-striped table-condensed table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>{{ 'gameConfig.gameType' | translate }}</th>
+                <th>{{ 'gameConfig.key' | translate }}</th>
+                <th>{{ 'gameConfig.value' | translate }}</th>
+                <th>{{ 'common.remark' | translate }}</th>
+                <th>{{ 'common.operation' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of gameDataList;let i=index">
+                <td>{{i+1}}</td>
+                <td [ngSwitch]="item.gameId">
+                  <template [ngSwitchCase]=1 >{{ 'gameTable.baccarat' | translate }}</template>
+                  <template [ngSwitchCase]=2 >{{ 'gameTable.dragonTiger' | translate }}</template>
+                  <template [ngSwitchCase]=3 >{{ 'gameTable.roulette' | translate }}</template>
+                  <template [ngSwitchCase]=4 >{{ 'gameTable.sicbo' | translate }}</template>
+                </td>
+                <td>{{item.key}}</td>
+                <td>{{item.value}}</td>
+                <td>{{item.remark}}</td>
+                <td>
+                    <a (click)="goUpdateGameConfig(item)" href="javascript:void(0);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.modify' | translate }}</a>&nbsp;&nbsp;
+                  <!--<a (click)="goDeleteGameConfig(item)" href="javascript:void(0);"><i class="fa fa-trash"></i>{{ 'common.delete' | translate }}</a>-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!--<pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                    [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                    [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                    (pageChanged)="pageChanged($event)"></pagination>-->
+
+    </div>
+</div>
+
+<!--游戏配置创建-->
+<div bsModal #createModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ 'gameConfig.createGameConfig' | translate }}</h4>
+                <button type="button" class="close" (click)="createModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="createGameConfig()">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="exampleInputEmai3">{{ 'gameConfig.gameType' | translate }}</label>
+                        <select id="exampleInputEmai3" class="form-control input-lg" [(ngModel)]="insertNewData.gid"
+                                name="status">
+                            <option *ngFor="let game of gameTypeList " [value]="game.lid">{{game.levelName}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userName1" class="form-control-label">{{ 'gameConfig.key' | translate }}:</label>
+                        <input type="text" class="form-control" id="userName1" name="userName"
+                               [(ngModel)]="insertNewData.keyname" autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userName2" class="form-control-label">{{ 'gameConfig.value' | translate }}:</label>
+                        <input type="text" class="form-control" id="userName2" name="userName"
+                               [(ngModel)]="insertNewData.keyval" autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userName3" class="form-control-label">{{ 'common.remark' | translate }}:</label>
+                        <textarea id="userName3" name="username3" [(ngModel)]="insertNewData.remarks"
+                                  class="form-control" required></textarea>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
+                  <button type="button" class="btn btn-secondary" (click)="createModal.hide()">{{ 'common.close' | translate }}</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<!--update-->
+<div bsModal #updateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ 'gameConfig.updateGameConfig' | translate }}</h4>
+                <button type="button" class="close" (click)="updateModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="updateGameConfig()">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="user1" class="form-control-label">{{ 'gameConfig.gameConfigId' | translate }}:</label>
+                        <input type="text" class="form-control" id="user1" name="userName1"
+                               [(ngModel)]="updateData.id" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="example2">{{ 'gameConfig.gameType' | translate }}</label>
+                        <select id="example2" class="form-control input-lg" [(ngModel)]="updateData.gameId" name="status">
+                            <option *ngFor="let game of gameTypeList " [value]="game.id">{{game.name}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user2" class="form-control-label">{{ 'gameConfig.key' | translate }}:</label>
+                        <input type="text" class="form-control" id="user2" name="userName2"
+                               [(ngModel)]="updateData.key" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="user3" class="form-control-label">{{ 'gameConfig.value' | translate }}:</label>
+                        <input type="text" class="form-control" id="user3" name="userName3"
+                               [(ngModel)]="updateData.value" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user4" class="form-control-label">{{ 'common.remark' | translate }}:</label>
+                        <textarea id="user4" name="username3" [(ngModel)]="updateData.remark" class="form-control"
+                                  required></textarea>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
+                  <button type="button" class="btn btn-secondary" (click)="updateModal.hide()">{{ 'common.close' | translate }}</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

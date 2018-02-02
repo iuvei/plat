@@ -1,0 +1,214 @@
+import {Component, OnInit, ViewChild} from '@angular/core';
+import { ModalDirective } from 'ng2-bootstrap/modal/modal.component';
+
+import {GameTableService} from "./gametable.service";
+import {GameTableForm} from "./gametablefrom";
+import {GameTableSearchForm} from "./gametablesearchform";
+import {ConfirmationService, Message} from "primeng/primeng";
+import {TranslateService} from "@ngx-translate/core";
+import {Common} from "app/common/common";
+
+@Component({
+  templateUrl: 'gametable.component.html',
+  styleUrls: ['./gametable.component.scss']
+})
+export class GameTableComponent implements  OnInit {
+
+  public currentPage: number = 1;
+  public smallnumPages: number = 1;
+  public totalItems: number = 0;
+  public pageSize: number = 20;
+  public maxSize: number = Common.MAX_PAGE_SIZE;
+
+  dataList: any[] = [];
+  // 搜索参数
+  searchForm: GameTableSearchForm = new GameTableSearchForm();
+  // 创建模型
+  form: GameTableForm = new GameTableForm();
+
+  @ViewChild('createGameTableModal')
+  public createGameTableModal: ModalDirective;
+
+  @ViewChild('modifyGameTableModal')
+  public modifyGameTableModal: ModalDirective;
+
+  @ViewChild('addBatchModal')
+  public addBatchModal: ModalDirective;
+
+  // 游戏类型
+  gameTypeList: string[] = [];
+
+  // 消息提醒
+  msgs: Message[] = [];
+
+  platFlag:String;
+  currentUser: any;
+
+  constructor(private gameTableService: GameTableService, private confirmationService: ConfirmationService,
+              private _translate: TranslateService ) {
+  }
+
+  ngOnInit() {
+    const user = JSON.parse(localStorage.getItem('loginUser'));
+    this.currentUser = user.user;
+    this.getGameType();
+    this.search();
+    this.getPlatFlag();
+  }
+
+  search() {
+    const param = this.searchForm;
+    param['page'] = this.currentPage;
+    param['rows'] = this.pageSize;
+    this.gameTableService.search(param).subscribe(
+      data => {
+        this.totalItems = data['data'].total;
+        this.dataList = data['data'].rows;
+      },
+      err => {
+        console.log(err);
+    });
+
+  }
+
+  getPlatFlag(){
+    this.gameTableService.getPlatFlag().subscribe(
+      data => {
+        this.platFlag=data.data;
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  clearOnlineUser(){
+    this.gameTableService.clearOnlineUser().subscribe(
+      data => {
+        if (data.status == 0) {
+          this.msgs.push({severity: 'success', summary: this._translate.instant('common.success'), detail: data.msg});
+        } else {
+          this.msgs.push({severity: 'error', summary: this._translate.instant('common.tips'), detail: data.msg});
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  platMaintenance(){
+    this.gameTableService.platMaintenance().subscribe(
+      data => {
+        if (data.status == 0) {
+          console.info(data);
+          this.getPlatFlag();
+          this.msgs.push({severity: 'success', summary: this._translate.instant('common.success'), detail: data.msg});
+        } else {
+          this.msgs.push({severity: 'error', summary: this._translate.instant('common.tips'), detail: data.msg});
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+
+
+  pageChanged(event: any): void {
+    this.currentPage =  event.page;
+    this.search();
+  }
+
+  create() {
+    this.gameTableService.create(this.form).subscribe(
+      data => {
+        if (data.status == 0) {
+          this.msgs.push({severity: 'success', summary: this._translate.instant('common.success'), detail: data.msg});
+          this.closeCreateModal();
+          this.search();
+        } else {
+          this.msgs.push({severity: 'error', summary: this._translate.instant('common.error'), detail: data.msg});
+        }
+      },
+      err => {
+        console.log(err);
+      });
+    return true;
+  }
+
+  openModifyModal(item: any) {
+    this.form = item;
+    this.modifyGameTableModal.show();
+  }
+
+  modify() {
+    this.gameTableService.modify(this.form).subscribe(
+      data => {
+        if (data.status == 0) {
+          this.msgs.push({severity: 'success', summary: this._translate.instant('common.success'), detail: data.msg});
+          this.closeModifyModal();
+          this.search();
+        } else {
+          this.msgs.push({severity: 'error', summary: this._translate.instant('common.error'), detail: data.msg});
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  getGameType() {
+    this.gameTableService.getGameType().subscribe(
+      data => {
+        this.gameTypeList = data['data'];
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  closeCreateModal() {
+    this.createGameTableModal.hide();
+    this.form = new GameTableForm();
+  }
+
+  closeModifyModal() {
+    this.modifyGameTableModal.hide();
+    this.form = new GameTableForm();
+  }
+
+  openAddBatchModal(item){
+    this.form = item;
+    this.addBatchModal.show();
+  }
+
+  closeAddBatchModal(){
+    this.addBatchModal.hide();
+    this.form = new GameTableForm();
+  }
+
+  updateTableStatus(item: any) {
+    this.confirmationService.confirm({
+
+      header: item.status == 0?this._translate.instant('gameTable.jinyongGameTable'):this._translate.instant('gameTable.qiyongGameTable'),
+      message: item.status == 0?this._translate.instant('gameTable.jinyongGameTableTip'):this._translate.instant('gameTable.qiyongGameTableTip'),
+      accept : () => {
+        this.gameTableService.updateTableStatus({
+          tid: item.id,
+          status:item.status == 0? 1:0
+        }).subscribe(
+          data => {
+            if (data.status == 0) {
+              this.search();
+              this.msgs.push({severity: 'success', summary: this._translate.instant('common.success'), detail: data.msg});
+            } else {
+              this.msgs.push({severity: 'error', summary: this._translate.instant('common.error'), detail: data.msg});
+            }
+          },
+          err => {
+            console.log(err);
+          });
+      }
+    });
+  }
+
+}

@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <h4 class="modal-title">修改密码</h4>
+  <button type="button" class="close" (click)="addRoleModal.hide()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<form (submit)="create('')" >
+  <div class="modal-body">
+
+    <div class="form-group">
+      <label for="addRoleName" class="form-control-label">角色名称:</label>
+      <input type="text" name="addRoleName" class="form-control" [(ngModel)]="role.rolename" id="addRoleName" autofocus required>
+    </div>
+    <div class="form-group">
+      <label for="addRoleDesc" class="form-control-label">角色描述:</label>
+      <textarea class="form-control" name="addRoleDesc" [(ngModel)]="role.roledesc" id="addRoleDesc" ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="addRoleDesc" class="form-control-label">权限配置:</label>
+      <input type="text" name="addRolePermissionList" class="form-control" id="addRolePermissionList" >
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" >保存</button>
+    <button type="button" class="btn btn-secondary" (click)="addRoleModal.hide()">关闭</button>
+  </div>
+</form>

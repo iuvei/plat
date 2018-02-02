@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IRoomWinLostMapper">
+
+ 	<sql id="selectColumns">
+ 		<![CDATA[
+      		a.loginName,
+			a.nickName,
+			a.roomNumber,
+			a.roundId,
+			SUM(a.bankTotal) as bankTotal,
+			SUM(a.playerTotal) AS playerTotal,
+			SUM(a.ylTotal) AS ylTotal,
+			SUM(a.ylTotal)*a.washPercentage AS ylCommission,
+			(SUM(a.ylTotal)*a.washPercentage+SUM(a.ylWinLost))*(1-p.hedge_percentage) AS ylSettle,
+			SUM(a.noHedgeTotal) AS noHedgeTotal,
+			SUM(a.noHedgeWinLost) AS noHedgeWinLost,
+			(SUM(a.noHedgeTotal)*a.washPercentage+SUM(a.noHedgeWinLost))*(1-p.no_hedge_percentage) AS noHedgeSettle,
+			SUM(a.bankerWinTotal) AS bankerWinTotal,
+			SUM(a.waterCommission) AS waterCommission,
+ 			SUM(a.waterCommission)*p.water_percentage AS waterSettle,
+			a.openResult
+		]]>
+    </sql>
+    
+    <sql id="selectColumnsTemp">
+ 		<![CDATA[
+      	b.round_id AS roundId,
+		vg.id AS roomNumber,
+		vg.hedge_percentage as hedgePercentage,
+		vg.no_hedge_percentage as noHedgePercentage,
+		vg.water_percentage AS waterPercentage,
+		SUM(IF(b.trade_item_id = 101,b.amount,0)) AS bankTotal,
+		SUM(IF(b.trade_item_id = 102,b.amount,0)) AS playerTotal,
+		IF(SUBSTR(r.result,1,1)=3,0,ABS(SUM(IF(b.trade_item_id=101,b.amount,0))-SUM(IF(b.trade_item_id=102,b.amount,0)))) AS ylTotal,
+		CASE SUBSTR(r.result,1,1) WHEN 1 THEN 
+		IF(SUM(IF(b.trade_item_id = 101,b.amount,0))>SUM(IF(b.trade_item_id = 102,b.amount,0)),
+		(SUM(IF(b.trade_item_id = 101,b.amount,0))-SUM(IF(b.trade_item_id = 102,b.amount,0)))*0.95,
+		SUM(IF(b.trade_item_id = 101,b.amount,0))-SUM(IF(b.trade_item_id = 102,b.amount,0))) 
+		WHEN 2 THEN SUM(IF(b.trade_item_id = 102,b.amount,0))-SUM(IF(b.trade_item_id = 101,b.amount,0)) ELSE 0 END AS ylWinLost,
+		SUM(IF(b.trade_item_id<>102 AND b.trade_item_id <> 101,b.amount,0)) AS noHedgeTotal,
+		SUM(IF(b.trade_item_id<>102 AND b.trade_item_id <> 101,b.win_lost_amount,0)) AS noHedgeWinLost,
+		SUM(IF(b.trade_item_id = 101 AND SUBSTR(r.result,1,1) =1,b.win_lost_amount,0)) AS bankerWinTotal,
+		CASE SUBSTR(r.result,1,1) WHEN 1 THEN 
+		IF(
+		SUM(IF(b.trade_item_id = 101,b.amount,0))>SUM(IF(b.trade_item_id = 102,b.amount,0)),
+		SUM(IF(b.trade_item_id = 102,b.amount,0)),
+		SUM(IF(b.trade_item_id = 101,b.amount,0))
+		)*0.05 ELSE 0 END AS waterCommission,
+		SUBSTR(r.result,1,1) as openResult,
+		]]>
+    </sql>
+
+    <!-- 包房对冲公司输赢报表  -->
+    <select id="queryRoomHedgeCompanyWinLostReport" resultType="com.na.manager.bean.vo.RoomVO">
+    	 select 
+			<include refid="selectColumns" />
+			from (
+			SELECT
+				u.login_name AS loginName,u.nick_name AS nickName,u.id,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+				<include refid="selectColumnsTemp" />
+				#{userId} as agentId 
+			FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+			WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.user_parent_path 
+			REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+			<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+			GROUP BY b.round_id,vg.id)AS t 
+			LEFT JOIN USER u ON u.id = t.agentId LEFT JOIN live_user lu ON lu.user_id = u.id
+		) a LEFT JOIN percentage_config p ON a.id =p.user_id ORDER BY a.agentId
+    </select>
+    
+    <!-- 包房对冲代理输赢报表  -->
+    <select id="queryRoomHedgeProxyWinLostReport" resultType="com.na.manager.bean.vo.RoomVO">
+    	select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.user_parent_path 
+		REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.id =p.user_id GROUP BY a.loginName
+    </select>
+    
+    <!-- 包房对冲房间输赢报表  -->
+    <select id="queryRoomHedgeRoomWinLostReport" resultType="com.na.manager.bean.vo.RoomVO">
+    	select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id as userId,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.parent_id =#{userId}
+		AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.userId =p.user_id GROUP BY a.id
+    </select>
+    
+    <!-- 包房对冲局输赢报表  -->
+    <select id="queryRoomHedgeRoundWinLostReport" resultType="com.na.manager.bean.vo.RoomVO">
+        select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id as userId,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 
+		<if test="roomNumber != null and roomNumber != '' ">AND vg.id = #{roomNumber}</if>
+		AND b.user_parent_path REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.userId =p.user_id GROUP BY a.roundId ORDER BY a.roundId DESC
+    </select>
+    
+    <sql id="dynamicWhere">
+		<where>
+            b.user_parent_path REGEXP CONCAT('/',#{userId},'/') AND b.table_type = 2 AND b.parent_id != 418 
+            <if test="startTime!=null and endTime!=null">AND b.bet_time BETWEEN #{startTime} AND #{endTime}</if>
+            <if test="loginName != null and loginName != ''"> AND b.login_name=#{loginName} </if>
+		</where>
+	</sql>
+	
+    <!--统计代理直系会员列表  -->
+    <select id="queryRoomWinLostReport" resultType="com.na.manager.bean.vo.RoomWinLostVO">
+	    SELECT
+			das.*, u.login_name AS 'loginName',u.nick_name AS 'nickName',
+			u2.parent_path AS 'parentPath',
+			u2.wash_percentage AS 'washPercentage',
+			u2.type as 'liveUserType',
+			das.winLostAmount + das.washAmount AS 'agentIncome',
+			IFNULL((das.winLostAmount + das.washAmount) / das.washBetting,0) AS 'winloSepercentage'
+		FROM
+			(
+				SELECT
+					COUNT(1) AS 'tradetime',
+					IFNULL(SUM(b.amount), 0) AS 'amountBetting',
+					IFNULL(SUM(b.win_lost_amount), 0) AS 'winLostAmount',
+					SUM(b.`valid_amount`) AS 'washBetting',
+					SUM(b.`valid_amount`* b.wash_percentage) AS 'washAmount',
+					b.user_id AS 'agentId'
+				FROM
+					bet_order b
+				<include refid="dynamicWhere" />  
+				GROUP BY agentId
+			) AS das
+		LEFT JOIN USER u ON das.agentId = u.id
+		LEFT JOIN live_user u2 ON u.id = u2.user_id
+		LIMIT #{startRow}, #{pageSize}
+    </select>
+    
+    <select id="getRoomWinLostReportCount" resultType="Long">
+      	select count(*) from (
+			SELECT
+				b.user_id 
+				FROM
+					bet_order b
+				<include refid="dynamicWhere" />  
+			GROUP BY b.user_id
+		) as a
+    </select>
+        
+</mapper>

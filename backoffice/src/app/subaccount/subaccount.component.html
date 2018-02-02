@@ -1,0 +1,293 @@
+
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> {{title}}
+        <button type="button" class="btn btn-primary" (click)="gotoCreateSubAccount()" style="float: right">{{ 'subaccount.addSubaccount' | translate }}
+        </button>
+    </div>
+
+  <p-growl [value]="msgs" sticky="sticky"></p-growl>
+
+    <div class="card-block">
+        <div style="width: 20%; float: left;border:2px solid #CCCCCC; padding:0px; min-height: 400px;"
+             class="cont-left">
+                    <h3 style="margin-bottom:0;font-size: 14px;height:35px;line-height: 35px;padding-left:20px;">{{ 'subaccount.agentAccount' | translate }}</h3>
+                    <p-tree [value]="lazyFiles" selectionMode="single" (onNodeSelect)="nodeSelect($event)"
+                            (onNodeExpand)="nodeExpand($event)"
+                            [style]="{'max-height':'400px','width':'100%','overflow':'auto'}"></p-tree>
+        </div>
+
+    <div style="width: 80%; float: left;" class="cont-right">
+      <table class="table table-bordered table-striped table-condensed table-hover">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>{{ 'subaccount.subaccount' | translate }}</th>
+          <th>{{ 'common.nickName' | translate }}</th>
+          <th>{{ 'common.status' | translate }}</th>
+          <th>{{ 'subaccount.registerDate' | translate }}</th>
+          <th>{{ 'common.modifyPassword' | translate }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of tablelist">
+          <td>{{item.id}}</td>
+          <td>{{item.loginName}}</td>
+          <td >
+            <a *ngIf="item.nickName == ''" href="javascript:void(0)" (click)="gotoUserMessage(item)">--</a>
+            <a *ngIf="item.nickName == null" href="javascript:void(0)"  (click)="gotoUserMessage(item)">--</a>
+            <a *ngIf="item.nickName != null || item.nickname !=''" href="javascript:void(0)"   (click)="gotoUserMessage(item)">{{item.nickName}}</a>
+          </td>
+          <td  [ngSwitch]="item.userStatus">
+            <a  href="javascript:void(0)" *ngSwitchCase = -1>{{ 'subaccount.deleted' | translate }} </a>
+            <a  href="javascript:void(0)" *ngSwitchCase = 3>{{ 'common.locked' | translate }} </a>
+            <a  (click)="gotoUserStatus(item)" href="javascript:void(0)" *ngSwitchCase = 2>{{ 'common.disable' | translate }}</a>
+            <a  (click)="gotoUserStatus(item)" href="javascript:void(0)" *ngSwitchDefault >{{ 'common.normal' | translate }}</a>
+          </td>
+          <td>{{item.createTime}}</td>
+          <td><a (click)="gotoUserPassword(item)" href="javascript:void(0)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.modify' | translate }}</a></td>
+        </tr>
+        </tbody>
+      </table>
+      <!--<template account-add-table ></template>-->
+    </div>
+</div>
+
+
+
+
+<!-- 新增子账号-->
+<div bsModal #createSubUserModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div style="width: 700px;" class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ 'subaccount.addSubaccount' | translate }}</h4>
+                <button type="button" class="close" (click)="createSubUserModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="createSubAccount()">
+
+                <div class="modal-body">
+                    <div>
+                        <div style="width:50%;float: left;" class="form-group">
+                            <div class="form-group">
+                                <label for="supername" class="form-control-label">{{ 'subaccount.higherUser' | translate }}:</label>
+                                <input type="text" class="form-control" id="supername" name="supername"
+                                       [(ngModel)]="global_parentuser.name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginname" class="form-control-label">{{ 'subaccount.subaccount' | translate }}:</label>
+                                <input type="text" class="form-control" id="loginname" name="loginname"
+                                       [(ngModel)]="createSubUser.loginName" [placeholder]="'subaccount.userNameTip' | translate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="nickname" class="form-control-label">{{ 'common.nickName' | translate }}</label>
+                                <input type="text" class="form-control" id="nickname" name="nickname"
+                                       [(ngModel)]="createSubUser.nickName" [placeholder]="'subaccount.nickNameTip' | translate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="modifyNewPassword" class="form-control-label">{{ 'common.password' | translate }}:</label>
+                                <input type="password" name="modifyNewPassword" class="form-control"
+                                       [(ngModel)]="createSubUser.password" id="modifyNewPassword"
+                                       [placeholder]="'subaccount.passwordTip' | translate" pPassword autofocus required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="modifyConfirmPassword" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+
+                                <input type="password" pPassword class="form-control" name="modifyConfirmPassword"
+                                       [(ngModel)]="createSubUser.rePassword" id="modifyConfirmPassword"
+                                       [placeholder]="'subaccount.plsReInputPassword' | translate" required/>
+                            </div>
+                            <div [hidden]="createSubUser.password==createSubUser.rePassword" class="alert alert-danger">
+                              {{ 'subaccount.confirmPasswordTip' | translate }}
+                            </div>
+                        </div>
+                        <div style="width:50%;float: right" class="form-group">
+                            <table border="0" cellspacing="0" cellpadding="0"
+                                   style=" float:right;width: 90%; height:100%;border: 0;"
+                                   class="table table-bordered dchannel-table">
+                                <tbody>
+                                <tr class="item-default">
+                                    <td align="right" style="width:40%;padding:0;height: 100%">
+                                        <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                                          {{ 'subaccount.alreadyOwnedMenu' | translate }}</h3>
+                                        <select style="height:345px;width:100%" id="woshiyi" name="selectUserList"
+                                                [(ngModel)]="assignRceSelectList" multiple>
+                                            <option *ngFor="let menu of assignRceList" [value]="menu.permissionID ">
+                                                {{menu.permissionDesc}}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td style="width: 20%; padding: 0;" valign="middle">
+                                        <button style="width: 100%;margin-bottom: 3px;margin-top: 110px;" type="button"
+                                                class="btn btn-primary" (click)="zuoyiAll()"> <<
+                                        </button>
+                                        <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                class="btn btn-primary" (click)="zuoyiMost()"> <
+                                        </button>
+                                        <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                class="btn btn-primary" (click)="youyiMost()"> >
+                                        </button>
+                                        <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                class="btn btn-primary" (click)="youyiAll()"> >>
+                                        </button>
+                                    </td>
+                                    <td style="width:40%;padding:0;height: 100%">
+                                        <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                                          {{ 'subaccount.notOwnedMenu' | translate }}</h3>
+                                        <select style="height:345px;width:100%" id="woshier" name="selectAllList"
+                                                [(ngModel)]="unAssignRceSelectList" multiple>
+                                            <option *ngFor="let menu of unAssignRceList" [value]="menu.permissionID">
+                                                {{menu.permissionDesc}}
+                                            </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+                  <button type="button" class="btn btn-secondary" (click)="createSubUserModal.hide()">{{ 'common.close' | translate }}</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--修改角色信息-->
+<div bsModal #updateUserModule="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div style="width: 700px;" class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ 'subaccount.modifySubAccountInfo' | translate }}</h4>
+                <button type="button" class="close" (click)="updateUserModule.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="updateUserMessage()">
+                <div class="modal-body">
+                    <div>
+                        <div style="width:50%;float: left;" class="form-group">
+                            <div class="form-group">
+                                <label for="supername" class="form-control-label">{{ 'subaccount.higherUser' | translate }}:</label>
+                                <input type="text" class="form-control" id="supername" name="supername"
+                                       [(ngModel)]="global_parentuser.name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginname" class="form-control-label">{{ 'subaccount.subaccount' | translate }}:</label>
+                                <input type="text" class="form-control" id="loginname" name="loginname"
+                                       [(ngModel)]="updateuser.loginName" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="nickname" class="form-control-label">{{ 'common.nickName' | translate }}</label>
+                                <input type="text" class="form-control" id="nickname" name="nickname"
+                                       [(ngModel)]="updateuser.nickName" required>
+                            </div>
+                        </div>
+
+                        <div style="width:50%;float: right" class="form-group">
+                            <div class="form-group">
+                                <table border="0" cellspacing="0" cellpadding="0"
+                                       style=" float:right;width: 90%; height:100%;border: 0;"
+                                       class="table table-bordered dchannel-table">
+                                    <tbody>
+                                    <tr class="item-default">
+                                        <td align="right" style="width:40%;padding:0;height: 100%">
+                                            <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                                              {{ 'subaccount.alreadyOwnedMenu' | translate }}</h3>
+                                            <select style="height:345px;width:100%" id="woshiyi" name="selectUserList"
+                                                    [(ngModel)]="assignRceSelectList" multiple>
+                                                <option *ngFor="let menu of assignRceList" [value]="menu.permissionID">
+                                                    {{menu.permissionDesc}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td style="width: 20%; padding: 0;" valign="middle">
+                                            <button style="width: 100%;margin-bottom: 3px;margin-top: 110px;"
+                                                    type="button" class="btn btn-primary" (click)="zuoyiAll()"> <<
+                                            </button>
+                                            <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                    class="btn btn-primary" (click)="zuoyiMost()"> <
+                                            </button>
+                                            <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                    class="btn btn-primary" (click)="youyiMost()"> >
+                                            </button>
+                                            <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                    class="btn btn-primary" (click)="youyiAll()"> >>
+                                            </button>
+                                        </td>
+                                        <td style="width:40%;padding:0;height: 100%">
+                                            <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                                              {{ 'subaccount.notOwnedMenu' | translate }}</h3>
+                                            <select style="height:345px;width:100%" id="woshier" name="selectAllList"
+                                                    [(ngModel)]="unAssignRceSelectList" multiple>
+                                                <option *ngFor="let menu of unAssignRceList"
+                                                        [value]="menu.permissionID"> {{menu.permissionDesc}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="clear: both;"></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
+                  <button type="button" class="btn btn-secondary" (click)="updateUserModule.hide()">{{ 'common.close' | translate }}</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<!--修改用户密码的窗口 -->
+<div bsModal #updatePasswrodModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ 'subaccount.modifyPassword' | translate }}</h4>
+                <button type="button" class="close" (click)="updatePasswrodModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (submit)="updateUserPassword()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="modifyNewPassword" class="form-control-label">{{ 'common.newPassword' | translate }}:</label>
+                        <input type="password" name="modifyNewPassword" class="form-control"
+                               [(ngModel)]="updatepassword.password" [placeholder]="'common.passwordTip' | translate"  autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modifyConfirmPassword" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+                        <input type="password" class="form-control" name="modifyConfirmPassword"
+                               [(ngModel)]="updatepassword.rePassword" [placeholder]="'common.passwordTip' | translate"  required>
+                    </div>
+                </div>
+                <div [hidden]="updatepassword.password==updatepassword.rePassword" class="alert alert-danger">
+                  {{ 'subaccount.confirmPasswordTip' | translate }}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
+                    <button type="button" class="btn btn-secondary" (click)="updatePasswrodModal.hide()">{{ 'common.close' | translate }}</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+

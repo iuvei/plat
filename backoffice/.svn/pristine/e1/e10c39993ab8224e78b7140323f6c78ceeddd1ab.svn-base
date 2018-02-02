@@ -1,0 +1,211 @@
+import {
+  Component, ComponentFactoryResolver, ComponentRef, OnDestroy, OnInit, ViewChild,
+  ViewContainerRef
+} from "@angular/core";
+import {TranslateService} from "@ngx-translate/core";
+import {CommonUtil} from "../../common/CommonUtil";
+import {SearchModel} from "./search.model";
+import {ToasterService} from "angular2-toaster";
+import {RoomNoHedgeTableComponent} from "./roomnohedge-table.component";
+import {RoomNoHedgeService} from "app/report/roomnohedge/roomnohedge.service";
+import {TransRecordService} from "../transrecord/transrecord.service";
+import {RoomHedgeService} from "../roomhedge/roomhedge.service";
+import {ModalDirective} from "ng2-bootstrap";
+
+@Component({
+  templateUrl: 'roomnohedge.component.html',
+  styleUrls: ['./roomnohedge.component.scss']
+})
+export class RoomNoHedgeComponent implements  OnInit,OnDestroy {
+  private tableList: any[] ;
+  private searchModel : SearchModel = new SearchModel();
+  public tableindex : number = 0;
+  private realTableList: any[] ;
+
+  @ViewChild('roomNoHedgePanel', {read: ViewContainerRef})
+  private roomNoHedgePanel: ViewContainerRef;
+
+  @ViewChild('betOrderDialog')
+  private betOrderDialog:ModalDirective;
+
+  private listTableComponent : ComponentRef<RoomNoHedgeTableComponent>[] = [];
+
+  constructor(private roomNoHedgeService:RoomNoHedgeService,
+              private roomHedgeService:RoomHedgeService,
+              private transRecordService:TransRecordService,private _translate:TranslateService,
+              private toaster:ToasterService,private _componentFactoryResolver: ComponentFactoryResolver) {
+  }
+
+  ngOnInit() {
+    let obj = JSON.parse(sessionStorage.getItem("roomnohedge-component"));
+    if(obj){
+      this.searchModel = SearchModel.create(obj.searchModel);
+      this.tableList = obj.tableList;
+      let tableListData = obj.tableListData;
+      for(let i=0;i<tableListData.length;i++){
+        this.createTableComponent(tableListData[i].tableList,tableListData[i].parentModel);
+      }
+    }else {
+      this.searchModel.startTime = CommonUtil.getStartDate();
+      this.searchModel.endTime = CommonUtil.getEndDate();
+      this.search();
+    }
+  }
+
+  ngOnDestroy(): void {
+    let data = {
+      "searchModel":this.searchModel,
+      "tableList":this.tableList,
+      "tableListData":[]
+    };
+
+    for(let i=0;i<this.listTableComponent.length;i++){
+      let temp = this.listTableComponent[i].instance;
+      data.tableListData.push({"tableList":temp.tableList,"parentModel":temp.parentModel});
+    }
+    sessionStorage.setItem("roomnohedge-component",JSON.stringify(data));
+  }
+
+  public search() {
+    this.clearAllTable();
+    this.roomNoHedgeService.search(this.searchModel.startTime,this.searchModel.endTime,
+    this.searchModel.agentName,this.searchModel.roomAgent,this.searchModel.roomNumber,this.searchModel.statisType).subscribe(
+      betOrder => {
+         this.tableList = betOrder.data;
+         this.createTableComponent(this.tableList, null);
+      },
+      err => {
+        this.toaster.pop('error', this._translate.instant('common.error'), err);
+      });
+  }
+
+
+  //toaster共用的函数
+  public glaobal_toaster(response:Response) {
+    let ok = response.json()['ok'] as boolean;
+    let message = response.json()['msg'] as string;
+    if (ok) {
+      this.toaster.pop('success', this._translate.instant('common.success'), message);
+    } else {
+      this.toaster.pop('error', this._translate.instant('common.error'), message);
+    }
+  }
+
+  searchChild(data) {
+    let parentAgent:any = data.model;
+    let tableComponent :RoomNoHedgeTableComponent = data.component;
+    let isdel : boolean = false;
+    let i = 0;
+    for(let item of this.listTableComponent){
+      if(item.instance.index>tableComponent.index){
+        isdel = true;
+      }
+      if(isdel){
+        item.destroy();
+      }else{
+        i++;
+      }
+    }
+    this.listTableComponent.splice(i,this.listTableComponent.length-i);
+    this.roomNoHedgeService.search(this.searchModel.startTime,this.searchModel.endTime,
+      parentAgent.loginName,this.searchModel.roomAgent,parentAgent.roomNumber,parentAgent.statisType).subscribe(
+      p => {
+        let agentStatisList : any= [];
+        let temps = p.data;
+        if (temps) {
+          for (let i = 0; i < temps.length; i++) {
+            let item = temps[i];
+            agentStatisList.push(item);
+          }
+          this.createTableComponent(agentStatisList, parentAgent);
+        }
+      }
+    );
+  }
+
+  //清空所有表格组件。
+  private clearAllTable() {
+    let comp: ComponentRef<RoomNoHedgeTableComponent>;
+    do {
+      comp = this.listTableComponent.pop();
+      if (comp) {
+        comp.destroy();
+      }
+    } while (comp);
+  }
+
+  private createTableComponent(roomStatisList:any[], parentAgent:any) {
+    let componentFactory = this._componentFactoryResolver.resolveComponentFactory(RoomNoHedgeTableComponent);
+    let componentRef = this.roomNoHedgePanel.createComponent(componentFactory);
+    this.listTableComponent.push(componentRef);
+    let winloseTable = componentRef.instance;
+    winloseTable.tableList = roomStatisList;
+    winloseTable.parentModel = parentAgent;
+    winloseTable.index = ++this.tableindex;
+    let path="/";
+    let roomNumber;
+    for (let item of this.listTableComponent){
+      if(item.instance.parentModel!=null){
+        if(path.length>1){
+          path+="/";
+        }
+        roomNumber = item.instance.parentModel.roomNumber;
+        path = path + item.instance.parentModel.loginName;
+      }
+    }
+    if(parentAgent !=null && parentAgent.statisType ==4){
+      winloseTable.path = path.substr(0,path.lastIndexOf("/")+1)+roomNumber;
+    }else{
+      winloseTable.path = path;
+    }
+    scroll(0,document.body.scrollHeight);
+
+    winloseTable.onExpend.subscribe(data => {
+      this.searchChild(data);
+    });
+
+    winloseTable.onHandle.subscribe(data=>{
+        this.betOrderView(data);
+    });
+
+    winloseTable.onClose.subscribe(data => {
+      do {
+        let item = this.listTableComponent.pop();
+        if (!item) break;
+        if (item.instance.path.indexOf(data.path)>=0) {
+          item.destroy();
+        } else {
+          this.listTableComponent.push(item);
+          break;
+        }
+      } while (true);
+    });
+  }
+
+  betOrderView(item:any){
+
+    this.roomHedgeService.view(this.searchModel.startTime,this.searchModel.endTime,item.model.loginName,
+      item.model.roomNumber,item.model.roundId).subscribe(
+      betOrder => {
+        this.realTableList = this.dealListData(betOrder.data.data);
+      });
+    this.betOrderDialog.show();
+  }
+  private makeRoundResult(data){
+    return this.transRecordService.formatter1(data);
+  }
+
+  //处理后台返回的数据
+  public dealListData(datas:any[]) {
+    if (datas.length <= 0)
+      return datas;
+    let rows:any[] =[];
+    for (let data of datas) {
+      data.gameName = data.gameTable + this._translate.instant('common.table')+ data.bootsNum + this._translate.instant('common.boots') + data.roundNum + this._translate.instant('common.round');
+      if(data.itemId !=101 && data.itemId !=102){ //显示非庄、闲投注
+        rows.push(data);
+      }
+    }
+    return rows;
+  }
+}

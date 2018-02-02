@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IDealerClassRecordMapper">
+	<sql id="dynamicWhere">
+		<where>
+			<if test="startTime !=null and startTime !=''">
+			 	<![CDATA[and r.`start_time`>=#{startTime}]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			 	<![CDATA[and r.`start_time` <=#{endTime}]]>
+			</if>
+			<if test="loginName !=null and loginName !=''">
+			 	and r.`login_name` =#{loginName} 
+			</if>
+		</where>
+	</sql>
+	
+    <select id="queryRecordByPage" resultType="com.na.manager.entity.DealerClassRecord">
+    	<![CDATA[
+		SELECT r.*,
+		(select count(DISTINCT b.login_name) from bet_order b where b.game_table_id =r.game_table_id and b.bet_time>=r.start_time 
+		and b.bet_time<=IF(ISNULL(r.end_time),DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s'),r.end_time)) as members
+		 FROM `dealer_class_record` r
+		 ]]>
+        <include refid="dynamicWhere" />
+       	ORDER BY r.start_time DESC
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+    
+    <select id="getRecordCount" resultType="Long">
+      	SELECT
+			count(*)
+		FROM
+			`dealer_class_record` r
+        <include refid="dynamicWhere" />
+    </select>
+    
+</mapper>

@@ -1,0 +1,203 @@
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> {{title}}
+
+        </div>
+
+        <p-growl [value]="msgs" sticky="sticky"></p-growl>
+
+        <div class="card-block">
+          <style>.forclas input{width:125px; padding:8px 5px;}</style>
+          <form class="form-inline forclas" (ngSubmit)="search()">
+
+            <div class="form-group">
+              <label for="exampleInputEmail">{{ 'gameOdds.gameName' | translate }}:</label>
+              <select id="exampleInputEmail"  class="form-control input-lg" [(ngModel)]="pid" name="status">
+                <option *ngFor="let play of playList " [value] = "play.lid">{{play.levelName}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmai2">{{ 'gameOdds.playName' | translate }}:</label>
+              <select id="exampleInputEmai2"  class="form-control input-lg" [(ngModel)]="gid" name="status">
+                <option *ngFor="let game of gameList " [value] = "game.lid">{{game.levelName}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="user2" class="form-control-label">{{ 'gameOdds.ratioName' | translate }}:</label>
+              <input type="text" class="form-control" id="user2" name="userName2"  [(ngModel)]="en" [placeholder]="'gameOdds.ratioName' | translate"  />
+            </div>
+            <div class="form-group">
+              <label for="user3" class="form-control-label">{{ 'gameOdds.betRatioCalc' | translate }}:</label>
+              <input type="text" class="form-control" id="user3" name="userName3"  [(ngModel)]="rate" [placeholder]="'gameOdds.betRatioCalc' | translate"/>
+            </div>
+
+            &nbsp;&nbsp;
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" >{{ 'common.search' | translate }}</button>&nbsp;&nbsp;
+              <!--
+                <button type="button" class="btn btn-success" (click)="createModal.show()">{{ 'gameOdds.createGameOdds' | translate }}</button>
+               -->
+            </div>
+          </form>
+
+          <br>
+          <table class="table table-bordered table-striped table-condensed table-hover">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>{{ 'gameOdds.gameName' | translate }}</th>
+              <th>{{ 'gameOdds.playName' | translate }}</th>
+              <th>{{ 'gameOdds.ratioName' | translate }}</th>
+              <th>{{ 'gameOdds.betRatioCalc' | translate }}</th>
+            <!--  <th>{{ 'common.operation' | translate }}</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of dataList;let i = index">
+              <td>{{i+1 + (currentPage-1)*pageSize}}</td>
+              <td>
+                <ng-template *ngIf="item.pn ==null || item.pn ==''">--</ng-template>
+                <ng-template *ngIf="item.pn !=null && item.pn !=''">{{item.pn}}</ng-template>
+              </td>
+              <td>{{item.gcn}}</td>
+              <td>{{item.key}}</td>
+              <td>{{item.rate}}</td>
+              <!-- <td><a (click)="goUpdateGameConfig(item)"  href="javascript:void(0);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.modify' | translate }}</a>&nbsp;
+                 &nbsp;<a (click)="goDeleteGameConfig(item)"  href="javascript:void(0);"><i class="fa fa-trash"></i>{{ 'common.delete' | translate }}</a></td>-->
+            </tr>
+            </tbody>
+          </table>
+
+          <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                      [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                      [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                      (pageChanged)="pageChanged($event)"></pagination>
+
+        </div>
+      </div>
+
+      <!--游戏配置创建-->
+      <div bsModal #createModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">{{ 'gameOdds.createGameOdds' | translate }}</h4>
+              <button type="button" class="close" (click)="createModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form (ngSubmit)="createGameConfig()">
+              <div class="modal-body">
+
+
+                <div class="form-group">
+                  <label for="exampleInput">{{ 'gameOdds.gameName' | translate }}</label>
+                  <select id="exampleInput"  class="form-control input-lg" [(ngModel)]="insertNewData.gid" name="status">
+                    <option *ngFor="let game of gameList " [value] = "game.lid">{{game.levelName}}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInput">{{ 'gameOdds.playName' | translate }}</label>
+                  <select id="exampleInput"  class="form-control input-lg" [(ngModel)]="insertNewData.pid" name="status">
+                    <option *ngFor="let play of playList " [value] = "play.lid">{{play.levelName}}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="user12" class="form-control-label">{{ 'gameOdds.ratioName' | translate }}:</label>
+                  <input type="text" class="form-control" id="user12" name="userName2"  [(ngModel)]="insertNewData.en" [placeholder]="'gameOdds.ratioName' | translate" autofocus required>
+                </div>
+                <div class="form-group">
+                  <label for="user13" class="form-control-label">{{ 'gameOdds.betRatioCalc' | translate }}:</label>
+                  <input type="text" class="form-control" id="user13" name="userName3"  [(ngModel)]="insertNewData.rate" [placeholder]="'gameOdds.betRatioCalc' | translate" autofocus required>
+                </div>
+                <div class="form-group">
+                  <label for="user14" class="form-control-label">{{ 'gameOdds.betLowerLimit' | translate }}:</label>
+                  <input type="number" class="form-control" id="user14" name="userName4"  [(ngModel)]="insertNewData.min" [placeholder]="'gameOdds.betLowerLimit' | translate" autofocus required>
+                </div>
+                <div class="form-group">
+                  <label for="user15" class="form-control-label">{{ 'gameOdds.betUpperLimit' | translate }}:</label>
+                  <input type="number" class="form-control" id="user15" name="userName5"  [(ngModel)]="insertNewData.max" [placeholder]="'gameOdds.betUpperLimit' | translate" autofocus required>
+                </div>
+
+                <div class="form-group">
+                  <label for="userName12" class="form-control-label">{{ 'gameOdds.sidenoteLimit' | translate }}:</label>
+                  <input type="number" class="form-control" id="userName12" name="userName"   [(ngModel)]="insertNewData.dis" [placeholder]="'gameOdds.sidenoteLimit' | translate" autofocus required>
+                </div>
+
+
+              </div>
+
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+                <button type="button" class="btn btn-secondary" (click)="createModal.hide()">{{ 'common.close' | translate }}</button>
+              </div>
+            </form>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+
+      <!--update-->
+      <div bsModal #updateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">{{ 'gameOdds.updateGameOdds' | translate }}</h4>
+              <button type="button" class="close" (click)="updateModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form (ngSubmit)="updateGameConfig()">
+              <div class="modal-body">
+
+                <div class="form-group">
+                  <label for="user1" class="form-control-label">{{ 'gameOdds.gameOddsId' | translate }}:</label>
+                  <input type="text" class="form-control" id="user1" name="userName1"  [(ngModel)]="updateGameOdds.id" readonly>
+                </div>
+                <!--
+               <div class="form-group">
+                 <label for="exampleInput1">{{ 'gameOdds.gameName' | translate }}</label>
+                 <select id="exampleInput1"  class="form-control input-lg" [(ngModel)]="updateGameOdds.gid" name="status">
+                   <option *ngFor="let game of gameList " [value] = "game.lid">{{game.levelName}}</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label for="exampleInput1">{{ 'gameOdds.playName' | translate }}</label>
+                 <select id="exampleInput1"  class="form-control input-lg" [(ngModel)]="updateGameOdds.pid" name="status">
+                   <option *ngFor="let play of playList " [value] = "play.lid">{{play.levelName}}</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label for="user121" class="form-control-label">{{ 'gameOdds.ratioName' | translate }}:</label>
+                 <input type="text" class="form-control" id="user121" name="userName2"  [(ngModel)]="updateGameOdds.key" autofocus required>
+               </div>
+               <div class="form-group">
+                 <label for="user131" class="form-control-label">{{ 'gameOdds.betRatioCalc' | translate }}:</label>
+                 <input type="text" class="form-control" id="user131" name="userName3"  [(ngModel)]="updateGameOdds.rate" autofocus required>
+               </div>
+               -->
+                <div class="form-group">
+                  <label for="user141" class="form-control-label">{{ 'gameOdds.betLowerLimit' | translate }}:</label>
+                  <input type="number" class="form-control" id="user141" name="userName4"  [(ngModel)]="updateGameOdds.min" autofocus required>
+                </div>
+                <div class="form-group">
+                  <label for="user151" class="form-control-label">{{ 'gameOdds.betUpperLimit' | translate }}:</label>
+                  <input type="number" class="form-control" id="user151" name="userName5"  [(ngModel)]="updateGameOdds.max" autofocus required>
+                </div>
+
+                <div class="form-group">
+                  <label for="userName121" class="form-control-label">{{ 'gameOdds.sidenoteLimit' | translate }}:</label>
+                  <input type="number" class="form-control" id="userName121" name="userName"   [(ngModel)]="updateGameOdds.dis" autofocus required>
+                </div>
+
+
+              </div>
+
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+                <button type="button" class="btn btn-secondary" (click)="updateModal.hide()">{{ 'common.close' | translate }}</button>
+              </div>
+            </form>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->

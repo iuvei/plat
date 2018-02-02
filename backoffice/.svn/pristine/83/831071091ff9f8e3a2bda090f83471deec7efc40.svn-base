@@ -1,0 +1,61 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}：</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchTableId">{{ 'tablewinlost.tableId' | translate }}：</label>
+        <input [(ngModel)]="tid" id="searchTableId" name="searchTableId" type="text" class="form-control input-xlarge"  [placeholder]="'tablewinlost.tableId' | translate">
+      </div>
+      <div class="form-group">
+        <label for="searchXueId">{{ 'tablewinlost.bootId' | translate }}：</label>
+        <input [(ngModel)]="bid" id="searchXueId" name="searchXueId" type="text" class="form-control input-xlarge"  [placeholder]="'tablewinlost.bootId' | translate">
+      </div>
+      &nbsp;&nbsp;
+      <div class="btn-group">
+        <button type="submit" class="margin-left9 btn btn-primary">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+      <tr>
+        <th>{{ 'tablewinlost.tableId' | translate }}</th>
+        <th>{{ 'tablewinlost.tableName' | translate }}</th>
+        <th>{{ 'tablewinlost.bootId' | translate }}</th>
+        <th>{{ 'tablewinlost.betMoney' | translate }}</th>
+        <th>{{ 'tablewinlost.sendMoney' | translate }}</th>
+        <th>{{ 'tablewinlost.winLostMoney' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of tableList">
+        <td>{{item.tableId}}</td>
+        <td>{{item.tableName}}</td>
+        <td>{{item.bootId}}</td>
+        <td>{{item.betAmount}}</td>
+        <td>{{item.settleAmount}}</td>
+        <td>{{item.winLostAmount}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+

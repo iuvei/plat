@@ -1,0 +1,16 @@
+export class RoomForm {
+  id: number;
+  gameTableId:string;
+  roomName: string;
+  password: string;
+  confirmPassword: string;
+  maxMembers: number=0;
+  minBalance: number;
+  hedgePercentage: number=0; //对冲占成
+  noHedgePercentage: number=0; //非对冲占成
+  waterPercentage: number=0; //打水占成
+  gameId:number = 1; //百家乐
+  type:number; //包房类型
+
+  constructor() {}
+}

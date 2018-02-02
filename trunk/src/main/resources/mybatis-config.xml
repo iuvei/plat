@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="logPrefix" value="dao."/>
+    	<!-- 使全局的映射器启用或禁用缓存。 -->        
+<!--         <setting name="cacheEnabled" value="true"/> -->
+        <!-- 使用驼峰命名法转换字段。 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    <plugins>
+       <plugin interceptor="com.na.manager.aop.I18NInterceptor">
+       </plugin>
+    </plugins>
+    <!-- <typeAliases>
+        <package name="com.na.baccarat.socketserver.entity"/>
+        <package name="com.na.user.socketserver.entity"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="com/na/user/socketserver/dao/UserMapper.xml"/>
+        <mapper resource="com/na/user/socketserver/dao/BetOrderMapper.xml"/>
+        <mapper resource="com/na/user/socketserver/dao/UserExtMapper.xml"/>
+    </mappers> -->
+</configuration>

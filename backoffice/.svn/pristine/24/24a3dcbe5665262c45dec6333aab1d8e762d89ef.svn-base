@@ -1,0 +1,229 @@
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ManyTypeUser} from "../model/many-type-user";
+import {CustomHttp} from "../components/customhttp";
+import {Message} from "primeng/primeng";
+import {ConfirmationService} from "primeng/components/common/api";
+import {ModalDirective} from "ng2-bootstrap";
+import {ModifyPasswordModel} from "./modify-password.model";
+import {SearchModel} from "./search.model";
+import {UserDetailModel} from "./user-detail.model";
+import {NewUserModel} from "./new-user.model";
+import {TranslateService} from "@ngx-translate/core";
+import {Common} from "../common/common";
+import {ToasterService} from "angular2-toaster/src/toaster.service";
+import {isUndefined} from "util";
+import {Dict} from "../model/dict";
+
+@Component({
+  selector: 'app-many-type-user',
+  templateUrl: './many-type-user.component.html',
+  styleUrls: ['./many-type-user.component.scss']
+})
+export class ManyTypeUserComponent implements OnInit {
+  private url = Common.URL+"/dealerUser/";
+  private uploadurl = Common.URL+"/uploadPhoto"
+  private manyTypeUserList : ManyTypeUser[] = [];
+  private userTypeList = [];
+  private statusList = [];
+  private msgs: Message[] = [];
+  private passwordModel : ModifyPasswordModel = new ModifyPasswordModel();
+  private searchModel : SearchModel = new SearchModel();
+  private userDetailModel = new UserDetailModel();
+  private newUserModel = new NewUserModel();
+
+  @ViewChild('userDetailDialog')
+  private userDetailDialog : ModalDirective;
+
+  @ViewChild('passwordModal')
+  private passwordDialog:ModalDirective;
+
+  @ViewChild('addUserDialog')
+  private addUserDialog:ModalDirective;
+
+  public currentPage: number = 1;
+
+  // fired when total pages count changes, $event:number equals to total pages count
+  public smallnumPages: number = 1;
+  public totalItems: number = 0;
+  public pageSize: number = 20;
+  public maxSize: number = Common.MAX_PAGE_SIZE;
+  //字典数据。
+  public dicts : Dict[] = [];
+
+  constructor(private http:CustomHttp, private confirmDialog: ConfirmationService, private _translate: TranslateService,private _toaster: ToasterService) {
+  }
+
+  ngOnInit() {
+    this.dicts = JSON.parse(localStorage['loginUser']).dicts;
+    this.userTypeList =this.dicts['dealer_user_type'];
+    this.statusList = this.dicts['user_status'];
+    this.searchModel.userStatus=0;
+    this.searchModel.type=1;
+    this.search();
+  }
+
+  public pageChanged(event:any):void {
+    this.currentPage = event.page;
+    this.searchModel.page =  event.page;
+    this.search();
+  }
+  updateUserStatus(uid:number, status:number){
+    let msg = status==1 ? this._translate.instant('manyTypeUser.confirmEnableUser') : this._translate.instant('manyTypeUser.confirmDisableUser');
+    this.confirmDialog.confirm({
+      message: msg,
+      accept: () => {
+        this.http.post(this.url + "updateStatus",{"id":uid,"userStatus":status})
+          .map(res =>res.json())
+          .subscribe(rec=>{
+            if (rec.status==0){
+              this.showSuccess(rec.msg);
+              this.search();
+            }else {
+              this.showError(rec.msg);
+            }
+          });
+      }
+    });
+  }
+
+
+  search(){
+    this.http.post(this.url + "search",this.searchModel)
+      .map(res =>res.json())
+      .subscribe(rec=>{
+          this.manyTypeUserList = rec.data.data;
+          this.totalItems = rec.data.total;
+      });
+  }
+
+  initPasswordModal(item : ManyTypeUser){
+    this.passwordModel = new ModifyPasswordModel();
+    this.passwordModel.id = item.id;
+    this.passwordDialog.show();
+  }
+
+  modifyPassword(){
+    if(this.passwordModel.password!=this.passwordModel.rePassword){
+      this._toaster.pop('error', this._translate.instant('common.validateFail'), this._translate.instant('account.pwdError'));
+      return;
+    }
+
+    this.http.post(this.url + "updatePassword",this.passwordModel)
+      .map(res =>res.json())
+      .subscribe(rec=>{
+        if (rec.status==0){
+          this.showSuccess(rec.msg);
+          this.passwordDialog.hide();
+          this.search();
+        }else {
+          this.showError(rec.msg);
+        }
+      });
+  }
+
+  initModifyUserDetailDialog(item : ManyTypeUser){
+    this.uploadedFiles = [];
+    this.userDetailModel = new UserDetailModel();
+    this.userDetailModel.id = item.id;
+    this.userDetailModel.loginName =item.loginName;
+    this.userDetailModel.nickName = item.nickName;
+    this.userDetailModel.type = item.type;
+    this.userDetailModel.headPic = item.headPic;
+    this.userDetailModel.barrcode = item.barrcode;
+    this.userDetailDialog.show();
+  }
+
+  modifyUserDetail(){
+    if(isUndefined(this.userDetailModel.headPic)){
+      this._toaster.pop('error', this._translate.instant('common.validateFail'), this._translate.instant('manyTypeUser.dealerpicVaild'));
+      return;
+    }
+    this.http.post(this.url + "update",this.userDetailModel)
+      .map(res =>res.json())
+      .subscribe(rec=>{
+        if (rec.status==0){
+          this.showSuccess(rec.msg);
+          this.userDetailDialog.hide();
+          this.search();
+        }else {
+          this.showError(rec.msg);
+        }
+      });
+  }
+
+  initAddUserDialogDialog(item : ManyTypeUser){
+    this.newUserModel = new NewUserModel();
+    this.uploadedFiles = [];
+    this.addUserDialog.show();
+  }
+
+  addUser(){
+    if(this.newUserModel.password!=this.newUserModel.rePassword){
+      this._toaster.pop('error', this._translate.instant('common.validateFail'), this._translate.instant('account.pwdError'));
+      return;
+    }
+
+    if(isUndefined(this.newUserModel.headPic)){
+      this._toaster.pop('error', this._translate.instant('common.validateFail'), this._translate.instant('manyTypeUser.dealerpicVaild'));
+      return;
+    }
+    this.http.post(this.url + "add",this.newUserModel)
+      .map(res =>res.json())
+      .subscribe(rec=>{
+        if (rec.status==0){
+         // this.showSuccess(rec.msg);
+          this._toaster.pop('success', this._translate.instant('common.success'), rec.msg);
+          this.addUserDialog.hide();
+          this.search();
+        }else {
+          this._toaster.pop('error', this._translate.instant('common.error'), rec.msg);
+          //this.showError(rec.msg);
+        }
+      });
+  }
+
+  uploadedFiles: any[] = [];
+  onUpload(event) {
+    for(let file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+    let responseBody = JSON.parse(event.xhr.response);
+    if(responseBody.status==0){
+      //this.showSuccess(responseBody.msg);
+      this._toaster.pop('success', this._translate.instant('common.success'), responseBody.msg);
+      this.newUserModel.headPic = responseBody.data;
+    }else{
+      //this.showError(responseBody.msg);
+      this._toaster.pop('error', this._translate.instant('common.error'), responseBody.msg);
+      this.uploadedFiles = [];
+    }
+  }
+
+  modifyOnUpload(event) {
+    for(let file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+    let responseBody = JSON.parse(event.xhr.response);
+    if(responseBody.status==0){
+      this.showSuccess(responseBody.msg);
+      this.userDetailModel.headPic = responseBody.data;
+    }else{
+      this.showError(responseBody.msg);
+      this.uploadedFiles = [];
+    }
+
+  }
+
+
+
+  showError(msg:string) {
+    this.msgs = [];
+    this.msgs.push({severity:'error', summary: this._translate.instant('common.error'), detail:msg});
+  }
+
+  showSuccess(msg:string) {
+    this.msgs = [];
+    this.msgs.push({severity:'success', summary: this._translate.instant('common.success'), detail:msg});
+  }
+
+}

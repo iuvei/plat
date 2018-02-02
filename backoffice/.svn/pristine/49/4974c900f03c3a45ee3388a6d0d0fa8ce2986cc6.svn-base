@@ -1,0 +1,351 @@
+import {NgModule} from "@angular/core";
+import {RouterModule, Routes} from "@angular/router";
+// Layouts
+import {FullLayoutComponent} from "./layouts/full-layout.component";
+import {LoginComponent} from "./login/login.component";
+import {PermissionComponent} from "./permission/permission.component";
+import {UserComponent} from "./user/user.component";
+import {GameResultComponent} from "./game/gameresult/gameresult.component";
+import {RoleComponent} from "./role/role.component";
+import {TableWinLostComponent} from "./report/tablewinlost/tablewinlost.component";
+import {LogRecordComponent} from "./report/logrecord/logrecord.component";
+import {PointInOutComponent} from "./report/pointinout/pointinout.component";
+import {TransRecordComponent} from "./report/transrecord/transrecord.component";
+import {BusinessManageComponent} from "./business-manage/business-manage.component";
+import {AccountComponent} from "./account/account.component";
+import {ManyTypeUserComponent} from "./many-type-user/many-type-user.component";
+import {WinLostComponent} from "app/report/winlost/winlost.component";
+import {SubAccountComponent}from "./subaccount/subaccount.component";
+import {TigerReportComponent} from "./report/tigereport/tigereport.component";
+import {ResourceComponent} from "./resource/resource.component";
+import {AuthGuard} from "./auth.guard";
+import {GameTableComponent} from "./game/gametable/gametable.component";
+import {HabaBetRecordComponent} from "app/report/hababetrecord/hababetrecord.component";
+import {AbnormalTableComponent} from "./abnormaltable/abnormaltable.component";
+import {ApiLogComponent} from "./apilog/apilog.component";
+import {IpBlackListComponent} from "./ipblacklist/ipblacklist.component";
+import {GameConfigComponent} from "./game/gameconfig/gameconfig.component";
+import {GameOddsComponent} from "./game/gameodds/gameodds.component";
+import {VoiceUserComponent} from "./voiceuser/voiceuser.component";
+import {BetComponent} from "app/bet/bet.component";
+import {BetLevelComponent} from "./betlevel/betlevel.component";
+import {SysAnnounceComponent} from "./sysannounce/sysannounce.component";
+import {FundManagerComponent} from "./fund-manager/fund-manager.component";
+import {AccountRecordComponent} from "./account-record/account-record.component";
+import {AdvertiseComponent} from "./advertise/advertise.component";
+import {RobotComponent} from "./robot/robot.component";
+import {RoomMemberComponent} from "./report/roommember/roommember.component";
+import {RoomWinLostComponent} from "./report/roomwinlost/roomwinlost.component";
+import {RoomComponent} from "./room/room.component";
+import {MonitorComponent} from "./monitor/monitor.component";
+import {RoomYLComponent} from "./report/roomyl/roomyl.component";
+import {RoomNoHedgeComponent} from "./report/roomnohedge/roomnohedge.component";
+import {RoomHedgeComponent} from "./report/roomhedge/roomhedge.component";
+import {UrlConfigComponent} from "app/game/urlconfig/urlconfig.component";
+
+export const routes: Routes = [
+
+        {
+            path: 'login',
+            component: LoginComponent,
+            data: {
+                title: 'Login Page'
+            }
+        },
+        {
+            path: '',
+            component: FullLayoutComponent,
+            canActivate: [AuthGuard],
+            data: {
+                title: 'Home'
+            },
+            children: [
+                {
+                    path: 'sys',
+                    loadChildren: './homepage/dashboard/dashboard.module#DashboardModule'
+                },
+                {
+                    path: 'api',
+                    loadChildren: './homepage/apipage/apipage.module#ApiPageModule'
+                },
+                {
+                    path: 'agent',
+                    loadChildren: './homepage/agentpage/agentpage.module#AgentPageModule'
+                },
+                {
+                    path: 'permission',
+                    component: PermissionComponent,
+                    data: {
+                        title: '权限管理'
+                    }
+                },
+                {
+                    path: 'user',
+                    component: UserComponent,
+                    data: {
+                        title: '系统用户'
+                    }
+                },
+                {
+                    path: 'gameresult',
+                    component: GameResultComponent,
+                    data: {
+                        title: '游戏结果'
+                    }
+                },
+                {
+                    path: 'resources',
+                    component: ResourceComponent,
+                    data: {
+                        title: '资源管理'
+                    }
+                },
+                {
+                    path: 'role',
+                    component: RoleComponent,
+                    data: {
+                        title: '角色管理'
+                    }
+                },
+                {
+                    path: 'winlost',
+                    component: WinLostComponent,
+                    data: {
+                        title: '输赢报表'
+                    }
+                },
+                {
+                    path: 'logrecord',
+                    component: LogRecordComponent,
+                    data: {
+                        title: '登陆记录报表'
+                    }
+                },
+                {
+                    path: 'pointinout',
+                    component: PointInOutComponent,
+                    data: {
+                        title: '点数出入报表'
+                    }
+                },
+                {
+                    path: 'tablewinlost',
+                    component: TableWinLostComponent,
+                    data: {
+                        title: '桌台输赢报表'
+                    }
+                },
+                {
+                    path: 'transrecord',
+                    component: TransRecordComponent,
+                    data: {
+                        title: '交易记录报表'
+                    },
+                },
+                {
+                    path: 'businessmanager',
+                    component: BusinessManageComponent,
+                    data: {
+                        title: '商户管理'
+                    },
+                },
+                {
+                    path: 'account',
+                    component: AccountComponent,
+                    data: {
+                        title: '账户管理'
+                    }
+                },
+                {
+                    path: 'manytypeuser',
+                    component: ManyTypeUserComponent,
+                    data: {
+                        title: '荷官账户管理'
+                    }
+                },
+                {
+                    path: 'subaccount',
+                    component: SubAccountComponent,
+                    data: {
+                        title: '子账户管理'
+                    }
+                },
+                {
+                    path: 'tigerreport',
+                    component: TigerReportComponent,
+                    data: {
+                        title: '代理老虎机报表'
+                    }
+                },
+                {
+                    path: 'gametable',
+                    component: GameTableComponent,
+                    data: {
+                        title: '游戏桌管理'
+                    }
+                },
+                {
+                    path: 'hababetrecord',
+                    component: HabaBetRecordComponent,
+                    data: {
+                        title: 'Haba老虎机投注报表'
+                    }
+                },
+                {
+                    path: 'abnormaltable',
+                    component: AbnormalTableComponent,
+                    data: {
+                        title: '异常桌台管理'
+                    }
+                },
+                {
+                    path: 'apilog',
+                    component: ApiLogComponent,
+                    data: {
+                        title: 'API日志'
+                    }
+                },
+                {
+                    path: 'ipblacklist',
+                    component: IpBlackListComponent,
+                    data: {
+                        title: 'IP黑白名单'
+                    }
+                },
+                {
+                    path: 'voiceuser',
+                    component: VoiceUserComponent,
+                    data: {
+                        title: '语音用户关联管理'
+                    }
+                },
+                {
+                    path: 'gameconfig',
+                    component: GameConfigComponent,
+                    data: {
+                        title: '游戏配置管理'
+                    }
+                },
+                {
+                    path: 'gameodds',
+                    component: GameOddsComponent,
+                    data: {
+                        title: '游戏赔率管理'
+                    }
+                },
+                {
+                  path: 'betlevel',
+                  component: BetLevelComponent,
+                  data: {
+                    title: '投注等级'
+                  }
+                },
+                {
+                  path: 'bet',
+                  component: BetComponent,
+                  data: {
+                    title: '现场投注'
+                  }
+                },
+              {
+                path: 'sysannounce',
+                component: SysAnnounceComponent,
+                data: {
+                  title: '用户公告'
+                }
+              },
+              {
+                path: 'fundmanager',
+                component: FundManagerComponent,
+                data: {
+                  title: '资金管理'
+                }
+              },
+              {
+                path: 'accountRecordReport',
+                component: AccountRecordComponent,
+                data: {
+                  title: '账户流水'
+                }
+              },
+              {
+                path: 'advertise',
+                component: AdvertiseComponent,
+                data: {
+                  title: '用户广告'
+                }
+              },
+              {
+                path: 'roomStaReport',
+                component: RoomWinLostComponent,
+                data: {
+                  title: '包房报表'
+                }
+              },
+              {
+                path: 'roomHedgeReport',
+                component: RoomHedgeComponent,
+                data: {
+                  title: '对冲报表'
+                }
+              },
+              {
+                path: 'roomNoHedgereport',
+                component: RoomNoHedgeComponent,
+                data: {
+                  title: '和对报表'
+                }
+              },
+              {
+                path: 'roomYLReport',
+                component: RoomYLComponent,
+                data: {
+                  title: '余量报表'
+                }
+              },
+              {
+                path: 'privateRoom',
+                component: RoomComponent,
+                data: {
+                  title: '包房管理'
+                }
+              },
+              {
+                path: 'roomMemberReport',
+                component: RoomMemberComponent,
+                data: {
+                  title: '包房输赢报表'
+                }
+              },
+              {
+                path: 'robot',
+                component: RobotComponent,
+                data: {
+                  title: '投注机器人管理'
+                }
+              },
+              {
+                path: 'serverMonitor',
+                component: MonitorComponent,
+                data: {
+                  title: '投注机器人管理'
+                }
+              },
+              {
+                path: 'urlConfig',
+                component: UrlConfigComponent,
+                data: {
+                  title: 'URL配置管理'
+                }
+              },
+            ]
+        }
+    ]
+    ;
+
+@NgModule({
+    imports: [RouterModule.forRoot(routes,{useHash: true})],
+    exports: [RouterModule]
+})
+export class AppRoutingModule {
+}

@@ -1,0 +1,30 @@
+.fistmenu{
+  background-color:rgba(0, 8, 10, 0.45) !important;
+}
+.active{
+  color: #fff;
+  background: #55666d !important;
+}
+.main .container-fluid {
+  padding: 0 5px;
+}
+.breadcrumb{
+  margin-bottom:0.5rem !important;
+}
+
+.zoom_100{
+  zoom: 100%;
+}
+
+.zoom_90{
+  zoom: 90%;
+}
+.zoom_80{
+  zoom: 80%;
+}
+.zoom_70{
+  zoom: 70%;
+}
+.zoom_60{
+  zoom: 60%;
+}

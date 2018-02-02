@@ -1,0 +1,176 @@
+
+
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}：</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="startTime" dateFormat="yy-mm-dd" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" ></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="endTime" dateFormat="yy-mm-dd" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" ></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchLoginName">{{ 'common.userName' | translate }}:</label>
+        <input [(ngModel)]="loginName" id="searchLoginName" name="searchLoginName" type="text" class="form-control input-xlarge"  [placeholder]=" 'common.userName' | translate ">
+      </div>
+      &nbsp;&nbsp;
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>&nbsp;&nbsp;
+        <button type="button" class="margin-left9 btn btn-success" (click)="gotoCreateAnnounce()">{{ 'common.create' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed" style="table-layout:fixed">
+      <thead>
+      <tr>
+        <th width="5%">ID</th>
+        <th width="16%">{{ 'common.userName' | translate }}</th>
+        <th width="8%">{{ 'sysannounce.contentTitle' | translate }}</th>
+        <th width="10%">{{ 'sysannounce.contentDesc' | translate }}</th>
+        <th width="6%">{{ 'common.type' | translate }}</th>
+        <th width="12%">{{ 'common.createTime' | translate }}</th>
+        <th width="12%">{{ 'common.modifyTime' | translate }}</th>
+        <th width="8%">{{ 'common.modifier' | translate }}</th>
+        <th width="8%">{{ 'common.operation' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of datalist;let i = index">
+        <td>{{i + 1}}</td>
+        <td [title]="item.userName" style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{item.userName}}</td>
+        <td [title]="item.contentTitle" style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{item.contentTitle}}</td>
+        <td [title]="item.conentDesc" style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{item.conentDesc}}</td>
+        <td>
+          <span *ngIf="item.type == 1" >{{ 'sysannounce.dailiGroup' | translate }}</span>
+          <span *ngIf="item.type == 2" >{{ 'sysannounce.dailiLine' | translate }}</span>
+        </td>
+        <td>{{item.createTime}}</td>
+        <td>{{item.updateTime}}</td>
+        <td>{{item.updateBy}}</td>
+        <td>
+          <a class=""  href="javascript:void(0)" (click)="gotoUpdateAnnounce(item)"><i class="fa fa-pencil-square-o"></i>修改</a>&nbsp;
+          <a class="" href="javascript:void(0)" (click)="gotoDelete(item)"><i class="fa fa-trash"></i>删除</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+
+  <div>
+
+    <!--
+    <p-tree [value]="filesTree" selectionMode="checkbox" [(selection)]="selectedFiles" (onNodeExpand)="nodeExpand($event)"
+            (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
+    -->
+
+  </div>
+
+
+
+<div bsModal #addAnnounceDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'sysannounce.createcontent' | translate }}</h4>
+        <button type="button" class="close" (click)="addAnnounceDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="createAnnounceDo()">
+        <div class="modal-body">
+
+
+          <div class="form-group">
+            <label for="loginName2" class="form-control-label">{{ 'sysannounce.dailiName' | translate }}</label>
+            <input type="text" class="form-control" id="loginName2" name="loginName2" [(ngModel)]="createAnnounceCon.loginName" [placeholder]="'sysannounce.dailiNameTab' | translate" (blur)="checkUser()" required>
+            <div [hidden]="status" class="alert alert-danger" readonly>{{msg}}</div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail3" class="form-control-label">{{ 'sysannounce.dailiType' | translate }}</label>
+            <select id="exampleInputEmail3" class="form-control input-lg" [(ngModel)]="createAnnounceCon.type" name="typeId" required>
+              <option value = 0>{{ 'common.plsSelect' | translate }}</option>
+              <option value = 1>{{ 'sysannounce.dailiGroup' | translate }}</option>
+              <option value = 2>{{ 'sysannounce.dailiLine' | translate }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="loginName" class="form-control-label">{{ 'sysannounce.contentTitle' | translate }}</label>
+            <input type="text" class="form-control" id="loginName" name="loginName3" [(ngModel)]="createAnnounceCon.contentTitle" [placeholder]="'sysannounce.contentTitle' | translate " required>
+          </div>
+          <div class="form-group">
+            <label for="loginName1" class="form-control-label">{{ 'sysannounce.contentDesc' | translate }}</label>
+            <textarea rows="5" class="form-control" id="loginName1" name="loginName1" [(ngModel)]="createAnnounceCon.contentDesc" [placeholder]="'sysannounce.contentDesc' | translate" required></textarea>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'sysannounce.publish' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="addAnnounceDialog.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div bsModal #updateAnnounceDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'sysannounce.updatecontent' | translate }}</h4>
+        <button type="button" class="close" (click)="updateAnnounceDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="updateAnnounceDo()">
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="loginNam2" class="form-control-label">{{ 'sysannounce.dailiName' | translate }}</label>
+            <input type="text" class="form-control" id="loginNam2" name="loginName1" [(ngModel)]="updateAnnounceCon.userName" [placeholder]="'sysannounce.dailiNameTab' | translate" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmal3" class="form-control-label">{{ 'sysannounce.dailiType' | translate }}</label>
+            <select id="exampleInputEmal3" class="form-control input-lg" [(ngModel)]="updateAnnounceCon.type" name="typeId" required>
+              <option value = 0>{{ 'common.plsSelect' | translate }}</option>
+              <option value = 1>{{ 'sysannounce.dailiGroup' | translate }}</option>
+              <option value = 2>{{ 'sysannounce.dailiLine' | translate }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="loginNam" class="form-control-label">{{ 'sysannounce.contentTitle' | translate }}</label>
+            <input type="text" class="form-control" id="loginNam" name="loginName2" [(ngModel)]="updateAnnounceCon.announceTitle" [placeholder]="'sysannounce.contentTitle' | translate " required>
+          </div>
+          <div class="form-group">
+            <label for="loginNam1" class="form-control-label">{{ 'sysannounce.contentDesc' | translate }}</label>
+            <textarea rows="5" class="form-control" id="loginNam1" name="loginName3" [(ngModel)]="updateAnnounceCon.announceDesc" [placeholder]="'sysannounce.contentDesc' | translate" required></textarea>
+          </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'sysannounce.publish' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="updateAnnounceDialog.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<p-growl [value]="msgs" sticky="sticky"></p-growl>
+

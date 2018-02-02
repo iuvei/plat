@@ -1,0 +1,3 @@
+<select id="{{id}}" class="{{clazz}}" [(ngModel)]="val">
+  <option *ngFor="let item of dicts" [value]="item.value">{{item.name}}</option>
+</select>

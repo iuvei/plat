@@ -1,0 +1,261 @@
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> {{title}}
+
+        </div>
+        <div class="card-block">
+          <form class="form-inline" (ngSubmit)="search()">
+            <div class="form-group">
+              <label for="inputName">{{ 'common.userName' | translate }}</label>
+              <input type="text" class="form-control input-xlarge" [(ngModel)]="usercondition.loginName" name = "username" [placeholder]="'common.userName' | translate">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail2">{{ 'common.status' | translate }}</label>
+              <select id="exampleInputEmail2" class="form-control input-lg" [(ngModel)]="usercondition.userStatus" name="status">
+                <option *ngFor="let item of dicts.user_status" [value]="item?.value">{{item.name}}</option>
+              </select>
+
+            </div>
+            &nbsp;&nbsp;
+            <div class="btn-group">
+                <button type="submit" class="margin-left9 btn btn-primary" >{{ 'common.search' | translate }}</button>
+                <button type="button" class="margin-left9 btn btn-success" (click)="goCreateUser()"> {{ 'common.create' | translate }}</button>
+            </div>
+          </form>
+
+          <br>
+          <table class="table table-bordered table-striped table-condensed table-hover">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>{{ 'common.userName' | translate }}</th>
+              <th>{{ 'common.createTime' | translate }}</th>
+              <th>{{ 'common.creator' | translate }}</th>
+              <th>{{ 'common.status' | translate }}</th>
+              <th>{{ 'common.operation' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of userList;let i = index">
+              <td>{{i+1  + (currentPage-1)*pageSize}}</td>
+              <td>{{item.loginName}}</td>
+              <td>{{item.createTime}}</td>
+              <td>{{item.createBy}}</td>
+              <td>
+                  <span><a href="javascript:void(0);" (click)="updateUserStatus(item)"  ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ item.userStatus | DictPipe:dicts.user_status }}</a></span>
+                  <!--<span *ngSwitchCase=2><a href="javascript:void(0);" (click)="updateUserStatus(item)"  ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ item.userStatus | DictPipe:dicts.user_status }}</a></span>-->
+              </td>
+              <td>
+                <span><a  (click)="goUpdate(item)"  href="javascript:void(0);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{'common.viewDetail' | translate}}</a>&nbsp;
+                  &nbsp;<a (click)="goPassword(item)"  href="javascript:void(0);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{'common.modifyPassword' | translate}}</a></span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+
+          <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                      [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                      [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                      (pageChanged)="pageChanged($event)"></pagination>
+
+        </div>
+      </div>
+      <p-growl [value]="msgs" sticky="sticky"></p-growl>
+      <!--配置用户角色-->
+      <div bsModal #updateUserModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content" style="width: 700px;" class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">{{'user.createUser' | translate}}</h4>
+                      <button type="button" class="close" (click)="updateUserModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <form (ngSubmit)="updateUser()">
+                      <div>
+                          <div class="modal-body">
+                              <<div style="width:50%;float: left;" class="form-group">
+                              <div class="form-group">
+                                  <label for="userName" class="form-control-label">{{'common.userName' | translate}}:</label>
+                                  <input type="text" class="form-control" id="userName" name="userName"  [(ngModel)]="userUpdateRoleRequest.loginName" readonly>
+                              </div>
+                          </div>
+
+                              <div style="width:50%;float: right" class="form-group">
+                                  <table border="0" cellspacing="0" cellpadding="0"
+                                         style=" float:right;width: 90%; height:100%;border: 0;"
+                                         class="table table-bordered dchannel-table">
+                                      <tbody>
+                                      <tr class="item-default">
+                                          <td align="right" style="width:40%;padding:0;height: 100%">
+                                              <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                                                  {{'user.configuredRole'| translate}}</h3>
+                                              <select style="height:345px;width:100%" id="woshiyi" name="selectUserList"
+                                                      [(ngModel)]="selectUserList" multiple>
+                                                  <option *ngFor="let menu of roleUserList" [value]="menu.roleID ">
+                                                      {{menu.roleDesc}}
+                                                  </option>
+                                              </select>
+                                          </td>
+                                          <td style="width: 20%; padding: 0;" valign="middle">
+                                              <button style="width: 100%;margin-bottom: 3px;margin-top: 110px;" type="button"
+                                                      class="btn btn-primary" (click)="zuoyiAll()"> <<
+                                              </button>
+                                              <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                      class="btn btn-primary" (click)="zuoyiMost()"> <
+                                              </button>
+                                              <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                      class="btn btn-primary" (click)="youyiMost()"> >
+                                              </button>
+                                              <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                                      class="btn btn-primary" (click)="youyiAll()"> >>
+                                              </button>
+                                          </td>
+                                          <td style="width:40%;padding:0;height: 100%">
+                                              <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                                                  {{'user.noConfiguredRole'| translate}}</h3>
+                                              <select style="height:345px;width:100%" id="woshier" name="selectAllList"
+                                                      [(ngModel)]="selectAllList" multiple>
+                                                  <option *ngFor="let menu of roleAllList" [value]="menu.roleID">
+                                                      {{menu.roleDesc}}
+                                                  </option>
+                                              </select>
+                                          </td>
+                                      </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+
+                          </div>
+                          <div style="clear: both;"></div>
+                      </div>
+
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" >{{'common.save' | translate}}</button>
+                        <button type="button" class="btn btn-secondary" (click)="updateUserModal.hide()">{{'common.close' | translate}}</button>
+                      </div>
+                  </form>
+              </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+      <!--密码修改对话框-->
+      <div bsModal #passwordModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">{{'common.modifyPassword' | translate}}</h4>
+                      <button type="button" class="close" (click)="passwordModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <form (ngSubmit)="updatePassword()">
+                      <div class="modal-body">
+                          <div class="form-group">
+                              <label for="newPwd" class="form-control-label">{{'user.newPassword' | translate}}:</label>
+                              <input type="password" class="form-control" id="newPwd" name="newPwd" [(ngModel)]="paswcondition.password" required minlength="6" maxlength="15">
+                          </div>
+                          <div class="form-group">
+                              <label for="receptPwd" class="form-control-label">{{'common.confirmPassword' | translate}}:</label>
+                              <input type="password" class="form-control" id="receptPwd" name="receptPwd" [(ngModel)]="paswcondition.rePassword" required minlength="6" maxlength="15">
+                          </div>
+                          <div [hidden]="paswcondition.password==paswcondition.rePassword" class="alert alert-danger">{{'common.confirmPasswordFailure' | translate}}</div>
+
+                      </div>
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" >{{'common.save' | translate}}</button>
+                        <button type="button" class="btn btn-secondary" (click)="passwordModal.hide()">{{'common.close' | translate}}</button>
+                      </div>
+                  </form>
+              </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+      <!--用户创建对话框-->
+      <div bsModal #createUserModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content" style="width: 700px;" class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">{{ 'user.createUser' | translate }}</h4>
+              <button type="button" class="close" (click)="createUserModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form (ngSubmit)="createUser()">
+              <div>
+              <div class="modal-body">
+                <<div style="width:50%;float: left;" class="form-group">
+                <div class="form-group">
+                  <label for="userName" class="form-control-label">{{ 'common.userName' | translate }}:</label>
+                  <input type="text" class="form-control" id="userName" name="userName" [placeholder]="'user.userNameTip' | translate" (blur)="checkUser()" [(ngModel)]="addUser.loginName" autofocus required minlength="6" maxlength="20">
+                </div>
+                <div class="form-group">
+                  <label for="passWord" class="form-control-label">{{ 'common.password' | translate }}:</label>
+                  <input type="password" class="form-control" id="passWord" name="passWord" [placeholder]="'user.passwordTip' | translate" [(ngModel)]="addUser.password" required minlength="6" maxlength="15">
+                </div>
+                <div class="form-group">
+                  <label for="rePassWord" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+                  <input type="password" class="form-control" id="rePassWord" name="rePassWord" [placeholder]="'common.confirmPassword' | translate" [(ngModel)]="addUser.rePassword" required minlength="6" maxlength="15">
+                </div>
+                <div [hidden]="addUser.password==addUser.rePassword" class="alert alert-danger">{{ 'user.confirmPasswordFailure' | translate }}</div>
+                <div [hidden]="!addUserStatus.msg" class="alert alert-danger">{{addUserStatus.msg}}</div>
+                </div>
+
+                <div style="width:50%;float: right" class="form-group">
+                  <table border="0" cellspacing="0" cellpadding="0"
+                         style=" float:right;width: 90%; height:100%;border: 0;"
+                         class="table table-bordered dchannel-table">
+                    <tbody>
+                    <tr class="item-default">
+                      <td align="right" style="width:40%;padding:0;height: 100%">
+                        <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                          {{'user.configuredRole' | translate}}</h3>
+                        <select style="height:345px;width:100%" id="woshiyi" name="selectUserList"
+                                [(ngModel)]="selectUserList" multiple>
+                          <option *ngFor="let menu of roleUserList" [value]="menu.roleID ">
+                            {{menu.roleDesc}}
+                          </option>
+                        </select>
+                      </td>
+                      <td style="width: 20%; padding: 0;" valign="middle">
+                        <button style="width: 100%;margin-bottom: 3px;margin-top: 110px;" type="button"
+                                class="btn btn-primary" (click)="zuoyiAll()"> <<
+                        </button>
+                        <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                class="btn btn-primary" (click)="zuoyiMost()"> <
+                        </button>
+                        <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                class="btn btn-primary" (click)="youyiMost()"> >
+                        </button>
+                        <button style="width: 100%;margin-bottom: 3px;" type="button"
+                                class="btn btn-primary" (click)="youyiAll()"> >>
+                        </button>
+                      </td>
+                      <td style="width:40%;padding:0;height: 100%">
+                        <h3 style="height:30px; line-height: 35px;font-size: 16px;font-weight:bold;color:#20a8d8;font-family:微软雅黑; text-align: center;">
+                          {{'user.noConfiguredRole' | translate}}</h3>
+                        <select style="height:345px;width:100%" id="woshier" name="selectAllList"
+                                [(ngModel)]="selectAllList" multiple>
+                          <option *ngFor="let menu of roleAllList" [value]="menu.roleID">
+                            {{menu.roleDesc}}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+                  <div style="clear: both;"></div>
+            </div>
+
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+                <button type="button" class="btn btn-secondary" (click)="createUserModal.hide()">{{ 'common.close' | translate }}</button>
+              </div>
+            </form>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->

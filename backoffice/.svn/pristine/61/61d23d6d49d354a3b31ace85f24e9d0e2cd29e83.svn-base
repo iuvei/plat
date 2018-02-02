@@ -1,0 +1,57 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="exampleInputName2">{{ 'common.userName' | translate }}</label>
+        <input type="text" class="form-control input-xlarge" id="exampleInputName2" [(ngModel)]="searchModel.loginName" name="perName" [placeholder]="'common.userName' | translate">
+      </div>
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="searchModel.startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="searchModel.endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+      <tr>
+        <th>{{ 'dealer.loginName' | translate }}</th>
+        <th>{{ 'dealer.startTime' | translate }}</th>
+        <th>{{ 'dealer.endTime' | translate }}</th>
+        <th>{{ 'dealer.members' | translate }}</th>
+        <th>{{ 'dealer.tableName' | translate }}</th>
+        <th>{{ 'dealer.gameName' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of recordList">
+        <td>{{item.loginName}}</td>
+        <td>{{item.startTime}}</td>
+        <td>{{item.endTime}}</td>
+        <td align="right">{{item.members}}</td>
+        <td>{{item.gameTableName}}</td>
+        <td>{{item.gameName}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                [totalItems]="totalItems" [itemsPerPage]="searchModel.pageSize" [maxSize]="maxSize" [(ngModel)]="searchModel.page" (numPages)="numPages = $event"
+                (pageChanged)="pageChanged($event)"></pagination>
+  </div>
+
+</div>
+
+
+
+

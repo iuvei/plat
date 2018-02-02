@@ -1,0 +1,101 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline">
+      &nbsp;&nbsp;
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>&nbsp;&nbsp;
+        <button type="button" class="margin-left9 btn btn-primary" (click)="operateMonitor('1')" *ngIf="flag==0">{{ 'monitor.start' | translate }}</button>&nbsp;&nbsp;
+        <button type="button" class="margin-left9 btn btn-success" (click)="operateMonitor('0')" *ngIf="flag==1">{{ 'monitor.stop' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed" style="table-layout:fixed">
+      <thead>
+      <tr>
+        <th>{{ 'monitor.displayName' | translate }}</th>
+        <th>{{ 'monitor.applicationName' | translate }}</th>
+        <th>{{ 'monitor.serverAddress' | translate }}</th>
+        <th>{{ 'monitor.serverPort' | translate }}</th>
+        <th>{{ 'monitor.contextPath' | translate }}</th>
+        <th>{{ 'common.operation' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of datalist;let i = index">
+        <td>{{item.displayName}}</td>
+        <td>{{item.applicationName}}</td>
+        <td>{{item.serverAddress}}</td>
+        <td>{{item.serverPort}}</td>
+        <td>{{item.contextPath}}</td>
+        <td>
+          <a href="javascript:void(0)" (click)="checkHealth(item)"><i class="fa fa-pencil-square-o"></i>{{ 'monitor.health' | translate }}</a>&nbsp;
+          <a href="javascript:void(0)" (click)="checkEvn(item)"><i class="fa fa-pencil-square-o"></i>{{ 'monitor.env' | translate }}</a>&nbsp;
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+
+    <!--<nav>-->
+      <!--<pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"-->
+                  <!--[previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"-->
+                  <!--[totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"-->
+                  <!--(pageChanged)="pageChanged($event)"></pagination>-->
+    <!--</nav>-->
+  </div>
+  <div>
+  </div>
+
+  <div bsModal #healthModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width:50%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">&nbsp;</h6>
+          <button type="button" class="close" (click)="closeHealthModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form >
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-control-label">{{ 'monitor.health' | translate }}:</label>
+              <textarea class="form-control" id="health" rows="5" style="height:500px;" name="health" [(ngModel)]="monitorForm.health"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeHealthModal()">{{ 'common.close' | translate }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #envModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width:50%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">&nbsp;</h6>
+          <button type="button" class="close" (click)="closeEnvModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form >
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-control-label">{{ 'monitor.env' | translate }}:</label>
+              <textarea class="form-control" id="env" rows="5" style="height:500px;" name="env" [(ngModel)]="monitorForm.env"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeEnvModal()">{{ 'common.close' | translate }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+

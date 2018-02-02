@@ -1,0 +1,277 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchGameType">{{ 'gameTable.gameType' | translate }}</label>
+        <select [(ngModel)]="searchForm.gameId" id="searchGameType" name="searchGameType" class="form-control"  >
+          <option value=null >{{ 'common.all' | translate }}</option>
+          <option *ngFor="let item of gameTypeList" [value]=item.id>
+            {{item.name}}
+          </option>
+        </select>
+
+      </div>
+      <!--<div class="form-group">-->
+        <!--<label for="searchGameCN">{{ 'gameTable.gameName' | translate }}:</label>-->
+        <!--<input [(ngModel)]="searchForm.name" id="searchGameCN" name="searchGameCN" type="text" class="form-control input-xlarge"  [placeholder]="'gameTable.gameName' | translate">-->
+      <!--</div>-->
+
+      <div class="form-group">
+        <label for="searchGameStatus">{{ 'common.status' | translate }}</label>
+        <!--<select [(ngModel)]="searchForm.status" id="searchGameStatus" name="searchGameStatus" class="form-control"  >
+          <option value=null >{{ 'common.all' | translate }}</option>
+          <option value=0>{{ 'common.normal' | translate }}</option>
+          <option value=1>{{ 'common.close' | translate }}</option>
+        </select>-->
+        <dict-control id="searchGameStatus" name="searchGameStatus"  d-class="form-control" dict-type="gametable_status"  [(val)]="searchForm.status" default-info="全部"></dict-control>
+      </div>
+    <!--  <div class="form-group">
+        <label for="searchType">{{ 'common.type' | translate }}</label>
+        <dict-control id="searchType" name="searchType"  d-class="form-control" dict-type="gametable_type"  [(val)]="searchForm.type" default-info="全部"></dict-control>
+      </div>-->
+
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="createGameTableModal.show();">{{ 'common.create' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-primary" (click)="platMaintenance()" *ngIf="platFlag=='0' && currentUser.id<=3">{{ 'gameTable.platNormal' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-danger" (click)="platMaintenance()" *ngIf="platFlag=='1' && currentUser.id<=3">{{ 'gameTable.platMaintain' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-danger" (click)="clearOnlineUser()" *ngIf="currentUser.id<=3">{{ 'gameTable.clearOnlineUser' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>{{ 'gameTable.gameType' | translate }}</th>
+        <th>{{ 'gameTable.gameName' | translate }}</th>
+        <th>{{ 'common.type' | translate }}</th>
+        <th>{{ 'gameTable.betLowerLimit' | translate }}</th>
+        <th>{{ 'gameTable.betUpperLimit' | translate }}</th>
+        <th>{{ 'gameTable.ismany' | translate }}</th>
+        <th>{{ 'gameTable.betTime' | translate }}</th>
+        <th>{{ 'gameTable.miCountdownSeconds' | translate }}</th>
+        <th>{{ 'common.operation' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of dataList;let i = index">
+        <td>{{i+1 + (currentPage-1)*pageSize}}</td>
+        <td [ngSwitch]="item.gameId">
+          <template [ngSwitchCase]="1" >{{ 'gameTable.baccarat' | translate }}</template>
+          <template [ngSwitchCase]="2" >{{ 'gameTable.dragonTiger' | translate }}</template>
+          <template [ngSwitchCase]="3" >{{ 'gameTable.roulette' | translate }}</template>
+          <template [ngSwitchCase]="4" >{{ 'gameTable.sicbo' | translate }}</template>
+          <template ngSwitchDefault >--</template>
+        </td>
+        <td>{{item.name}}</td>
+        <td [ngSwitch]="item.type">
+          <template [ngSwitchCase]="0" >{{ 'gameTable.unknow' | translate }}</template>
+          <template [ngSwitchCase]="1" >{{ 'gameTable.mppt' | translate }}</template>
+          <template [ngSwitchCase]="2" >{{ 'gameTable.bmpjm' | translate }}</template>
+          <template [ngSwitchCase]="3" >{{ 'gameTable.mpjm' | translate }}</template>
+          <template ngSwitchDefault>--</template>
+        </td>
+        <td>{{item.min}}</td>
+        <td>{{item.max}}</td>
+        <td [ngSwitch]="item.isMany">
+          <span *ngIf = "item.isMany == '0' "><font color='red'>{{ 'common.no' | translate }}</font></span>
+          <span *ngIf = "item.isMany == '1' "><font color='green'>{{ 'common.yes' | translate }}</font></span>
+        </td>
+        <td>{{item.countDownSeconds}}</td>
+        <td>{{item.miCountdownSeconds}}</td>
+        <td [ngSwitch]="item.status">
+          <a href="javascript:void(0);" (click)="openModifyModal(item);" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.modify' | translate }}</a>&nbsp;&nbsp;
+          <a *ngSwitchCase = "0" href="javascript:void(0);" (click)="updateTableStatus(item);" ><i class="fa fa-pencil-square-o"></i>{{ 'common.disabled' | translate }}</a>
+          <a *ngSwitchCase = "1" href="javascript:void(0);" (click)="updateTableStatus(item);" ><i class="fa fa-pencil-square-o"></i>{{ 'common.enabled' | translate }}</a>&nbsp;&nbsp;
+          <!--<a href="javascript:void(0);" (click)="openAddBatchModal(item);" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'gameTable.addCommonBatch' | translate }}</a>-->
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+
+<div bsModal #createGameTableModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'gameTable.createGameTable' | translate }}</h4>
+        <button type="button" class="close" (click)="closeCreateModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="create()">
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label for="addGameTableType" class="form-control-label">{{ 'common.type' | translate }}:</label>
+                <select [(ngModel)]="form.gameId" id="addGameTableType" name="addGameTableType" class="form-control"  autofocus required>
+                  <option value=null >{{ 'common.all' | translate }}</option>
+                  <option *ngFor="let item of gameTypeList" [value]=item.id>
+                    {{item.name}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="addGameTableCN" class="form-control-label">{{ 'gameTable.gameName' | translate }}:</label>
+                <input type="text" class="form-control" id="addGameTableCN" name="addGameTableCN" [(ngModel)]="form.name" >
+              </div>
+              <div class="form-group">
+                <label for="user14" class="form-control-label">{{ 'gameTable.betLowerLimit' | translate }}:</label>
+                <input type="number" class="form-control" id="user14" name="userName4"  [(ngModel)]="form.min" [placeholder]="'gameTable.betLowerLimit' | translate" autofocus required>
+              </div>
+              <div class="form-group">
+                <label for="user15" class="form-control-label">{{ 'gameTable.betUpperLimit' | translate }}:</label>
+                <input type="number" class="form-control" id="user15" name="userName5"  [(ngModel)]="form.max" [placeholder]="'gameTable.betUpperLimit' | translate" autofocus required>
+              </div>
+              <div class="form-group">
+                <label for="addGameTableCountdown" class="form-control-label">{{ 'gameTable.betTime' | translate }}:</label>
+                <input type="number" class="form-control" id="addGameTableCountdown" name="addGameTableCountdown" [(ngModel)]="form.countDownSeconds" >
+              </div>
+              <div class="form-group">
+                <label for="miCountdownSeconds1" class="form-control-label">{{ 'gameTable.miCountdownSeconds' | translate }}:</label>
+                <input type="number" class="form-control" id="miCountdownSeconds1" name="miCountdownSeconds1"  [(ngModel)]="form.miCountdownSeconds" required>
+              </div>
+              <div class="form-group">
+                <label for="addGameTableStatus" class="form-control-label">{{ 'common.status' | translate }}:</label>
+                <dict-control id="addGameTableStatus" name="addGameTableStatus"  d-class="form-control" dict-type="gametable_status"  [(val)]="form.status" default-info="请选择"></dict-control>
+              </div>
+              <div class="form-group">
+                <label for="addType" class="form-control-label">{{ 'common.type' | translate }}:</label>
+                <select [(ngModel)]="form.type" id="addType" name="addType" class="form-control" >
+                  <option value=null>{{ 'common.plsSelect' | translate }}</option>
+                  <option value="0">{{ 'gameTable.unknow' | translate }}</option>
+                  <option value="1">{{ 'gameTable.mppt' | translate }}</option>
+                  <option value="2">{{ 'gameTable.bmpjm' | translate }}</option>
+                  <option value="3">{{ 'gameTable.mpjm' | translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #modifyGameTableModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'gameTable.modifyGameTable' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="modify()">
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label for="modifyGameTableType" class="form-control-label">{{ 'common.type' | translate }}:</label>
+                <select [(ngModel)]="form.gameId" id="modifyGameTableType" name="modifyGameTableType" class="form-control"  autofocus required>
+                  <option value=null >{{ 'common.all' | translate }}</option>
+                  <option *ngFor="let item of gameTypeList" [value]=item.id>
+                    {{item.name}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="modifyGameTableCN1" class="form-control-label">{{ 'gameTable.gameName' | translate }}:</label>
+                <input type="text" class="form-control" id="modifyGameTableCN1" name="modifyGameTableCN1" [(ngModel)]="form.name" >
+              </div>
+
+              <div class="form-group">
+                <label for="modifyGameTableCountdown" class="form-control-label">{{ 'gameTable.betTime' | translate }}:</label>
+                <input type="text" class="form-control" id="modifyGameTableCountdown" name="modifyGameTableCountdown" [(ngModel)]="form.countDownSeconds" >
+              </div>
+              <div class="form-group">
+                <label for="miCountdownSeconds" class="form-control-label">{{ 'gameTable.miCountdownSeconds' | translate }}:</label>
+                <input type="number" class="form-control" id="miCountdownSeconds" name="miCountdownSeconds"  [(ngModel)]="form.miCountdownSeconds" required>
+              </div>
+              <div class="form-group">
+                <label for="modifyType" class="form-control-label">{{ 'common.type' | translate }}:</label>
+                <select [(ngModel)]="form.type" id="modifyType" name="modifyType" class="form-control" >
+                  <option value=null>{{ 'common.plsSelect' | translate }}</option>
+                  <option value="0">{{ 'gameTable.unknow' | translate }}</option>
+                  <option value="1">{{ 'gameTable.mppt' | translate }}</option>
+                  <option value="2">{{ 'gameTable.bmpjm' | translate }}</option>
+                  <option value="3">{{ 'gameTable.mpjm' | translate }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="user141" class="form-control-label">{{ 'gameTable.betLowerLimit' | translate }}:</label>
+                <input type="number" class="form-control" id="user141" name="userName4"  [(ngModel)]="form.min" autofocus required>
+              </div>
+              <div class="form-group">
+                <label for="user151" class="form-control-label">{{ 'gameTable.betUpperLimit' | translate }}:</label>
+                <input type="number" class="form-control" id="user151" name="userName5"  [(ngModel)]="form.max" autofocus required>
+              </div>
+              <div class="form-group">
+                <label for="isMany" class="form-control-label">{{ 'gameTable.ismany' | translate }}:</label>
+                <select [(ngModel)]="form.isMany" id="isMany" name="isMany" class="form-control" >
+                  <option value=null>{{ 'common.plsSelect' | translate }}</option>
+                  <option value=1>{{ 'common.yes' | translate }}</option>
+                  <option value=0>{{ 'common.no' | translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #addBatchModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'gameTable.modifyGameTable' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="modify()">
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label class="form-control-label">{{ 'gameTable.gameName' | translate }}:</label>
+                <input type="text" class="form-control" id="modifyGameTableCN" name="modifyGameTableCN" [(ngModel)]="form.name" >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<p-growl [value]="msgs" ></p-growl>

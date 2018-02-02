@@ -1,0 +1,206 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="templateDownload();">{{ 'robot.templateDownload' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="batchCreateModalShow();">{{ 'robot.batchImport' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="batchSnCreateModalShow();">{{ 'robot.batchCreate' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-danger" data-toggle="modal" (click)="batchDepositModalShow();">{{ 'robot.batchDeposit' | translate }}</button>&nbsp;
+        <input [(ngModel)]="loginNumber" id="loginNumber" name="loginNumber" type="text" class="form-control input-xlarge"  [placeholder]="'robot.loginNumber' | translate" >
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="startBet();">{{ 'robot.startBet' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" data-toggle="modal" (click)="stopBet();">{{ 'robot.stopBet' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-danger" data-toggle="modal" (click)="syncNumberShow();">{{ 'robot.syncNumber' | translate }}</button>
+        <label class="margin-left9">{{ 'robot.loginNumber' | translate }}:{{onlineRobotCount}}</label>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+        <tr>
+          <th>{{ 'common.userName' | translate }}</th>
+          <th>{{ 'common.nickName' | translate }}</th>
+          <th>{{ 'robot.balance' | translate }}</th>
+          <th>{{ 'common.createTime' | translate }}</th>
+          <th>{{ 'common.operation' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of dataList">
+          <td>{{item.loginName}}</td>
+          <td>{{item.nickName}}</td>
+          <td>{{item.balance}}</td>
+          <td>{{item.createTime}}</td>
+          <td [ngSwitch]="item.online">
+            <a href="javascript:void(0);" (click)="stop(item.id)" >
+              <font *ngSwitchCase="true" color='#009600'>{{ 'common.online' | translate }}</font>
+            </a>
+            <a href="javascript:void(0);" (click)="start(item.id)" >
+              <font *ngSwitchDefault color='#20a8d8'>{{ 'common.offline' | translate }}</font>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+
+<div bsModal #batchCreateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'robot.batchImport' | translate }}</h4>
+        <button type="button" class="close" (click)="closeBatchCreateModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="batchCreate()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.choose' | translate }}</label>
+                <p-fileUpload name="Filedata" url="{{uploadurl}}" (onUpload)="onUpload($event)" chooseLabel="{{'robot.choose' | translate }}" uploadLabel="{{'robot.upload' | translate }}" cancelLabel="{{'robot.cancel' | translate }}">
+                  <template pTemplate type="content">
+                    <ul *ngIf="uploadedFiles.length">
+                      <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                    </ul>
+                  </template>
+                </p-fileUpload>
+                <span style="color: red;">{{'robot.fileformat' | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.add' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeBatchCreateModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #batchSnCreateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'robot.batchCreate' | translate }}</h4>
+        <button type="button" class="close" (click)="closeBatchSnCreateModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="batchSnCreate()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.userName' | translate }}</label>
+                <input type="text" class="form-control" name="userName" [(ngModel)]="batchAddWithSnRequest.userName" autofocus required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.nickName' | translate }}</label>
+                <input type="text" class="form-control" name="nickName" [(ngModel)]="batchAddWithSnRequest.nickName" required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.password' | translate }}</label>
+                <input type="text" class="form-control" name="password" [(ngModel)]="batchAddWithSnRequest.password" required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.initPoint' | translate }}</label>
+                <input type="number" class="form-control" name="initPoint" [(ngModel)]="batchAddWithSnRequest.initPoint" required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.start' | translate }}</label>
+                <input type="number" class="form-control" name="start" [(ngModel)]="batchAddWithSnRequest.start" required>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.end' | translate }}</label>
+                <input type="number" class="form-control" name="end" [(ngModel)]="batchAddWithSnRequest.end" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.add' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeBatchSnCreateModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #batchDepositModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'robot.batchDeposit' | translate }}</h4>
+        <button type="button" class="close" (click)="closeDepositModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="batchSnDeposit()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label class="form-control-label">{{ 'common.amount' | translate }}</label>
+                <input type="number" autocomplete="off" class="form-control" name="userName" [(ngModel)]="batchAddWithSnRequest.amount" autofocus required>
+              </div>
+              <span style="color: red;">{{'robot.batch.deposit.tip' | translate }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.add' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeDepositModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #syncNumberModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'robot.syncNumber' | translate }}</h4>
+        <button type="button" class="close" (click)="closeSyncNumberModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="sendSyncNumber()" >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label class="form-control-label">{{ 'robot.robotNumber' | translate }}</label>
+                <input type="number" autocomplete="off" class="form-control" name="userName" [(ngModel)]="onlineNumber" autofocus required>
+              </div>
+              <span style="color: red;">{{'robot.syncNumberTip' | translate }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.sync' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeSyncNumberModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

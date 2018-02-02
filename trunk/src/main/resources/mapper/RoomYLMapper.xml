@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IRoomYLMapper">
+
+ 	<sql id="selectColumns">
+ 		<![CDATA[
+      		a.loginName,
+			a.nickName, 
+			a.roomNumber,
+			a.roundId,
+			SUM(a.bankTotal) as bankTotal,
+			SUM(a.playerTotal) AS playerTotal,
+			SUM(a.ylTotal) AS ylTotal,
+			SUM(a.ylWinLost) AS ylWinLost,
+			a.openResult,
+			SUM(a.ylTotal)*a.washPercentage AS ylCommission,
+			(SUM(a.ylTotal)*a.washPercentage+SUM(a.ylWinLost))*(1-p.hedge_percentage) AS ylSettle,
+			a.washPercentage AS proxyWashPercentage,
+			p.hedge_percentage AS hedgePercentage
+		]]>
+    </sql>
+    
+    <sql id="selectColumnsTemp">
+ 		<![CDATA[
+      	b.round_id AS roundId,
+		vg.id AS roomNumber,
+		SUM(IF(b.trade_item_id = 101,b.amount,0)) AS bankTotal,
+	  	SUM(IF(b.trade_item_id = 102,b.amount,0)) AS playerTotal,
+		IF(SUBSTR(r.result,1,1)=3,0,ABS(SUM(IF(b.trade_item_id=101,b.amount,0))-SUM(IF(b.trade_item_id=102,b.amount,0)))) AS ylTotal,
+		CASE SUBSTR(r.result,1,1) WHEN 1 THEN 
+		IF(SUM(IF(b.trade_item_id = 101,b.amount,0))>SUM(IF(b.trade_item_id = 102,b.amount,0)),
+		(SUM(IF(b.trade_item_id = 101,b.amount,0))-SUM(IF(b.trade_item_id = 102,b.amount,0)))*0.95,
+		SUM(IF(b.trade_item_id = 101,b.amount,0))-SUM(IF(b.trade_item_id = 102,b.amount,0))) 
+		WHEN 2 THEN SUM(IF(b.trade_item_id = 102,b.amount,0))-SUM(IF(b.trade_item_id = 101,b.amount,0)) ELSE 0 END AS ylWinLost,
+		SUBSTR(r.result,1,1) as openResult,
+		vg.create_user,
+		]]>
+    </sql>
+
+    <!-- 包房余量下级代理报表  -->
+    <select id="queryRoomYLTeamReport" resultType="com.na.manager.bean.vo.RoomVO">
+        select 
+			<include refid="selectColumns" />
+			from (
+			SELECT
+				u.login_name AS loginName,u.nick_name AS nickName,u.id,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+				<include refid="selectColumnsTemp" />
+				#{userId} as agentId 
+			FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+			WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.user_parent_path 
+			REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+			<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+			GROUP BY b.round_id,vg.id)AS t 
+			LEFT JOIN USER u ON u.id = t.agentId LEFT JOIN live_user lu ON lu.user_id = u.id
+		) a LEFT JOIN percentage_config p ON a.id =p.user_id ORDER BY a.agentId
+    </select>
+    
+    <!-- 包房余量代理报表  -->
+    <select id="queryRoomYLProxyReport" resultType="com.na.manager.bean.vo.RoomVO">
+    	select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.user_parent_path 
+		REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime}
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.id =p.user_id GROUP BY a.loginName
+    </select>
+    
+    <!-- 包房余量房间报表  -->
+    <select id="queryRoomYLRoomReport" resultType="com.na.manager.bean.vo.RoomVO">
+    	select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id as userId,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id =#{userId} AND b.parent_id != 418 
+		AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.userId =p.user_id GROUP BY a.id
+    </select>
+    
+    <!-- 包房余量局报表  -->
+    <select id="queryRoomYLRoundReport" resultType="com.na.manager.bean.vo.RoomVO">
+        select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id as userId,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 
+		<if test="roomNumber != null and roomNumber != '' ">AND vg.id = #{roomNumber}</if>
+		AND b.user_parent_path REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.userId =p.user_id GROUP BY a.roundId ORDER BY a.roundId DESC
+    </select>
+
+</mapper>

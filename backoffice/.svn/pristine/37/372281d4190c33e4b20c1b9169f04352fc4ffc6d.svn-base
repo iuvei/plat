@@ -1,0 +1,53 @@
+{
+  "login": {
+    "login": "login",
+    "verificationCode": "verificationCode"
+  },
+  "common": {
+    "userName": "userName",
+    "password": "password"
+  },
+  "menu":{
+    "SearchProfitReport":"SearchProfitReport",
+    "SubAgentAccountManage":"SubAgentAccountManage",
+    "SearchSlotReport":"SearchSlotReport",
+    "SearchProfitReport":"SearchProfitReport",
+    "SubAgentAccountManage":"SubAgentAccount",
+    "SearchSlotReport":"SearchSlotReport",
+    "PointInOutReport":"PointInOutReport",
+    "AbnormalTableManager":"AbnormalTable",
+    "SysBuManage":"SysBuManage",
+    "BetterManage":"BetterManage",
+    "SysAccountManage":"SysAccountManage",
+    "SearchSiteBet":"SearchSiteBet",
+    "LoginReport":"LoginReport",
+    "SearchGameResult":"SearchGameResult",
+    "ResourceManage":"ResourceManage",
+    "PhoneBetterManage":"PhoneBett",
+    "HabaBetRecord":"HabaBetRecord",
+    "GameTableManage":"GameTableManage",
+    "RoleManage":"RoleManage",
+    "BetType":"TradeItem",
+    "IpBlackList":"IpBlackList",
+    "Login":"Login",
+    "ApiLog":"ApiLog",
+    "PermissionManage":"PermissionManage",
+    "TranRecordReport":"TranRecordReport",
+    "GameConfig":"GameConfig",
+    "TableWinLoseReport":"TableWinLose",
+    "AccountManager":"AccountManager",
+    "SystemManagement":"SystemManage",
+    "GameManagement":"GameManagement",
+    "Report":"Report",
+    "UserManagement":"UserManagement",
+    "Scene":"Scene",
+    "AnnounceManage":"AnnounceManage"
+
+  },
+  "msg": {
+    "d3_table": "common",
+    "d3_livevip": "livevip",
+    "d3_voice": "voice"
+  }
+
+}

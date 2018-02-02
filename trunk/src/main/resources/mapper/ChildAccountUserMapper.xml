@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IChildAccountUserMapper">
+    <insert id="add">
+      INSERT INTO `child_account_user` (
+    	  `user_id`,
+          `parent_id`
+        )
+        VALUES
+          (
+            #{userId},
+            #{parentId}
+          )
+    </insert>
+    
+    <update id="update">
+        UPDATE
+          `child_account_user`
+        <set>
+            <if test="parentId">`parent_id` = #{parentId}</if>
+        </set>
+        WHERE `user_id` = #{userId}
+    </update>
+    
+</mapper>

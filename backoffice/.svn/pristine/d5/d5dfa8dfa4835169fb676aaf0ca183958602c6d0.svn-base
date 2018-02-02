@@ -1,0 +1,46 @@
+export class CommonUtil {
+
+  static forDight(dight, how) {
+    dight = Math.round(dight * Math.pow(10, how)) / Math.pow(10, how);
+    return dight;
+  }
+
+  static formatDate(date){
+    let year=date.getFullYear();
+    let month=(date.getMonth()+1)>9?(date.getMonth()+1):"0"+(date.getMonth()+1);
+    let day =date.getDate()>9?date.getDate():"0"+date.getDate();
+    let hour=date.getHours()>9?date.getHours():"0"+date.getHours();
+    let minute =date.getMinutes()>9?date.getMinutes():"0"+date.getMinutes();
+    let second =date.getSeconds()>9?date.getSeconds():"0"+date.getSeconds();
+    return year+"-"+month+"-"+day+" "+hour+":"+minute+":"+second;
+  }
+
+  static getDate(date){
+    let year=date.getFullYear();
+    let month=(date.getMonth()+1)>9?(date.getMonth()+1):"0"+(date.getMonth()+1);
+    let day =date.getDate()>9?date.getDate():"0"+date.getDate();
+    return year+"-"+month+"-"+day;
+  }
+
+  /**
+   *
+   * @returns {Date}
+   */
+  static getStartDate(){
+    let date = new Date();
+    if (date.getHours()<12){
+      date.setDate(date.getDate()-1)
+    }
+    date.setHours(12,0,0);
+    return new Date(date.getFullYear(),date.getMonth(),date.getDate(),date.getHours(),date.getMinutes(),date.getSeconds());
+  }
+
+  static getEndDate(){
+    let date = new Date();
+    if (date.getHours()>=12){
+      date.setDate(date.getDate()+1)
+    }
+    date.setHours(11,59,59);
+    return  new Date(date.getFullYear(),date.getMonth(),date.getDate(),date.getHours(),date.getMinutes(),date.getSeconds());
+  }
+}

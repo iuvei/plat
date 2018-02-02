@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IRoundExtMapper">
+
+   
+    <update id="updateRoundExtById" parameterType="com.na.manager.entity.RoundExt">
+    	update roundext set 
+    	bankCard1_mode = #{bankCard1Mode},
+    	bankCard1_number = #{bankCard1Number},
+    	bankCard2_mode = #{bankCard2Mode},
+    	bankCard2_number = #{bankCard2Number},
+    	bankCard3_mode = #{bankCard3Mode},
+    	bankCard3_number = #{bankCard3Number},
+    	playerCard1_mode = #{playerCard1Mode},
+    	playerCard1_number = #{playerCard1Number},
+    	playerCard2_mode = #{playerCard2Mode},
+    	playerCard2_number = #{playerCard2Number},
+    	playerCard3_mode = #{playerCard3Mode},
+    	playerCard3_number = #{playerCard3Number}
+    	where
+    	round_id = #{roundId}
+    </update>
+
+    
+    
+</mapper>

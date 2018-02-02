@@ -1,0 +1,23 @@
+<table style="padding: 0;margin-bottom: 0" class="table table-bordered table-condensed tab-bet">
+  <thead>
+  <tr>
+    <td>{{'bet.ranking' | translate}}</td>
+    <td>{{'bet.childTableProxy' | translate}}</td>
+    <td>{{'bet.childTableMember' | translate}}</td>
+    <td>{{'bet.childTableBetContent' | translate}}</td>
+    <td>{{'bet.childTableBetMoney' | translate}}</td>
+    <td>{{'bet.childTableIP' | translate}}</td>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let item of dataList;let i = index">
+    <td>{{i+1}}</td>
+    <td>{{item.agentName}}</td>
+    <td>{{item.loginName}}</td>
+    <td>{{item.tradeItemNames}}</td>
+    <td>{{item.amounts}}</td>
+    <td>{{item.betIps}}</td>
+  </tr>
+  </tbody>
+</table>
+

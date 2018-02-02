@@ -1,0 +1,164 @@
+
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> {{title}}
+    </div>
+  <div class="card-block">
+    <div class="btn-group">
+      <button type="button" class="margin-left9 btn btn-success" (click)="opencreate()">{{ 'common.create' | translate }}</button>
+    </div>
+  <p-dataList [value]="dataList" [paginator]="false" [rows]="5">
+    <p-header>
+      {{'advertise.advertiseGame' | translate}}
+    </p-header>
+    <template let-data pTemplate="item">
+      <div class="ui-grid ui-grid-responsive ui-fluid" style="font-size:16px;padding:20px;border-bottom:1px solid #D5D5D5;">
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-3" style="text-align:center"><i class="fa fa-search" (click)="openupdate(data)" style="cursor:pointer;float:left;margin-top:40px"></i><img src="{{data.url}}" width="190px" height="200px"></div>
+          <div class="ui-grid-col-9">
+            <div class="ui-grid ui-grid-responsive ui-fluid">
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-3">{{'advertise.advertiseType' | translate}}: </div>
+                <div [ngSwitch]="data.type" class="ui-grid-col-10">
+                  <template [ngSwitchCase]=1 >{{'advertise.initGame' | translate}}</template>
+                </div>
+              </div>
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-3">{{'advertise.advertisePlatform' | translate}}: </div>
+                <div [ngSwitch]="data.platform" class="ui-grid-col-10">
+                  <template [ngSwitchCase]=1 >{{'advertise.phone' | translate}}</template>
+                  <template [ngSwitchCase]=2 >{{'advertise.pc' | translate}}</template>
+                </div>
+              </div>
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-3">{{'advertise.remark' | translate}}: </div>
+                <div class="ui-grid-col-10">{{data.remark}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </p-dataList>
+  </div>
+</div>
+
+<!--游戏配置创建-->
+<div bsModal #createModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div style="width: 682px;"class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{'advertise.advertiseGame' | translate}}</h4>
+                <button type="button" class="close" (click)="createModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label for="exampleInputEmail22">{{'advertise.advertiseType' | translate}}</label>
+                    <select  id="exampleInputEmail22" class="form-control input-lg" [(ngModel)]="createAdvertise.type" name="status">
+                      <option *ngFor="let type of types"  [value]="type.value" >{{type.name}}</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail232">{{'advertise.advertisePlatform' | translate}}</label>
+                    <select  id="exampleInputEmail232" class="form-control input-lg" [(ngModel)]="createAdvertise.platform" name="status">
+                      <option  *ngFor="let platform of platforms" [value]="platform.value" >{{platform.name}}</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail232">{{'advertise.remark' | translate}}</label>
+                    <input type="text" class="form-control input-xlarge" id="exampleInputName2" [(ngModel)]="createAdvertise.remark" name="perName">
+                  </div>
+                  <div class="form-group" >
+                    <label for="photo" >{{'advertise.photoImage' | translate}}</label>
+                    <p-fileUpload name="Filedata" url="{{uploadurl}}" (onUpload)="createOnUpload($event)" accept="image/*" multiple="multiple" maxFileSize="2048000" chooseLabel="{{'manyTypeUser.choose' | translate }}" uploadLabel="{{'manyTypeUser.upload' | translate }}" cancelLabel="{{'manyTypeUser.cancle' | translate }}" ngDefaultControl>
+                    </p-fileUpload>
+
+                      <div *ngFor="let advertisePictures of createAdvertise.advertisePictures,let i = index" class="ui-grid-row">
+                        <div class="ui-grid-col-5" style="text-align:center">
+                          <img src="{{advertisePictures.url}}" width="190px" height="200px" ngDefaultControl >
+                        </div>
+                        <div class="ui-grid-col-3">
+                          <label for="exampleInputEmail21">{{'advertise.photoOrder' | translate}}</label>
+                          <select id="exampleInputEmail21" class="form-control input-lg" [(ngModel)]="advertisePictures.order" name="status">
+                            <option *ngFor="let order of orders" [value]="order" >{{order}}</option>
+                          </select>
+                        </div>
+                        <div class="ui-grid-col-2"></div>
+                      </div>
+
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary" (click)="create()">{{ 'common.save' | translate }}</button>
+                  <button type="button" class="btn btn-secondary" (click)="createModal.hide()">{{ 'common.close' | translate }}</button>
+                </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!--游戏配置创建-->
+<div bsModal #updateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div style="width: 682px;"class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{'advertise.advertiseGame' | translate}}</h4>
+        <button type="button" class="close" (click)="updateModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="exampleInputEmail33">{{'advertise.advertiseType' | translate}}</label>
+          <select  id="exampleInputEmail33" class="form-control input-lg" [(ngModel)]="updateAdvertise.type" name="status">
+            <option *ngFor="let type of types"  [value]="type.value" >{{type.name}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail34">{{'advertise.advertisePlatform' | translate}}</label>
+          <select  id="exampleInputEmail34" class="form-control input-lg" [(ngModel)]="updateAdvertise.platform" name="status">
+            <option  *ngFor="let platform of platforms" [value]="platform.value" >{{platform.name}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail35">{{'advertise.remark' | translate}}</label>
+          <input type="text" class="form-control input-xlarge" id="exampleInputEmail35" [(ngModel)]="updateAdvertise.remark" name="perName">
+        </div>
+        <div class="form-group" >
+          <label for="photo1" >{{'advertise.photoImage' | translate}}</label>
+          <p-fileUpload name="Filedata" url="{{uploadurl}}" (onUpload)="updateOnUpload($event)" accept="image/*" multiple="multiple" maxFileSize="2048000" chooseLabel="{{'manyTypeUser.choose' | translate }}" uploadLabel="{{'manyTypeUser.upload' | translate }}" cancelLabel="{{'manyTypeUser.cancle' | translate }}" ngDefaultControl>
+          </p-fileUpload>
+
+          <div *ngFor="let advertisePictures of updateAdvertise.advertisePictures,let i = index" class="ui-grid-row">
+            <div class="ui-grid-col-5" style="text-align:center">
+              <img src="{{advertisePictures.url}}" width="190px" height="200px" ngDefaultControl >
+            </div>
+            <div class="ui-grid-col-3">
+              <label for="exampleInputEmail36">{{'advertise.photoOrder' | translate}}</label>
+              <select id="exampleInputEmail36" class="form-control input-lg" [(ngModel)]="advertisePictures.order" name="status">
+                <option *ngFor="let order of orders" [value]="order" >{{order}}</option>
+              </select>
+            </div>
+            <div class="ui-grid-col-2"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" (click)="update()">{{ 'common.save' | translate }}</button>
+        <button type="button" class="btn btn-primary" (click)="delete()">{{ 'common.delete' | translate }}</button>
+        <button type="button" class="btn btn-secondary" (click)="updateModal.hide()">{{ 'common.close' | translate }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+

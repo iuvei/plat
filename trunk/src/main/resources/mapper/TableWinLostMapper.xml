@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.ITableWinLostMapper">
+	<sql id="dynamicWhere">
+		<where>
+			br.`status` = 3 and (br.bet_time BETWEEN #{startTime} AND #{endTime}) AND br.parent_id != 418
+	        <if test="tableId !=null and tableId !=''">
+	           and br.game_table_id =#{tableId}
+	        </if>
+	        <if test="bootsId !=null and bootsId !=''">
+	           and br.boots_id =#{bootsId}
+	        </if>
+		</where>
+	</sql>
+	
+	<!-- 交易记录报表 -->
+    <select id="queryTableWinLostByPage" resultType="com.na.manager.bean.vo.TableWinLostVO">
+        SELECT
+			br.game_table_id AS tableId,
+			(
+				SELECT
+					`name`
+				FROM
+					gametable
+				WHERE
+					id = br.game_table_id
+			) tableName,
+			br.boots_id AS bootsId,
+			SUM(br.valid_amount) betAmount,
+			CASE
+		WHEN SUM(
+			br.win_lost_amount + br.valid_amount
+		) IS NULL THEN
+			0.00
+		ELSE
+			SUM(
+				br.win_lost_amount + br.valid_amount
+			)
+		END AS settleAmount,
+		 CASE
+		WHEN SUM(br.win_lost_amount) IS NULL THEN
+			0.00
+		ELSE
+			SUM(br.win_lost_amount)
+		END AS winLostAmount
+		FROM
+			bet_order br
+        <include refid="dynamicWhere" />  
+        GROUP BY br.game_table_id, br.boots_id
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+    
+    <select id="getTableWinLostCount" resultType="Long">
+    	select count(1) from (SELECT
+			br.game_table_id AS tableId,
+			(
+				SELECT
+					`name`
+				FROM
+					gametable
+				WHERE
+					id = br.game_table_id
+			) tableName,
+			br.boots_id AS bootsId,
+			SUM(br.valid_amount) betAmount,
+			CASE
+		WHEN SUM(
+			br.win_lost_amount + br.valid_amount
+		) IS NULL THEN
+			0.00
+		ELSE
+			SUM(
+				br.win_lost_amount + br.valid_amount
+			)
+		END AS settleAmount,
+		 CASE
+		WHEN SUM(br.win_lost_amount) IS NULL THEN
+			0.00
+		ELSE
+			SUM(br.win_lost_amount)
+		END AS winLostAmount
+		FROM
+		bet_order br
+		<include refid="dynamicWhere" />
+		GROUP BY br.game_table_id, br.boots_id
+		) a
+    </select>
+        
+</mapper>

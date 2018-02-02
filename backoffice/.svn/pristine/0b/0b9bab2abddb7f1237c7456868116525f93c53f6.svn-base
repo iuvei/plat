@@ -1,0 +1,8 @@
+{
+  "login": {
+    "login": "登 錄",
+    "user_name": "用戶名",
+    "password": "密碼",
+    "verif_code": "驗證碼"
+  }
+}

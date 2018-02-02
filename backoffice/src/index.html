@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+  <base href="./">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="NA GROUP">
+	<meta name="author" content="Sunny">
+	<meta name="keyword" content="NA GROUP">
+	<link rel="shortcut icon" href="assets/img/favicon.ico">
+
+	<title>NA GROUP</title>
+
+    <!-- Icons -->
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/simple-line-icons.css" rel="stylesheet">
+    <link href="assets/css/toaster.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/css/themes/omega/theme.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/primeng.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/common.css" />
+</head>
+
+<!-- BODY options, add following classes to body to change options
+
+// Header options
+1. '.header-fixed'					- Fixed Header
+
+// Sidebar options
+1. '.sidebar-fixed'					- Fixed Sidebar
+2. '.sidebar-hidden'				- Hidden Sidebar
+3. '.sidebar-off-canvas'		- Off Canvas Sidebar
+4. '.sidebar-compact'				- Compact Sidebar Navigation (Only icons)
+
+// Aside options
+1. '.aside-menu-fixed'			- Fixed Aside Menu
+2. '.aside-menu-hidden'			- Hidden Aside Menu
+3. '.aside-menu-off-canvas'	- Off Canvas Aside Menu
+
+// Footer options
+1. 'footer-fixed'						- Fixed footer
+
+-->
+
+<body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
+  <!-- Enable bootstrap 4 theme -->
+  <script>window.__theme = 'bs4';</script>
+
+  <!-- App Loading... -->
+</body>
+
+<script type="text/javascript" src="assets/js/swfobject.js"></script>
+<script type="text/javascript">
+  var swfList = [];
+  function intSwf(viewlandtid,sysurl) {
+    var swfVersionStr = "11.1.0";
+    var xiSwfUrlStr = "playerProductInstall.swf";
+    var flashvars = {};
+
+    var swf_name = 'MainNew';
+
+    var params = {};
+    params.quality = "high";
+    params.bgcolor = "#57799c";
+    params.allowscriptaccess = "always";
+    params.allowfullscreen = "true";
+    params.wmode = "transparent";
+
+    var attributes = {};
+    attributes.id = swf_name;
+    attributes.name = swf_name;
+    attributes.align = "middle";
+
+    var url = sysurl;
+    if (viewlandtid == '122') {//龙盘
+      swfobject.embedSWF("/assets/flush/rotLand.swf?id=" + Math.random(), "MainNew", 780, 165, "11.1.0", "/assets/flush/rotLand.swf", flashvars, params, attributes);
+    } else if (viewlandtid == '123') {//骰宝
+      swfobject.embedSWF(url + "/assets/sicboLand.swf?id=" + Math.random(), "MainNew", 780, 165, "11.1.0", url + "/assets/sicboLand.swf", flashvars, params, attributes);
+    } else if (viewlandtid == '120' || viewlandtid == '121') {//龙虎
+      swfobject.embedSWF(url + "/assets/dragonTigerLand.swf?id=" + Math.random(), "MainNew", 780, 165, "11.1.0", url + "/assets/dragonTigerLand.swf", flashvars, params, attributes);
+    } else {//百家乐
+      swfobject.embedSWF("/assets/flush/land.swf?id=" + Math.random(), "MainNew", 780, 165, "11.1.0", "/assets/flush/land.swf", flashvars, params, attributes);
+    }
+  }
+
+  function swfComplete(){
+    swfobject.getObjectById('MainNew').addSwfVo(swfList);
+  }
+</script>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IPercentageConfigMapper">
+
+
+    <select id="listPercentConfigByPage" resultType="com.na.manager.entity.PercentageConfig">
+        SELECT
+        *
+        FROM
+        percentage_config
+        WHERE
+        <if test="userId != null">user_id = #{userId}</if>
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+
+    <select id="countPercentConfigs" resultType="Long">
+        SELECT
+        count(*)
+        FROM
+        percentage_config
+        WHERE
+        <if test="userId != null">user_id = #{userId}</if>
+    </select>
+
+    <insert id="savePercentConfig" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO `percentage_config` (
+        `user_id`,
+        `water_percentage`,
+        `hedge_percentage`,
+        `no_hedge_percentage`
+        )
+        VALUES
+        (
+        #{userId},
+        #{waterPercentage},
+        #{hedgePercentage},
+        #{noHedgePercentage}
+        )
+    </insert>
+
+    <update id="updatePercentConfig">
+        UPDATE
+        `percentage_config`
+        <set>
+            <if test="userId != null">`user_id` = #{userId},</if>
+            <if test="waterPercentage != null">`water_percentage` = #{waterPercentage},</if>
+            <if test="hedgePercentage != null">`hedge_percentage` = #{hedgePercentage},</if>
+            <if test="noHedgePercentage != null">`no_hedge_percentage` = #{noHedgePercentage},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,108 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}：</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="merchantNo">{{ 'apilog.merchantNo' | translate }}</label>
+        <input [(ngModel)]="searchForm.merchantNo" id="merchantNo" name="merchantNo" type="text" class="form-control input-xlarge" [placeholder]=" 'apilog.merchantNo' | translate ">
+      </div>
+      <div class="form-group">
+        <label for="searchIP">IP</label>
+        <input [(ngModel)]="searchForm.ip" id="searchIP" name="searchIP" type="text" class="form-control input-xlarge"  placeholder="IP">
+      </div>
+      <div class="form-group">
+        <label for="status">{{ 'common.status' | translate }}</label>
+        <!--<select [(ngModel)]="searchForm.status" id="status" name="status" class="form-control"  >
+          <option value="-1">{{ 'common.all' | translate }}</option>
+          <option value="1">{{ 'common.success' | translate }}</option>
+          <option value="0">{{ 'common.failure' | translate }}</option>
+        </select>-->
+        <dict-control id="status" name="status"  d-class="form-control" dict-type="api_status"  [(val)]="searchForm.status" default-info="全部"></dict-control>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="margin-left9 btn btn-primary">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+        <tr>
+          <th>{{ 'apilog.merchantNo' | translate }}</th>
+          <th>IP</th>
+          <th>{{ 'apilog.operationDescribe' | translate }}</th>
+          <th>{{ 'apilog.errorDescribe' | translate }}</th>
+          <th>{{ 'common.createTime' | translate }}</th>
+          <th>{{ 'common.status' | translate }}</th>
+          <th>{{ 'apilog.requestData' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of dataList">
+          <td>{{item.merchantNo}}</td>
+          <td>{{item.ip}}</td>
+          <td>{{item.operDesc}}</td>
+          <td>{{item.errorDesc}}</td>
+          <td>{{item.createTime}}</td>
+          <td [ngSwitch]="item.status" >
+            <font *ngSwitchCase="1" color='green'>{{ 'common.success' | translate }}</font>
+            <font *ngSwitchDefault color='red'>{{ 'common.failure' | translate }}</font>
+          </td>
+          <td>
+            <a href="javascript:void(0);" (click)="openRequestDataModal(item);" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'apilog.toViewRequestData' | translate }}</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+
+<div bsModal #requestDataModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'apilog.toViewRequestData' | translate }}</h4>
+        <button type="button" class="close" (click)="closeRequestDataModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form >
+        <div class="modal-body">
+          <div>
+            <div class="form-group" >
+              <div class="form-group">
+                <label for="decryptData" class="form-control-label">{{ 'apilog.encryptRequestData' | translate }}:</label>
+                <textarea class="form-control" id="decryptData" name="decryptData" [(ngModel)]="form.decryptData" rows="5"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="encryptData" class="form-control-label">{{ 'apilog.decryptRequestData' | translate }}:</label>
+                <textarea class="form-control" id="encryptData" name="encryptData" [(ngModel)]="form.encryptData" rows="5"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeRequestDataModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

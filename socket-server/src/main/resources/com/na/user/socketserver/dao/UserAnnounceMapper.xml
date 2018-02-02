@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+       Copyright 2015-2016 the original author or authors.
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.user.socketserver.dao.IUserAnnounceMapper">
+
+	<resultMap id="UserAnnounceResult" type="com.na.user.socketserver.entity.UserAnnounce">
+		<!--UserAnnounce 基本属性 -->
+		<id property="id" column="id"/>
+		<result column="user_id" property="userId"/>
+		<result column="user_name" property="userName"/>
+		<result column="content_id" property="contentId"/>
+		<result column="type" property="type"/>
+		<!-- 关联对象-->
+		<association property="announceContent" javaType="com.na.user.socketserver.entity.AnnounceContent">
+			<result column="ac_id" property="id"/>
+			<result column="ac_desc" property="contentDesc"/>
+			<result column="ac_title" property="contentTitle"/>
+		</association>
+	</resultMap>
+    <select id="getAllUserAnnouce" resultMap="UserAnnounceResult">
+		SELECT
+			ua.*,
+			ac.id as ac_id,
+			ac.content_desc as ac_desc,
+			ac.content_title as ac_title
+		FROM
+			user_announce ua
+		LEFT JOIN announce_content ac ON ua.content_id = ac.id
+		LIMIT 0,
+		 30
+	</select>
+
+</mapper>

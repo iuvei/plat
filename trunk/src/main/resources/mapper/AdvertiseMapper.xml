@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IAdvertiseMapper">
+
+    <update id="update">
+        UPDATE
+          `advertise`
+        <set>
+            <if test="type">`type` = #{type},</if>
+            <if test="platform">`platform` = #{platform},</if>
+            <if test="remark">`remark` = #{remark}</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach close="" collection="list" index="index" item="item" open="" separator=";">
+        UPDATE
+        `advertise_picture`
+        <set>
+            <if test="item.advertiseId">`advertise_id` = #{item.advertiseId},</if>
+            <if test="item.url">`url` = #{item.url},</if>
+            <if test="item.order">`order` = #{item.order}</if>
+        </set>
+        WHERE `id` = #{item.id}
+        </foreach>
+    </update>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO `advertise_picture` (
+        `advertise_id`,
+        `url`,
+        `order`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.advertiseId},
+            #{item.url},
+            #{item.order}
+            )
+        </foreach>
+
+    </insert>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO `advertise` (
+        `type`,
+        `platform`,
+        `remark`
+        )
+        VALUES
+        (#{type},
+        #{platform},
+        #{remark}
+        )
+    </insert>
+
+
+    
+</mapper>

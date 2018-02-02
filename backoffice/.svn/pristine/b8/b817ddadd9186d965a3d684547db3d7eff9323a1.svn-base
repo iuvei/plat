@@ -1,0 +1,226 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="exampleInputName2">{{ 'common.userName' | translate }}</label>
+        <input type="text" class="form-control input-xlarge" id="exampleInputName2" [(ngModel)]="searchModel.loginName" name="perName" [placeholder]="'common.userName' | translate">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail2">{{ 'common.type' | translate }}</label>
+        <select id="exampleInputEmail2" class="form-control input-lg" [(ngModel)]="searchModel.type" name="type">
+          <option *ngFor="let item of userTypeList" [value]="item.value">{{item.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail21">{{ 'common.type' | translate }}</label>
+        <select id="exampleInputEmail21" class="form-control input-lg" [(ngModel)]="searchModel.userStatus" name="status">
+          <option *ngFor="let item of statusList" [value]="item.value">{{item.name}}</option>
+        </select>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" (click)="initAddUserDialogDialog()">{{ 'common.create' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success" (click)="clearRouletteDealer()">{{ 'manyTypeUser.clearRouletteDealer' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>{{ 'common.userName' | translate }}</th>
+        <th>{{ 'common.nickName' | translate }}</th>
+        <th>{{ 'common.type' | translate }}</th>
+        <th>{{ 'manyTypeUser.accountStatus' | translate }}</th>
+        <th>{{ 'common.createTime' | translate }}</th>
+        <th>{{ 'common.creator' | translate }}</th>
+        <th>{{ 'common.operation' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of manyTypeUserList;let i = index">
+        <td>{{i+1 + (currentPage-1)*pageSize}}</td>
+        <td>
+          <a class=""  href="javascript:void(0)" (click)="initModifyUserDetailDialog(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{item.loginName}}</a>
+        </td>
+        <td>{{item.nickName}}</td>
+        <td>{{item.type | DictPipe : 'dealer_user_type'}}</td>
+        <td>
+          <a class="" href="javascript:void(0)" (click)="updateUserStatus(item.id,item.userStatus==1 ? 2 : 1)">
+            <i class=""></i>{{item.userStatus | DictPipe : 'user_status'}}
+          </a>
+        </td>
+        <td>{{item.createTime}}</td>
+        <td>{{item.createBy}}</td>
+        <td><a class=""  href="javascript:void(0)" (click)="initPasswordModal(item)"><i class="fa fa-pencil-square-o"></i><span>{{ 'common.modifyPassword' | translate }}</span></a></td>
+      </tr>
+      </tbody>
+    </table>
+    <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                [totalItems]="totalItems" [itemsPerPage]="searchModel.pageSize" [maxSize]="maxSize" [(ngModel)]="searchModel.page" (numPages)="numPages = $event"
+                (pageChanged)="pageChanged($event)"></pagination>
+  </div>
+
+</div>
+
+<p-growl [value]="msgs" sticky="sticky"></p-growl>
+
+<!--密码修改对话框-->
+<div bsModal #passwordModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'common.modifyPassword' | translate }}</h4>
+        <button type="button" class="close" (click)="passwordModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="modifyPassword()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="newPwd" class="form-control-label">{{ 'manyTypeUser.newPassword' | translate }}:</label>
+            <input type="password" class="form-control" id="newPwd" name="newPwd" [(ngModel)]="passwordModel.password" minlength="6" maxlength="15" required>
+          </div>
+          <div class="form-group">
+            <label for="receptPwd" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+            <input type="password" class="form-control" id="receptPwd" name="receptPwd" [(ngModel)]="passwordModel.rePassword" minlength="6" maxlength="15" required>
+          </div>
+          <div [hidden]="passwordModel.password==passwordModel.rePassword" class="alert alert-danger">{{ 'manyTypeUser.confirmPasswordFailure' | translate }}</div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="passwordModal.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!--修改详情对话框-->
+<div bsModal #userDetailDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'manyTypeUser.modifyDetail' | translate }}</h4>
+        <button type="button" class="close" (click)="userDetailDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="modifyUserDetail()">
+        <div class="modal-body">
+          <div class="form-group" style="display: none;">
+            <label for="newPwd" class="form-control-label">{{ 'common.uid' | translate }}:</label>
+            <span>{{userDetailModel.id}}</span>
+          </div>
+          <div class="form-group">
+            <label for="newPwd" class="form-control-label">{{ 'common.userName' | translate }}:</label>
+            <span>{{userDetailModel.loginName}}</span>
+            <div style="float: right; ">
+              <label>{{ 'manyTypeUser.dealerHeadPic' | translate }}</label>
+              <img [src]="userDetailModel.headPic" width="100px" height="120px">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail3">{{ 'common.type' | translate }}</label>
+            <select id="exampleInputEmail3" class="form-control input-lg" [(ngModel)]="userDetailModel.type" name="type" required disabled>
+              <option *ngFor="let item of userTypeList" [value]="item.value">{{item.name}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="nickName" class="form-control-label">{{ 'common.nickName' | translate }}</label>
+            <input type="text" class="form-control" id="nickName" name="nickName" [(ngModel)]="userDetailModel.nickName" required>
+          </div>
+          <div class="form-group">
+            <label for="barrcode" class="form-control-label">{{ 'common.barrcode' | translate }}</label>
+            <input type="text" class="form-control" id="barrcode" name="barrcode" [(ngModel)]="userDetailModel.barrcode" required disabled>
+          </div>
+          <div class="form-group">
+            <label for="userPhoto" class="form-control-label">{{ 'common.headSculpture' | translate }}</label>
+            <p-fileUpload name="Filedata" url="{{uploadurl}}" (onUpload)="modifyOnUpload($event)" accept="image/*" maxFileSize="2048000">
+              <template pTemplate type="content">
+                <ul *ngIf="uploadedFiles.length">
+                  <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                </ul>
+              </template>
+            </p-fileUpload>
+          </div>
+        </div>
+
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="userDetailDialog.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!--创建用户对话框-->
+<div bsModal #addUserDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'manyTypeUser.createUser' | translate }}</h4>
+        <button type="button" class="close" (click)="addUserDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="addUser()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="exampleInputEmail4">{{ 'common.type' | translate }}</label>
+            <select id="exampleInputEmail4" class="form-control input-lg" [(ngModel)]="newUserModel.type" name="type" required>
+              <option *ngFor="let item of userTypeList" [value]="item.value">{{item.name}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="loginName" class="form-control-label">{{ 'common.userName' | translate }}</label>
+            <input type="text" class="form-control" id="loginName" name="loginName" [(ngModel)]="newUserModel.loginName" minlength="6" maxlength="20" required>
+          </div>
+          <div class="form-group">
+            <label for="nickName1" class="form-control-label">{{ 'common.nickName' | translate }}</label>
+            <input type="text" class="form-control" id="nickName1" name="nickName" [(ngModel)]="newUserModel.nickName" required>
+          </div>
+          <div class="form-group">
+            <label for="nickName1" class="form-control-label">{{ 'common.headSculpture' | translate }}</label>
+            <p-fileUpload name="Filedata" url="{{uploadurl}}" (onUpload)="onUpload($event)" accept="image/*" maxFileSize="2048000" chooseLabel="{{'manyTypeUser.choose' | translate }}" uploadLabel="{{'manyTypeUser.upload' | translate }}" cancelLabel="{{'manyTypeUser.cancle' | translate }}">
+              <template pTemplate type="content">
+                <ul *ngIf="uploadedFiles.length">
+                  <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                </ul>
+              </template>
+            </p-fileUpload>
+            <span style="color: red;">{{'manyTypeUser.picformat' | translate }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-control-label">{{ 'manyTypeUser.newPassword' | translate }}:</label>
+            <input type="password" class="form-control" id="password" name="password" [(ngModel)]="newUserModel.password" minlength="6" maxlength="15" required>
+          </div>
+          <div class="form-group">
+            <label for="rePassword" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+            <input type="password" class="form-control" id="rePassword" name="rePassword" [(ngModel)]="newUserModel.rePassword" minlength="6" maxlength="15" required>
+          </div>
+          <div [hidden]="newUserModel.password==newUserModel.rePassword" class="alert alert-danger">{{ 'manyTypeUser.confirmPasswordFailure' | translate }}</div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="ubmit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="addUserDialog.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+

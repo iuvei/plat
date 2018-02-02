@@ -1,0 +1,78 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}：</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchLoginName">{{ 'pointinout.userNameAndAgent' | translate }}:</label>
+        <input [(ngModel)]="loginName" id="searchLoginName" name="searchLoginName" type="text" pInputText  [placeholder]=" 'pointinout.userNameAndAgent' | translate" required>
+      </div>
+      &nbsp;&nbsp;
+      <div class="btn-group">
+        <button type="submit" class="margin-left9 btn btn-primary">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+      <tr>
+        <th>{{ 'common.date' | translate }}</th>
+        <th>{{ 'common.account' | translate }}</th>
+        <th>{{ 'common.type' | translate }}</th>
+        <th>{{ 'pointinout.takePoint' | translate }}</th>
+        <th>{{ 'pointinout.savePoint' | translate }}</th>
+        <th>{{ 'pointinout.beforeSurplus' | translate }}</th>
+        <th>{{ 'pointinout.surplus' | translate }}</th>
+        <th>{{ 'common.remark' | translate }}</th>
+        <th>{{ 'pointinout.executeUser' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of tableList">
+        <td>{{item.time}}</td>
+        <td>{{item.loginName}}</td>
+        <td>
+          <span *ngIf = "item.type == '1' "><font color='green'>{{ 'msg.d6_deposit' | translate }}</font></span>
+          <span *ngIf = "item.type == '2' "><font color='red'>{{ 'msg.d6_withdraw' | translate }}</font></span>
+        </td>
+        <td><span *ngIf="item.type == '2'">{{item.amount}}</span><span *ngIf="item.type == '1'">--</span> </td>
+        <td><span *ngIf="item.type == '1'">{{item.amount}}</span><span *ngIf="item.type == '2'">--</span></td>
+        <td>{{item.preBalance}}</td>
+        <td>{{item.afterAmount}}</td>
+        <td>{{item.remark}}</td>
+        <td>{{item.execUser}}</td>
+      </tr>
+      <tr *ngIf="tableList.length >0" style="line-height: 0.5rem">
+        <td colspan="3" style="text-align: center;"><font color="red">{{'common.pageSta' | translate}}：</font></td>
+        <td><font color="red">{{withwraw}}</font></td>
+        <td><font color="red">{{deposit}}</font></td>
+        <td colspan="4"></td>
+      </tr>
+      <tr *ngIf="tableList.length >0" style="line-height: 0.5rem">
+        <td colspan="3" style="text-align: center;"><font color="red">{{'common.pageTotalSta' | translate}}：</font></td>
+        <td><font color="red">{{totalWithwraw}}</font></td>
+        <td><font color="red">{{totalDeposit}}</font></td>
+        <td colspan="4"></td>
+      </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+

@@ -1,0 +1,124 @@
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> {{title}}
+
+    </div>
+        <p-growl [value]="msgs" sticky="sticky"></p-growl>
+    <div class="card-block">
+        <form class="form-inline" (ngSubmit)="search()">
+            <div class="form-group">
+              <label for="username">{{ 'voiceuser.voiceUserName' | translate }}:</label>
+              <input type="text"  class="form-control input-xlarge" [(ngModel)]="searchConditon.username" name = "username" [placeholder]="'voiceuser.voiceUserName' | translate">
+            </div>
+            <div class="form-group">
+              <label for="username1">{{ 'voiceuser.voiceBetter' | translate }}:</label>
+              <input type="text" id = "username1" class="form-control input-xlarge" [(ngModel)]="searchConditon.bettername" name = "username1" [placeholder]="'voiceuser.voiceBetter' | translate">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail2">{{ 'common.status' | translate }}:</label>
+              <select id="exampleInputEmail2"  class="form-control input-lg" [(ngModel)]="searchConditon.status" name="status">
+                <option value = 0>{{ 'voiceuser.notRelevance' | translate }}</option>
+                <option value = 1>{{ 'voiceuser.relevance' | translate }}</option>
+                <option value = 2>{{ 'voiceuser.outTime' | translate }}</option>
+                <option value = -1>{{ 'common.all' | translate }}</option>
+              </select>
+            </div>
+            &nbsp;&nbsp;
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" >{{ 'common.search' | translate }}</button>
+            </div>
+        </form>
+
+        <br>
+        <table class="table table-bordered table-striped table-condensed table-hover">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>{{ 'voiceuser.voiceUserName' | translate }}</th>
+              <th>{{ 'voiceuser.voiceBetter' | translate }}</th>
+              <th>{{ 'common.createTime' | translate }}</th>
+              <th>{{ 'common.creator' | translate }}</th>
+              <th>{{ 'common.status' | translate }}</th>
+              <th>{{ 'common.operation' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of phoneUser;let i = index">
+                <td>{{i+1 + (currentPage-1)*pageSize}}</td>
+                <td>{{item.username}}</td>
+                <td>
+                <span [ngSwitch]="item.betterusername">
+                  <span *ngSwitchCase=null>--</span>
+                  <span *ngSwitchDefault>{{item.betterusername}}</span>
+                </span>
+                </td>
+                <td>
+                <span [ngSwitch]="item.createdatetime">
+                  <span *ngSwitchCase=null>--</span>
+                  <span *ngSwitchDefault>{{item.createdatetime}}</span>
+                </span>
+                </td>
+                <td>
+                <span [ngSwitch]="item.createby">
+                  <span *ngSwitchCase=null>--</span>
+                  <span *ngSwitchDefault>{{item.createby}}</span>
+                </span>
+                </td>
+                <td>
+                <span [ngSwitch]="item.status">
+                  <span *ngSwitchCase=0>{{ 'voiceuser.notRelevance' | translate }}</span>
+                  <span *ngSwitchCase=1>{{ 'voiceuser.relevance' | translate }}</span>
+                  <span *ngSwitchCase=2>{{ 'voiceuser.outTime' | translate }}</span>
+                </span>
+              </td>
+              <td >
+                <a *ngIf="item.status===0" (click)="goAdd(item)" href="javascript:void(0);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'voiceuser.addRelevance' | translate }}</a>
+                <span *ngIf="item.status===1"><a  href="javascript:void(0);" (click)="goRemoveAdd(item)"  ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'voiceuser.removeRelevance' | translate }}</a>&nbsp;&nbsp;<a  (click)="goForceOld(item)"  href="javascript:void(0);"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'voiceuser.overDue' | translate }}</a></span>
+                <span *ngIf="item.status===2">--</span>
+              </td>
+            </tr>
+            </tbody>
+        </table>
+
+          <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                      [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                      [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                      (pageChanged)="pageChanged($event)"></pagination>
+
+    </div>
+</div>
+
+<!--添加关联对话框-->
+<div bsModal #addPhoneBetterModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">{{ 'voiceuser.addRelevance' | translate }}</h4>
+              <button type="button" class="close" (click)="addPhoneBetterModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form (ngSubmit)="addPhoneBetter()">
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="userName" class="form-control-label">{{ 'voiceuser.voiceUserName' | translate }}:</label>
+                  <input type="text" class="form-control" id="userName" name="userName" [(ngModel)]="addeVoiceUser.username" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="example2">{{ 'voiceuser.voiceBetter' | translate }}:</label>
+                  <select id="example2"  class="form-control input-lg" [(ngModel)]="addBid" name="status">
+                    <option *ngFor="let game of betterUserList " [value] = "game.lid">{{game.levelName}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+                <button type="button" class="btn btn-secondary" (click)="addPhoneBetterModal.hide()">{{ 'common.close' | translate }}</button>
+              </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+

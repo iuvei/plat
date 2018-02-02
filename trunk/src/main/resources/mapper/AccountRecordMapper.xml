@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IAccountRecordMapper">
+	<sql id="dynamicWhere">
+		<where>
+			<if test="type">
+		  		ar.type in(1,2)
+			</if>
+			<if test="flag!=null and flag !=''">
+			 	ar.flag =#{flag}
+			</if>
+			<if test="startTime">
+			 	<![CDATA[and ar.time >=#{startTime}]]>
+			</if>
+			<if test="endTime">
+			 	<![CDATA[and ar.time <=#{endTime}]]>
+			</if>
+			<if test="parentPath">
+			 	and lu.parent_path like CONCAT(#{parentPath},'%')
+			</if>
+			<if test="userId">
+			 	and lu.user_id =#{userId}
+			</if>
+			<if test="roundId">
+			 	and ar.remark LIKE CONCAT("%","roundId\":",#{roundId},"}")
+			</if>
+			<if test="proxyPath!=null or merchantPath!=null">
+			 	and (lu.parent_path LIKE CONCAT(#{proxyPath},"%") OR lu.parent_path LIKE CONCAT(#{merchantPath},"%"))
+			</if>
+		</where>
+	</sql>
+	
+	<select id="queryAccountRecordByPageTotal" resultType="java.util.HashMap">
+		SELECT
+			sum(case when ar.type=1 then amount when ar.type!=1 then 0 end) as 'totalDeposit',
+			sum(case when ar.type=1 then 0 when ar.type!=1 then amount end) as 'totalWithwraw'
+		FROM
+			account_record ar
+			JOIN USER u ON ar.user_id = u.id
+			JOIN live_user lu ON u.id = lu.user_id
+        <include refid="dynamicWhere" />
+    </select>
+	
+    <select id="queryAccountRecordByPage" resultType="com.na.manager.entity.AccountRecord">
+		SELECT
+			ar.*,
+			u.login_name AS loginName,
+			u.balance AS currentBalance
+		FROM
+			account_record ar
+			JOIN USER u ON ar.user_id = u.id
+			JOIN live_user lu ON u.id = lu.user_id
+        <include refid="dynamicWhere" />
+       	ORDER BY ID DESC
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+    
+    <select id="getAccountRecordCount" resultType="Long">
+      	SELECT
+			count(*)
+		FROM
+			account_record ar
+			JOIN USER u ON ar.user_id = u.id
+			JOIN live_user lu ON u.id = lu.user_id
+        <include refid="dynamicWhere" />
+    </select>
+    
+     <insert id="add">
+    	INSERT INTO `account_record` (
+    	  `id`,
+          `user_id`,
+          `sn`,
+          `time`,
+          `amount`,
+          `pre_balance`,
+          `type`,
+          `business_key`,
+          `remark`,
+          `exec_user`
+        )
+        VALUES
+          (
+            #{id},
+            #{userId},
+            #{sn},
+            #{time},
+            #{amount},
+            #{preBalance},
+            #{type},
+            #{businessKey},
+            #{remark},
+            #{execUser}
+          )
+    </insert>
+    
+    <update id="updataFlag" parameterType="java.util.List">
+    	UPDATE account_record SET flag=1 WHERE id IN 
+	    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >    
+	   	   #{item.id} 
+	    </foreach>  
+    </update>
+</mapper>

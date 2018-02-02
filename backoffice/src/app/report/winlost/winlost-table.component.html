@@ -1,0 +1,63 @@
+<br>
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+      <th>{{ 'common.hierarchy' | translate }}：</th>
+      <th colspan="11">{{path}}</th>
+     <!-- <th class="text-center">
+        <a href="javascript:void(0)" (click)="search()" tooltip="'common.refresh' | translate" ><i class="fa fa-refresh" aria-hidden="true"></i></a>&nbsp;&nbsp;
+      </th>-->
+    </tr>
+    <tr>
+      <th>{{ 'winlost.loginName' | translate }}</th>
+      <th>{{ 'winlost.statisType' | translate }}</th>
+      <th>{{ 'winlost.tradetime' | translate }}</th>
+      <th>{{ 'winlost.amountBetting' | translate }}</th>
+      <th>{{ 'winlost.winLostAmount' | translate }}</th>
+      <th>{{ 'winlost.washBetting' | translate }}</th>
+      <th>{{ 'winlost.washPercentage' | translate }}</th>
+      <th>{{ 'winlost.washAmount' | translate }}</th>
+      <th>{{ 'winlost.FAgentIncome' | translate }}</th>
+      <th>{{ 'winlost.oPercentage' | translate }}</th>
+      <th>{{ 'winlost.FAgentCompanyIncome' | translate }}</th>
+      <!--<th>{{ 'winlost.agentCompanyBetting' | translate }}</th>
+      <th>{{ 'winlost.agentCompanyOpercentage' | translate }}</th>-->
+      <th>{{ 'winlost.winloSepercentage' | translate }}</th>
+    </tr>
+    </thead>
+    <tbody *ngFor="let item of tableList" class="table table-bordered table-striped table-condensed table-hover">
+    <tr>
+      <td>{{item.loginName}}<span *ngIf="item.nickName!=''" style="color: red;">({{item.nickName}})</span></td>
+      <td>
+        <a href="javascript:void(0)"  (click)="expend(item)" *ngIf="item.statisType!=4" >
+          <i class="fa fa-caret-down" aria-hidden="true"></i> {{item.statisTypeDesc}}
+        </a>
+        <span href="javascript:void(0)"  *ngIf="item.statisType==4" >{{item.statisTypeDesc}}</span>
+      </td>
+      <td>{{item.tradeTime}}</td>
+      <td>{{item.amountBetting | number:'1.0-2' }}</td>
+      <td><span *ngIf="item.winLostAmount<0" style="color: red;">{{item.winLostAmount | number:'1.0-2' }}</span><span *ngIf="item.winLostAmount>=0" style="color: green;">{{item.winLostAmount | number }}</span></td>
+      <td>{{item.washBetting | number }}</td>
+      <td>
+        <span *ngIf="item.statisType==3">--</span>
+        <span *ngIf="item.statisType!=3">{{item.washPercentage*100 | number:'1.0-4' }}%</span>
+      </td>
+      <td align="right">{{item.washAmount | number:'1.0-2' }}</td>
+      <td align="right">
+        <money [value]="item.agentIncome"></money>
+      </td>
+      <td>
+        <span *ngIf="item.statisType==3 || item.statisType==4">--</span>
+        <span *ngIf="item.statisType!=3 && item.statisType!=4">{{item.intoPercentage*100 | number:'1.0-4'}}%</span></td>
+      <td ngSwitch="item.statisType">
+        <span *ngIf="item.statisType==3 || item.statisType==4">--</span>
+        <span *ngIf="item.statisType!=3 && item.statisType!=4">{{item.agentCompanyIncome  | number:'1.0-2'}}</span>
+      </td>
+ <!--     <td>{{item.agent_company_betting | number }}</td>
+      <td>{{item.agent_company_opercentage | number }}</td>-->
+      <td><money [value]="item.winloSepercentage*100"></money>%</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

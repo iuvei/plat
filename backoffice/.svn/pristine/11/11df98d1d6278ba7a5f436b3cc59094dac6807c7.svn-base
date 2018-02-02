@@ -1,0 +1,53 @@
+<br>
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-condensed mytable" style="width: 100%; font-size: 14px; overflow-y: auto;">
+    <thead>
+      <tr>
+        <th>{{ 'common.hierarchy' | translate }}：</th>
+        <th colspan="13">{{path}}</th>
+      </tr>
+      <tr>
+        <th width="4%">{{ 'room.agentName' | translate }}</th>
+        <th width="5%">{{ 'room.statisType' | translate }}</th>
+        <th width="6%">{{ 'room.nickName' | translate }}</th>
+        <th width="3%">{{ 'room.roomNumber' | translate }}</th>
+        <th width="4%">{{ 'room.roundId' | translate }}</th>
+        <th width="4%">{{ 'room.bankTotal' | translate }}</th>
+        <th width="3%">{{ 'room.playerTotal' | translate }}</th>
+        <th width="4%">{{ 'room.gameResult' | translate }}</th>
+        <th width="3%">{{ 'roomHedge.hedgeTotal' | translate }}</th>
+        <th width="4%">{{ 'roomHedge.bankerWinTotal' | translate }}</th>
+        <th width="4%">{{ 'roomHedge.waterCommission' | translate }}</th>
+        <th width="4%">{{ 'room.waterPercentage' | translate }}</th>
+        <th width="3%">{{ 'roomHedge.waterSettle' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of tableList" style="line-height: 0.5rem" >
+        <td>{{item.loginName}}</td>
+        <td>
+          <a href="javascript:void(0)" (click)="expend(item)" *ngIf="item.statisType != 5">
+            <i class="fa fa-caret-down" aria-hidden="true"></i> {{item.statisTypeDesc}}
+          </a>
+          <a href="javascript:void(0)" (click)="handle(1,item)" *ngIf="item.statisType == 5">
+            <i class="fa fa-caret-down" aria-hidden="true"></i> {{item.statisTypeDesc}}
+          </a>
+        </td>
+        <td>{{item.nickName}}</td>
+        <td *ngIf="item.statisType == 4 || item.statisType == 5">{{item.roomNumber}}</td>
+        <td *ngIf="item.statisType != 4 && item.statisType != 5">--</td>
+        <td *ngIf="item.statisType ==5">{{item.roundId}}</td>
+        <td *ngIf="item.statisType !=5">--</td>
+        <td align="right">{{item.bankTotal | number:'1.2'}}</td>
+        <td align="right">{{item.playerTotal | number:'1.2'}}</td>
+        <td *ngIf="item.statisType ==5">{{item.openResult}}</td>
+        <td *ngIf="item.statisType !=5">--</td>
+        <td align="right">{{item.ylTotal | number:'1.2'}}</td>
+        <td align="right"><money [value]="item.bankerWinTotal"></money></td>
+        <td align="right">{{item.waterCommission | number:'1.2'}}</td>
+        <td>{{item.waterPercentage*100 | number:'1.0-4'}}%</td>
+        <td align="right"><money [value]="item.waterSettle"></money></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IAnnounceManageMapper">
+
+	<sql id="dynicWhere">
+		<where>
+			user_announce.user_id IN (
+					SELECT
+						user_id
+					FROM
+						live_user
+					WHERE
+						parent_path REGEXP (
+							SELECT
+								CONCAT('/', id, '/')
+							FROM
+								USER
+							WHERE
+								login_name = #{userName}
+						)
+				)
+			OR user_announce.CREATE_BY = #{userName}
+			OR find_in_set(
+				#{userName},
+				user_announce.user_name
+			)
+			AND DATE_FORMAT(user_announce.CREATE_DATETIME,'%Y-%m-%d') BETWEEN #{startDate}
+			AND #{endDate}
+		</where>
+	</sql>
+
+	<select id="queryUserAnnouneByPage" resultType="com.na.manager.bean.vo.AnnounceListVO">
+		SELECT
+			user_announce.id,
+			announce_content.id as announceId,
+			user_announce.CREATE_DATETIME as createTime,
+			user_announce.user_name as userName,
+			announce_content.content_desc as conentDesc,
+			user_announce.UPDATE_BY as updateBy,
+			user_announce.UPDATE_DATETIME as updateTime,
+			user_announce.type,
+			announce_content.content_title as contentTitle
+		FROM
+			user_announce
+		LEFT JOIN announce_content ON announce_content.id = user_announce.content_id
+		<include refid="dynicWhere" />
+		order by user_announce.create_datetime DESC
+		limit #{startRow},#{pageSize}
+	</select>
+
+	<select id="count" resultType="long">
+		SELECT
+			count(1)
+		FROM
+			user_announce
+		LEFT JOIN announce_content ON announce_content.id = user_announce.content_id
+		<include refid="dynicWhere" />
+	</select>
+
+	<insert id="insertAnnounceConent" useGeneratedKeys="true" keyProperty="id"
+		keyColumn="content_id">
+		INSERT INTO `announce_content`(
+		`content_desc`,
+		`content_title`
+		)
+		VALUES
+		(#{contentDesc},#{contentTitle})
+	</insert>
+	
+	<insert id="insertUserAnnounce" useGeneratedKeys="true" keyProperty="id"
+		keyColumn="announce_id">
+		INSERT INTO `user_announce`(
+		`user_id`,
+		`user_name`,
+		`type`,
+		`content_id`,
+		`create_datetime`,
+		`update_datetime`,
+		`create_by`,
+		`update_by`
+		)
+		VALUES 
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+				#{item.userId},
+				#{item.userName},
+				#{item.type},
+				#{item.contentId},
+				#{item.createDateTime},
+				#{item.updateDateTime},
+				#{item.createBy},
+				#{item.updateBy}
+			)
+		</foreach>
+	</insert>
+    
+     <update id="updateAnnounceContent">
+        UPDATE
+          `announce_content`
+        <set>
+            <if test="contentDesc">`content_desc` = #{contentDesc},</if>
+            <if test="contentTitle">`content_title` = #{contentTitle}</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+    
+    
+    <update id="updateUserAnnounce">
+        UPDATE
+          `user_announce`
+        <set>
+            <if test="userId">`user_id` = #{userId},</if>
+            <if test="userName">`user_name` = #{userName},</if>
+            <if test="updateDateTime">`UPDATE_DATETIME` = #{updateDateTime},</if>
+            <if test="updateBy">`UPDATE_BY` = #{updateBy},</if>
+            <if test="type">`type` = #{type}</if>
+        </set>
+        WHERE `content_id` = #{contentId}
+    </update>
+
+</mapper>

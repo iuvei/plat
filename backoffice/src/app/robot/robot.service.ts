@@ -1,0 +1,67 @@
+import {Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
+
+import 'rxjs/add/operator/map';
+import {Common} from "../common/common";
+import {CustomHttp} from "../components/customhttp";
+
+@Injectable()
+export class RobotService {
+
+  private host = Common.URL;
+
+  private url = this.host + '/robot/search';
+  private createUrl = this.host + '/robot/create';
+  private batchCreateUrl = this.host + '/robot/batchAdd';
+  private batchSnCreateUrl = this.host + '/robot/batchAddWithSn';
+  private batchSnDepositUrl = this.host + '/robot/batchSnDeposit';
+  private startBetUrl = this.host + '/robot/startBet';
+  private stopBetUrl = this.host + '/robot/stopBet';
+  private startUrl = this.host + '/robot/start';
+  private stopUrl = this.host + '/robot/stop';
+  private syncNumberUrl = this.host + '/robot/syncNumber';
+
+  constructor(private http: CustomHttp) {
+  }
+
+  search(data: any) {
+    return this.http.post(this.url, data).map((res: Response) => res.json());
+  }
+
+  create(data: any) {
+    return this.http.post(this.createUrl, data).map((res: Response) => res.json());
+  }
+
+  batchCreate(data: any) {
+    return this.http.post(this.batchCreateUrl, data).map((res: Response) => res.json());
+  }
+
+  batchSnCreate(data: any) {
+    return this.http.post(this.batchSnCreateUrl, data).map((res: Response) => res.json());
+  }
+
+  batchSnDeposit(data: any) {
+    return this.http.post(this.batchSnDepositUrl, data).map((res: Response) => res.json());
+  }
+
+  startBet(number: number) {
+    return this.http.post(this.startBetUrl + '/' + number, {}).map((res: Response) => res.json());
+  }
+
+  stopBet() {
+    return this.http.post(this.stopBetUrl, {}).map((res: Response) => res.json());
+  }
+
+  start(id: number) {
+    return this.http.post(this.startUrl + '/' + id, {}).map((res: Response) => res.json());
+  }
+
+  stop(id: number) {
+    return this.http.post(this.stopUrl+ '/' + id, {}).map((res: Response) => res.json());
+  }
+
+  syncNumber(count: number) {
+    return this.http.get(this.syncNumberUrl+ '/' +count,).map((res: Response) => res.json());
+  }
+
+}

@@ -1,0 +1,48 @@
+<br>
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-condensed mytable" style="width: 100%; font-size: 14px; overflow-y: auto;">
+    <thead>
+    <tr>
+      <th>{{ 'common.hierarchy' | translate }}：</th>
+      <th colspan="11">{{path}}</th>
+    </tr>
+    <tr>
+      <th width="4%">{{ 'room.agentName' | translate }}</th>
+      <th width="5%">{{ 'room.statisType' | translate }}</th>
+      <th width="6%">{{ 'room.nickName' | translate }}</th>
+      <th width="3%">{{ 'room.roomNumber' | translate }}</th>
+      <th width="4%">{{ 'room.roundId' | translate }}</th>
+      <th width="4%">{{ 'roomNoHedge.noHedgeTotal' | translate }}</th>
+      <th width="4%">{{ 'room.proxyWater' | translate }}</th>
+      <th width="3%">{{ 'roomNoHedge.noHedgeCommission' | translate }}</th>
+      <th width="4%">{{ 'roomNoHedge.noHedgeWinTotal' | translate }}</th>
+      <th width="4%">{{ 'room.noHedgePercentage' | translate }}</th>
+      <th width="3%">{{ 'roomNoHedge.noHedgeSettle' | translate }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of tableList" style="line-height: 0.5rem" >
+      <td>{{item.loginName}}</td>
+      <td>
+        <a href="javascript:void(0)" (click)="expend(item)" *ngIf="item.statisType != 5">
+          <i class="fa fa-caret-down" aria-hidden="true"></i> {{item.statisTypeDesc}}
+        </a>
+        <a href="javascript:void(0)" (click)="handle(1,item)" *ngIf="item.statisType == 5">
+          <i class="fa fa-caret-down" aria-hidden="true"></i> {{item.statisTypeDesc}}
+        </a>
+      </td>
+      <td>{{item.nickName}}</td>
+      <td *ngIf="item.statisType == 4 || item.statisType == 5">{{item.roomNumber}}</td>
+      <td *ngIf="item.statisType != 4 && item.statisType != 5">--</td>
+      <td *ngIf="item.statisType ==5">{{item.roundId}}</td>
+      <td *ngIf="item.statisType !=5">--</td>
+      <td align="right">{{item.noHedgeTotal | number:'1.2'}}</td>
+      <td align="right">{{item.proxyWashPercentage*100 | number:'1.0-4'}}%</td>
+      <td align="right">{{item.nohedgeCommission | number:'1.2'}}</td>
+      <td align="right"><money [value]="item.noHedgeWinLost"></money></td>
+      <td>{{item.noHedgePercentage*100 | number:'1.0-4'}}%</td>
+      <td align="right"><money [value]="item.noHedgeSettle"></money></td>
+    </tr>
+    </tbody>
+  </table>
+</div>

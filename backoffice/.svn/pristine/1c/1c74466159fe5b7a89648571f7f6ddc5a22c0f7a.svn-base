@@ -1,0 +1,8 @@
+{
+  "login": {
+    "login": "한국의",
+    "user_name": "유저 이름",
+    "password": "암호",
+    "verif_code": "코드"
+  }
+}

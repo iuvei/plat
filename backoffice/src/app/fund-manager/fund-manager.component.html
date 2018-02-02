@@ -1,0 +1,49 @@
+<div class="card">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card-block p-a-0 clearfix">
+        <i class="fa fa-bell bg-danger p-a-2 p-x-3 font-2xl m-r-1 pull-left"></i>
+        <div class="h5 text-danger m-b-0 p-t-1">{{balance | currency:'CNY':true}}</div>
+        <div class="text-muted text-uppercase font-weight-bold font-xs">总账余额</div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card-block p-a-0 clearfix">
+        <button class="btn btn-outline-primary btn-lg btn-block" type="button" (click)="openModifyBalanceModal()">入账</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #modifyBalanceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'account.modifyRemainPoint' | translate }}</h4>
+        <button type="button" class="close" (click)="closeModifyBalanceModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="changeBalance()" >
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-control-label">{{ 'account.currentBalance' | translate }}:{{balance}}</label>
+          </div>
+          <div class="form-group">
+            <label for="modifyBalancePoint" class="form-control-label">{{ 'account.point' | translate }}:</label>
+            <input type="number" autocomplete="off" auclass="form-control" name="modifyBalancePoint" [(ngModel)]="modifyBalance.money" id="modifyBalancePoint" >
+          </div>
+          <div class="form-group">
+            <label for="modifyBalanceNote" class="form-control-label">{{ 'common.remark' | translate }}:</label>
+            <textarea class="form-control" name="modifyBalanceNote" [(ngModel)]="modifyBalance.remark" id="modifyBalanceNote" ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModifyBalanceModal()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

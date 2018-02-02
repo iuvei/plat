@@ -1,0 +1,109 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> <div [innerHTML]="title"></div>
+  </div>
+  <div class="card-block" >
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="searchModel.startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="searchModel.endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchLoginName">{{ 'transrecord.userNameAndAgent' | translate }}</label>
+        <input [(ngModel)]="searchModel.loginName" id="searchLoginName" name="searchLoginName" type="text" pInputText [placeholder]="'transrecord.userNameAndAgent' | translate">
+      </div>
+      <div class="form-group">
+        <label for="betNo">{{ 'transrecord.betNo' | translate }}</label>
+        <input [(ngModel)]="searchModel.betNo" id="betNo" name="betNo" type="text" pInputText  [placeholder]="'transrecord.betNo' | translate">
+      </div>
+
+      <div class="form-group">
+        <label for="gameId">{{ 'common.game' | translate }}</label>
+        <!--<select [(ngModel)]="searchModel.gameId" id="gameId" name="gameId" class="form-control"  >
+          <option value="-1">{{ 'common.all' | translate }}</option>
+          <option value="1">{{ 'common.baccarat' | translate }}</option>
+          <option value="3">{{ 'common.roulette' | translate }}</option>
+          &lt;!&ndash;<option value="2">{{ 'common.dragonTiger' | translate }}</option>
+          <option value="4">{{ 'common.dice' | translate }}</option>&ndash;&gt;
+        </select>-->
+        <dict-control id="gameId" name="gameId"  d-class="form-control" dict-type="trasrecord_game_type"  [(val)]="searchModel.gameId" default-info="全部"></dict-control>
+      </div>
+      <div class="btn-group">
+        <button type="submit" class="margin-left9 btn btn-primary">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+    <br>
+
+    <table *ngIf="realTableList != null" class="table table-bordered table-striped table-condensed mytable" style="width: 98%; font-size: 14px;">
+      <thead>
+        <tr>
+          <th width="8%">{{ 'transrecord.betNo' | translate }}</th>
+          <th width="12%">{{ 'transrecord.betTime' | translate }}</th>
+          <th width="12%">{{ 'transrecord.sendTime' | translate }}</th>
+        <!--  <th style="min-width: 60px;">{{ 'transrecord.agent' | translate }}</th>-->
+          <th width="6%">{{ 'transrecord.member' | translate }}</th>
+          <!-- <th>{{ 'transrecord.currency' | translate }}</th>-->
+          <th width="11%">{{ 'common.game' | translate }}</th>
+          <th>{{ 'transrecord.gameResult' | translate }}</th>
+          <!--<th>{{ 'transrecord.bettingCode' | translate }}</th>-->
+          <th>{{ 'transrecord.betNumber' | translate }}</th>
+          <th width="5%" >{{ 'transrecord.betBeforeBalance' | translate }}</th>
+          <th width="4%" >{{ 'transrecord.betMoney' | translate }}</th>
+          <th width="2%" >{{ 'transrecord.winlost' | translate }}</th>
+          <th width="4%">{{ 'transrecord.winlostMoney' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of realTableList" style="line-height: 0.5rem" >
+          <td>{{item.betId}}</td>
+          <td>{{item.betTime}}</td>
+          <td>{{item.settleTime}}</td>
+          <!--<td>{{item.agentName}}</td>-->
+          <td>{{item.userName}}</td>
+          <!--<td>{{item.moneytype}}</td>-->
+          <!--<td>{{item.result}}</td>
+          <td>{{item.betnums}}</td>-->
+          <td>{{item.gameName}}</td>
+          <td><div [innerHTML] = "makeRoundResult(item)"></div></td>
+          <td>{{item.itemName}}</td>
+          <td align="right">{{item.preBalance  | number:'1.2'}}</td>
+          <td align="right">{{item.amount  | number:'1.2'}}</td>
+          <td>
+          <span *ngIf = "item.winLostStatus == '1' "><font color='red'>{{ 'msg.d6_lose' | translate }}</font></span>
+          <span *ngIf = "item.winLostStatus == '2' "><font color='green'>{{ 'msg.d6_win' | translate }}</font></span>
+          <span *ngIf = "item.winLostStatus == '3' ">{{ 'msg.d6_tie' | translate }}</span>
+          <span *ngIf = "item.winLostStatus == '0' ">{{ 'msg.d6_return' | translate }}</span>
+          </td>
+          <td align="right">
+          <money [value]="item.winLostAmount"></money>
+          </td>
+        </tr>
+        <tr *ngIf="realTableList.length >0">
+          <td colspan="3" style="text-align: center;"><font color="red">{{'common.pageSta' | translate}}：</font></td>
+          <td colspan="5"></td>
+          <td align="right"><font color="red">{{betMoney}}</font></td>
+          <td></td>
+          <td align="right"><font color="red">{{winLostMoney}}</font></td>
+        </tr>
+        <tr *ngIf="realTableList.length >0">
+          <td colspan="3" style="text-align: center;"><font color="red">{{'common.pageTotalSta' | translate}}：</font></td>
+          <td colspan="5"></td>
+          <td align="right"><font color="red">{{totalBetMoney}}</font></td>
+          <td></td>
+          <td align="right"><font color="red">{{totalWinLostMoney}}</font></td>
+        </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false" [maxSize]="maxSize"
+                  [totalItems]="totalItems" [itemsPerPage]="searchModel.pageSize" [(ngModel)]="searchModel.currentPage" (numPages)="numPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+</div>
+

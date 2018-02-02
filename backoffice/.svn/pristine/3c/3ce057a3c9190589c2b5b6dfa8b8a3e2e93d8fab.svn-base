@@ -1,0 +1,52 @@
+<div class="app flex-row align-items-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card-group mb-0">
+          <div class="card p-2">
+            <div class="card-block">
+              <form (submit)="login()">
+                <h1>{{'login.login' | translate}}</h1>
+                <p class="text-muted">NA GROUP ADMIN</p>
+                <div class="input-group mb-1">
+                  <span class="input-group-addon"><i class="icon-user"></i></span>
+                  <input type="text" class="form-control" name="username" [(ngModel)]="userName" (blur)="changeVerifCodeURL()" placeholder="{{'common.userName' | translate}}"  #userNameSpy="ngModel" required autofocus>
+                </div>
+                <div class="input-group mb-2">
+                  <span class="input-group-addon"><i class="icon-lock"></i></span>
+                  <input type="password" class="form-control" name="password" [(ngModel)]="password" placeholder="{{'common.password' | translate}}" required>
+                </div>
+                <div class="input-group mb-2">
+                  <input type="text" class="form-control" name="verifCode" [(ngModel)]="verifCode" placeholder="{{'login.verificationCode' | translate}}" required [disabled]="!userNameSpy.valid" >
+                  <img (click)="changeVerifCodeURL()" [src]="verifCodeURL" *ngIf="verifCodeURL!=null">
+                </div>
+                <div class="alert alert-danger" role="alert" *ngIf="message">
+                  <strong>{{message}}</strong>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">{{'login.login' | translate}}</button>
+                  </div>
+                </div>
+                <br>
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-secondary"></button>
+                  <button type="button" class="btn btn-secondary"></button>
+                  <button type="button" class="btn btn-secondary" (click)="changeLanguage('zh-CN');">简</button>
+                  <button type="button" class="btn btn-secondary" (click)="changeLanguage('zh-TW');">繁</button>
+                  <button type="button" class="btn btn-secondary" (click)="changeLanguage('en-US');">EN</button>
+                  <button type="button" class="btn btn-secondary" (click)="changeLanguage('sk-SU');">한국의</button>
+                  <button type="button" class="btn btn-secondary"></button>
+                  <button type="button" class="btn btn-secondary"></button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+
+</style>

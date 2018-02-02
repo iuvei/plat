@@ -1,0 +1,240 @@
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ModalDirective} from 'ng2-bootstrap/modal/modal.component';
+
+import {RobotService} from "./robot.service";
+import {ToasterService} from "angular2-toaster";
+import {ConfirmationService} from "primeng/primeng";
+import {TranslateService} from "@ngx-translate/core";
+import {Common} from "../common/common";
+import {isUndefined} from "util";
+import {RobotBatchAddForm} from "./robotBatchAddForm";
+
+@Component({
+  templateUrl: 'robot.component.html',
+  styleUrls: ['./robot.component.scss']
+})
+export class RobotComponent implements OnInit {
+
+  public currentPage: number = 1;
+  public smallnumPages: number = 1;
+  public totalItems: number = 0;
+  public pageSize: number = 20;
+  public maxSize: number = Common.MAX_PAGE_SIZE;
+  private uploadurl = Common.URL + '/robot/upload';
+  private batchAddWithSnRequest = {};
+  private onlineRobotCount: number = 0;
+
+  dataList: any[] = [];
+
+  uploadedFiles: any[] = [];
+
+  loginNumber: number;
+
+  form: RobotBatchAddForm;
+
+  @ViewChild('batchCreateModal')
+  public batchCreateModal: ModalDirective;
+
+  @ViewChild('batchSnCreateModal')
+  public batchSnCreateModal: ModalDirective;
+
+  @ViewChild('removeMultipleModal')
+  public removeMultipleModal: ModalDirective;
+
+  @ViewChild('batchDepositModal')
+  public batchDepositModal: ModalDirective;
+
+  constructor(private robotService: RobotService, private _toaster: ToasterService,
+              private confirmationService: ConfirmationService, private _translate: TranslateService) {
+  }
+
+  ngOnInit() {
+    this.search();
+  }
+
+  public search() {
+    this.robotService.search({
+      'currentPage': this.currentPage,
+      'pageSize': this.pageSize
+    }).subscribe(
+      row => {
+        this.totalItems = row.data.total;
+        this.dataList = row.data.data;
+        this.onlineRobotCount = row.data.otherInfo.onlineRobotCount;
+      });
+  }
+
+  batchCreateModalShow() {
+    this.uploadedFiles = [];
+    this.form = new RobotBatchAddForm();
+    this.batchCreateModal.show();
+  }
+
+  startBet() {
+    let number = 0;
+    if (isUndefined(this.loginNumber) || this.loginNumber == null) {
+      number = 0;
+    } else {
+      number = this.loginNumber;
+    }
+    this.robotService.startBet(number).subscribe(
+      data => {
+        if (data.status == 0) {
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  stopBet() {
+    this.robotService.stopBet().subscribe(
+      data => {
+        if (data.status == 0) {
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  start(id: number) {
+    this.robotService.start(id).subscribe(
+      data => {
+        if (data.status == 0) {
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+        setTimeout(this.search(), 2000);
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  stop(id: number) {
+    this.robotService.stop(id).subscribe(
+      data => {
+        if (data.status == 0) {
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+        setTimeout(this.search(), 2000);
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  templateDownload() {
+    var download = Common.URL + '/file/robot/robotTemplate.xlsx';
+    window.open(download);
+  }
+
+  batchCreate() {
+    if (isUndefined(this.form.filePath) || this.form.filePath === '') {
+      this._toaster.pop('error', this._translate.instant('common.error'), this._translate.instant('robot.plz.select.file'));
+      return;
+    }
+    this.robotService.batchCreate(JSON.stringify(this.form)).subscribe(
+      data => {
+        if (data.status == 0) {
+          this.closeBatchCreateModal();
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+          this.search();
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  onUpload(event) {
+    for(let file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+    let responseBody = JSON.parse(event.xhr.response);
+    if(responseBody.status==0) {
+      this._toaster.pop('success', this._translate.instant('common.success'), responseBody.msg);
+      this.form.filePath = responseBody.data;
+    }else{
+      this._toaster.pop('error', this._translate.instant('common.error'), responseBody.msg);
+      this.uploadedFiles = [];
+    }
+  }
+
+  pageChanged(event: any): void {
+    this.currentPage = event.page;
+    this.search();
+  }
+
+  closeBatchCreateModal() {
+    this.form = new RobotBatchAddForm();
+    this.batchCreateModal.hide();
+  }
+
+
+  batchSnCreate() {
+    this.robotService.batchSnCreate(JSON.stringify(this.batchAddWithSnRequest)).subscribe(
+      data => {
+        if (data.status == 0) {
+          this.closeBatchCreateModal();
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+          this.search();
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+
+  batchSnDeposit() {
+    this.robotService.batchSnDeposit(JSON.stringify(this.batchAddWithSnRequest)).subscribe(
+      data => {
+        if (data.status == 0) {
+          this.closeDepositModal();
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+          this.search();
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  batchSnCreateModalShow() {
+    this.batchAddWithSnRequest = {};
+    this.batchSnCreateModal.show();
+  }
+
+  closeBatchSnCreateModal() {
+    this.batchAddWithSnRequest = {};
+    this.batchSnCreateModal.hide();
+  }
+
+  batchDepositModalShow() {
+    this.batchAddWithSnRequest = {};
+    this.batchDepositModal.show();
+  }
+
+  closeDepositModal() {
+    this.batchAddWithSnRequest = {};
+    this.batchDepositModal.hide();
+  }
+
+}

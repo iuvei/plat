@@ -1,0 +1,267 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="startTime">{{ 'common.date' | translate }}</label>
+        <p-calendar id="startTime" name="startTime" [(ngModel)]="searchForm.startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="endTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="endTime" name="endTime" [(ngModel)]="searchForm.endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="roomName">{{ 'privateRoom.roomName' | translate }}:</label>
+        <input [(ngModel)]="searchForm.roomName" name="roomName" type="text" class="form-control input-xlarge" >
+      </div>
+      <div class="form-group">
+        <label for="createUser1">{{ 'privateRoom.createUser' | translate }}:</label>
+        <input [(ngModel)]="searchForm.createUser" name="createUser1" id="createUser1" type="text" class="form-control input-xlarge" >
+      </div>
+      <div class="form-group">
+        <label for="type">{{ 'privateRoom.roomType' | translate }}</label>
+        <dict-control id="type" name="type"  d-class="form-control" dict-type="room_type"  [(val)]="searchForm.type" default-info="全部"></dict-control>
+      </div>
+      <div class="form-group">
+        <label for="searchRoomStatus">{{ 'common.status' | translate }}</label>
+        <dict-control id="searchRoomStatus" name="searchRoomStatus"  d-class="form-control" dict-type="room_status"  [(val)]="searchForm.searchRoomStatus" default-info="全部"></dict-control>
+      </div>
+      &nbsp;&nbsp;
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>&nbsp;&nbsp;
+        <button *ngIf="hasAuth && currentUser.id>2" type="button" class="margin-left9 btn btn-success" (click)="gotoCreateRoom()">{{ 'common.create' | translate }}</button>
+      </div>
+    </form>
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed" style="table-layout:fixed">
+      <thead>
+      <tr>
+        <th width="5%">{{ 'privateRoom.roomNumber' | translate }}</th>
+        <th width="8%">{{ 'privateRoom.roomName' | translate }}</th>
+        <th width="8%">{{ 'privateRoom.roomTable' | translate }}</th>
+        <th width="6%">{{ 'privateRoom.maxMembers' | translate }}</th>
+        <th width="6%">{{ 'privateRoom.minBalance' | translate }}</th>
+        <th width="6%">{{ 'privateRoom.hedgePercentage' | translate }}</th>
+        <th width="6%">{{ 'privateRoom.noHedgePercentage' | translate }}</th>
+        <th width="6%">{{ 'privateRoom.waterPercentage' | translate }}</th>
+        <th width="5%">{{ 'privateRoom.status' | translate }}</th>
+        <th width="8%">{{ 'privateRoom.roomType' | translate }}</th>
+        <th width="11%">{{ 'privateRoom.createUser' | translate }}</th>
+        <th width="12%">{{ 'privateRoom.createTime' | translate }}</th>
+        <th width="8%">{{ 'common.operation' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of datalist;let i = index">
+        <td>{{item.id}}</td>
+        <td><a *ngIf="item.id != currentUser.id" href="javascript:void(0);" (click)="gotoUpdateRoom(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{item.roomName}}</a></td>
+        <td>{{item.tableName}}</td>
+        <td align="right">{{item.maxMembers}}</td>
+        <td align="right">{{item.minBalance}}</td>
+        <td align="right" *ngIf="item.type ==2">{{item.hedgePercentage | number:'1.0-4'}}%</td>
+        <td *ngIf="item.type !=2" align="center">--</td>
+        <td align="right" *ngIf="item.type ==2">{{item.noHedgePercentage | number:'1.0-4'}}%</td>
+        <td *ngIf="item.type !=2" align="center">--</td>
+        <td align="right" *ngIf="item.type ==2">{{item.waterPercentage | number:'1.0-4'}}%</td>
+        <td *ngIf="item.type !=2" align="center">--</td>
+        <td *ngIf="hasAuth && (item.parentId ==currentUser.id || item.ownerId ==currentUser.id || currentUser.id==2)" align="center">
+          <a *ngIf="item.status==0" href="javascript:void(0);" (click)="gotoDelete(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><font color="red">{{item.status | DictPipe:'room_status'}}</font></a>
+          <a *ngIf="item.status==1" href="javascript:void(0);" (click)="gotoDelete(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><font color="green">{{item.status | DictPipe:'room_status'}}</font></a>
+        </td>
+        <td *ngIf="!(hasAuth && (item.parentId ==currentUser.id || item.ownerId ==currentUser.id || currentUser.id==2))" align="center">
+          <font *ngIf="item.status==0" color='red'>{{item.status | DictPipe:'room_status'}}</font>
+          <font *ngIf="item.status==1" color='green'>{{item.status | DictPipe:'room_status'}}</font>
+        </td>
+        <th>
+          <font *ngIf="item.type==3" color='red'>{{item.type | DictPipe:'room_type'}}</font>
+          <font *ngIf="item.type==2" color='green'>{{item.type | DictPipe:'room_type'}}</font>
+        </th>
+        <td>{{item.createUser}}</td>
+        <td>{{item.createTime}}</td>
+        <td *ngIf="hasAuth && (item.parentId ==currentUser.id || item.ownerId ==currentUser.id || currentUser.id==2)">
+          <a href="javascript:void(0)" (click)="openModifyPasswordModal(item)"><i class="fa fa-pencil-square-o"></i>{{ 'common.modifyPassword' | translate }}</a>&nbsp;
+        </td>
+        <td *ngIf="!(hasAuth && (item.parentId ==currentUser.id || item.ownerId ==currentUser.id || currentUser.id==2))"></td>
+      </tr>
+      </tbody>
+    </table>
+
+
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+    </nav>
+  </div>
+
+  <div>
+
+  </div>
+
+<div bsModal #addRoomDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width:700px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'privateRoom.createRoom' | translate }}</h4>
+        <button type="button" class="close" (click)="addRoomDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="createRoom()">
+        <div class="modal-body">
+          <div style="width:30%;float: left;" class="form-gro">
+              <div class="form-group">
+                <label for="gameTableId" class="form-control-label text-danger">{{ 'privateRoom.roomTable' | translate }}</label>
+                <select id="gameTableId" class="form-control input-lg" [(ngModel)]="roomForm.gameTableId" name="gameTableId" autofocus required>
+                <option *ngFor="let item of gameTableList" [value]="item.id">
+                  {{item.name}}
+                </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="roomName" class="form-control-label text-danger">{{ 'privateRoom.roomName' | translate }}</label>
+                <input type="text" class="form-control" id="roomName" name="roomName" [(ngModel)]="roomForm.roomName" required>
+                <label>{{ 'privateRoom.roomNameTip' | translate }}</label>
+              </div>
+              <div class="form-group">
+                <label for="password" class="form-control-label text-danger">{{ 'privateRoom.password' | translate }}</label>
+                <input type="password" class="form-control" id="password" name="password" [(ngModel)]="roomForm.password" required>
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword" class="form-control-label text-danger">{{ 'privateRoom.confirmPassword' | translate }}</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" [(ngModel)]="roomForm.confirmPassword" required>
+              </div>
+          </div>
+          <div style="width:60%;float: right;" class="form-group">
+            <div class="form-group">
+              <label for="maxMembers" class="form-control-label text-danger">{{ 'privateRoom.maxMembers' | translate }}</label>
+              <input type="text" class="form-control" id="maxMembers" name="maxMembers" [(ngModel)]="roomForm.maxMembers" required>
+              <label>{{ 'privateRoom.maxMembersTip' | translate }}</label>
+            </div>
+            <div class="form-group">
+              <label for="minBalance" class="form-control-label text-danger">{{ 'privateRoom.minBalance' | translate }}</label>
+              <input type="text" class="form-control" id="minBalance" name="minBalance" [(ngModel)]="roomForm.minBalance" required>
+            </div>
+            <!--<div class="form-group">-->
+              <!--<label for="type2">{{ 'privateRoom.roomType' | translate }}</label>-->
+              <!--<select [(ngModel)]="roomForm.type" id="type2" name="type2" class="form-control" autofocus required>-->
+                <!--<option value="">{{ 'common.plsSelect' | translate }}</option>-->
+                <!--<option value=2>{{ 'privateRoom.vipRoom' | translate }}</option>-->
+                <!--<option value=3>{{ 'privateRoom.normalRoom' | translate }}</option>-->
+              <!--</select>-->
+            <!--</div>-->
+            <div class="form-group">
+              <label for="type2">{{ 'privateRoom.roomType' | translate }}</label>
+              <dict-control id="type2" name="type2"  d-class="form-control" dict-type="room_type"  [(val)]="roomForm.type" default-info=""></dict-control>
+            </div>
+
+            <div class="form-group" *ngIf="roomForm.type ==2">
+              <label class="form-control-label text-danger">{{ 'privateRoom.configParam' | translate }}:</label>
+              <div class="ui-g-12" *ngFor="let percentageConfig of percentageConfigList">
+                <p-radioButton name="groupname" value="{{percentageConfig.lid}}" label="{{percentageConfig.label}}" [(ngModel)]="selectedValue"></p-radioButton>
+              </div>
+            </div>
+          </div>
+          <div style="clear: both;"></div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="addRoomDialog.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <div bsModal #updateRoomDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width:400px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{ 'privateRoom.updateRoom' | translate }}</h4>
+          <button type="button" class="close" (click)="updateRoomDialog.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form (ngSubmit)="updateRoom()">
+
+            <div class="modal-body">
+              <!--
+              <div class="form-group">
+                <label for="gameTableId2" class="form-control-label">{{ 'privateRoom.roomTable' | translate }}</label>
+                <select id="gameTableId2" class="form-control input-lg" [(ngModel)]="roomForm.gameTableId" name="gameTableId2" required>
+                  <option *ngFor="let item of gameTableList" [value]=item.id>
+                    {{item.name}}
+                  </option>
+                </select>
+              </div>
+              -->
+              <div class="form-group">
+              <div class="form-group">
+                <label for="roomName2" class="form-control-label">{{ 'privateRoom.roomName' | translate }}</label>
+                <input type="text" class="form-control" id="roomName2" name="roomName2" [(ngModel)]="roomForm.roomName" >
+                <label>{{ 'privateRoom.roomNameTip' | translate }}</label>
+              </div>
+              <div class="form-group">
+                <label for="maxMembers2" class="form-control-label">{{ 'privateRoom.maxMembers' | translate }}</label>
+                <input type="text" class="form-control" id="maxMembers2" name="maxMembers2" [(ngModel)]="roomForm.maxMembers" >
+                <label>{{ 'privateRoom.maxMembersTip' | translate }}</label>
+              </div>
+              <div class="form-group">
+                <label for="minBalance2" class="form-control-label text-danger">{{ 'privateRoom.minBalance' | translate }}</label>
+                <input type="text" class="form-control" id="minBalance2" name="minBalance2" [(ngModel)]="roomForm.minBalance" required>
+              </div>
+            </div>
+        <!--    <div style="width:60%;float: right;" class="form-group">
+              <div class="form-group">
+                <label class="form-control-label text-danger">{{ 'privateRoom.configParam' | translate }}:</label>
+                <div class="ui-g-12" *ngFor="let percentageConfig of percentageConfigList">
+                  <p-radioButton name="groupname" value="{{percentageConfig.lid}}" label="{{percentageConfig.label}}" [(ngModel)]="selectedValue"></p-radioButton>
+                </div>
+              </div>
+            </div>
+            <div style="clear: both;"></div>-->
+
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+            <button type="button" class="btn btn-secondary" (click)="updateRoomDialog.hide()">{{ 'common.close' | translate }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div bsModal #modifyPasswordModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width:400px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{ 'common.modifyPassword' | translate }}</h4>
+          <button type="button" class="close" (click)="closeModifyPasswordModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form (submit)="modifyPassword()" >
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="modifyNewPassword" class="form-control-label">{{ 'common.newPassword' | translate }}:</label>
+              <input type="password" name="modifyNewPassword" class="form-control" [(ngModel)]="roomForm.password" id="modifyNewPassword" autofocus required>
+            </div>
+            <div class="form-group">
+              <label for="modifyConfirmPassword" class="form-control-label">{{ 'common.confirmPassword' | translate }}:</label>
+              <input type="password" class="form-control" name="modifyConfirmPassword" [(ngModel)]="roomForm.confirmPassword" id="modifyConfirmPassword" required >
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+            <button type="button" class="btn btn-secondary" (click)="closeModifyPasswordModal()">{{ 'common.close' | translate }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

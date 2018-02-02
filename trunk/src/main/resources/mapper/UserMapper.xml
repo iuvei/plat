@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IUserMapper">
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+      INSERT INTO `user` (
+          `login_name`,
+          `nick_name`,
+          `password`,
+          `phone`,
+          `email`,
+          `balance`,
+          `barrcode`,
+          `head_pic`,
+          `user_type`,
+          `user_status`,
+          `password_salt`,
+          `create_by`
+        )
+        VALUES
+          (
+            #{loginName},
+            #{nickName},
+            #{password},
+            #{phone},
+            #{email},
+            #{balance},
+            #{barrcode},
+            #{headPic},
+            #{userType},
+            #{userStatus},
+            #{passwordSalt},
+            #{createBy}
+          )
+    </insert>
+    
+    <update id="update">
+        UPDATE
+          `user`
+        <set>
+            <if test="loginName != null and loginName != '' ">`login_name` = #{loginName},</if>
+            <if test="nickName != null and nickName!= '' ">`nick_name` = #{nickName},</if>
+            <if test="password != null and password != ''">`password` = #{password},</if>
+            <if test="phone != null and phone != ''">`phone` = #{phone},</if>
+            <if test="email != null and email != '' ">`email` = #{email},</if>
+            <if test="barrcode != null and barrcode != ''">`barrcode` = #{barrcode},</if>
+            <if test="headPic != null and headPic != ''">`head_pic` = #{headPic},</if>
+            <if test="userType">`user_type` = #{userType},</if>
+            <if test="userStatus">`user_status` = #{userStatus},</if>
+        </set>
+        WHERE `id` = #{id} and `user_type` = #{userType}
+    </update>
+
+
+    <insert id="addUserRole">
+        <foreach close="" collection="roleIds" index="index" item="roleId" open="" separator=";">
+            INSERT INTO `user_role` (
+            `ROLE_ID`,
+            `USER_ID`
+            )
+            VALUES
+            (
+            #{roleId},
+            #{userId}
+            )
+        </foreach>
+    </insert>
+
+    <sql id="condtion">
+        <where>
+            <if test="loginName !=null">and login_name LIKE CONCAT('%',#{loginName},'%')</if>
+            <if test="userStatus !=null and userStatus>0">and user_status=#{userStatus}</if>
+            <if test="userType !=null">and user_type=#{userType}</if>
+        </where>
+    </sql>
+
+    <select id="search" resultType="com.na.manager.entity.User">
+        select * from user
+        <include refid="condtion"/>
+        order by create_time desc
+        limit #{startRow},#{pageSize}
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*) from user
+        <include refid="condtion"/>
+    </select>
+    
+</mapper>

@@ -1,0 +1,133 @@
+<div class="card">
+  <div class="card-block">
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label>{{'bet.realTimeBetInfo' | translate}} {{'bet.realTimeBetInfoOnline' | translate}} {{data.liveUserNum}}	{{'bet.realTimeBetInfoBet' | translate}} {{data.betUserNum}}</label>
+      </div>
+      &nbsp;&nbsp;
+      <div class="form-group">
+        <button type="button" class="btn btn-primary" (click)="search()">{{'common.refresh' | translate}}</button>
+      </div>
+    </form>
+
+    <br>
+    <ng-container *ngFor="let item of data.liveBetBeans">
+      <!--百家乐-->
+      <table class="table table-bordered table-striped table-condensed" *ngIf="item.gameId==1">
+        <tbody>
+          <tr>
+            <td>{{'bet.tableGame' | translate}}</td>
+            <td>{{'bet.tableTableNum' | translate}}</td>
+            <td>{{'bet.tableBootsNum' | translate}}</td>
+            <td>{{'bet.tableGameNum' | translate}}</td>
+            <td colspan="2">{{'bet.tableStatus' | translate}}</td>
+            <td>{{'bet.b' | translate}}</td>
+            <td>{{'bet.p' | translate}}</td>
+            <td>{{'bet.t' | translate}}</td>
+          </tr>
+          <tr>
+            <td rowspan="3"><a href="javascript:void(0)"  (click)="expend(item)"><i class="fa fa-caret-down" aria-hidden="true"></i> {{item.gameName}}</a></td>
+            <td rowspan="3">{{item.tableName}}</td>
+            <td rowspan="3">{{item.bootId}}</td>
+            <td>{{item.roundNum}}</td>
+            <td colspan="2">{{item.roundStatus | DictPipe : statusList}}</td>
+            <td>{{item.bMoney}}</td>
+            <td>{{item.pMoney}}</td>
+            <td>{{item.tMoney}}</td>
+          </tr>
+          <tr>
+            <td>{{'bet.bd' | translate}}</td>
+            <td>{{'bet.pd' | translate}}</td>
+            <td>{{'bet.bc' | translate}}</td>
+            <td>{{'bet.pc' | translate}}</td>
+            <td>{{'bet.n6' | translate}}</td>
+            <td>{{'bet.b27' | translate}}</td>
+          </tr>
+          <tr>
+            <td>{{item.bdMoney}}</td>
+            <td>{{item.pdMoney}}</td>
+            <td>{{item.bcMoney}}</td>
+            <td>{{item.pcMoney}}</td>
+            <td>{{item.n6Money}}</td>
+            <td>{{item.b27Money}}</td>
+          </tr>
+          <tr *ngIf="item.isExpanded">
+            <td style="padding: 0"><span class="pull-right">└─────</span></td>
+            <td style="padding: 0" colspan="12">
+              <top-bet-table [parentObj]="item"></top-bet-table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!--轮盘-->
+      <table class="table table-bordered table-striped table-condensed" *ngIf="item.gameId==3">
+        <tbody>
+        <tr>
+          <td>{{'bet.tableGame' | translate}}</td>
+          <td>{{'bet.tableTableNum' | translate}}</td>
+          <td>{{'bet.tableGameNum' | translate}}</td>
+          <td colspan="2">{{'bet.tableStatus' | translate}}</td>
+          <td>{{'bet.one' | translate}}</td>
+          <td>{{'bet.two' | translate}}</td>
+          <td>{{'bet.str' | translate}}</td>
+          <td>{{'bet.thr' | translate}}</td>
+        </tr>
+        <tr>
+          <td rowspan="5"><a href="javascript:void(0)"  (click)="expend(item)"><i class="fa fa-caret-down" aria-hidden="true"></i> {{item.gameName}}</a></td>
+          <td rowspan="5">{{item.tableName}}</td>
+          <td rowspan="5">{{item.roundNum}}</td>
+          <td colspan="2">{{item.roundStatus | DictPipe : statusList}}</td>
+          <td>{{item.oneMoney}}</td>
+          <td>{{item.twoMoney}}</td>
+          <td>{{item.strMoney}}</td>
+          <td>{{item.thrMoney}}</td>
+        </tr>
+        <tr>
+          <td>{{'bet.lin' | translate}}</td>
+          <td>{{'bet.col' | translate}}</td>
+          <td>{{'bet.fig' | translate}}</td>
+          <td>{{'bet.ang' | translate}}</td>
+          <td>{{'bet.for' | translate}}</td>
+          <td>{{'bet.big' | translate}}</td>
+        </tr>
+        <tr>
+          <td>{{item.linMoney}}</td>
+          <td>{{item.colMoney}}</td>
+          <td>{{item.figMoney}}</td>
+          <td>{{item.angMoney}}</td>
+          <td>{{item.forMoney}}</td>
+          <td>{{item.bigMoney}}</td>
+        </tr>
+        <tr>
+          <td>{{'bet.sma' | translate}}</td>
+          <td>{{'bet.odd' | translate}}</td>
+          <td>{{'bet.eve' | translate}}</td>
+          <td>{{'bet.bla' | translate}}</td>
+          <td>{{'bet.red' | translate}}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>{{item.smaMoney}}</td>
+          <td>{{item.oddMoney}}</td>
+          <td>{{item.eveMoney}}</td>
+          <td>{{item.blaMoney}}</td>
+          <td>{{item.redMoney}}</td>
+          <td></td>
+        </tr>
+        <tr *ngIf="item.isExpanded">
+          <td style="padding: 0"><span class="pull-right">└─────</span></td>
+          <td style="padding: 0" colspan="12">
+            <top-bet-table [parentObj]="item"></top-bet-table>
+          </td>
+        </tr>
+
+
+        </tbody>
+      </table>
+
+    </ng-container>
+
+  </div>
+</div>
+

@@ -1,0 +1,134 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> {{title}}
+  </div>
+  <div class="card-block">
+    <form class="form-inline" onsubmit="search()">
+      <div class="form-group">
+        <label>{{ 'resource.resourceName' | translate }}</label>
+        <input  id="resourceName" name="resourceName"  [(ngModel)]="searchResourceModel.resourceName"  type="text" class="form-control input-xlarge"  [placeholder]="'resource.resourceName' | translate" [ngModelOptions]="{standalone: true}">
+      </div>
+      <div class="form-group">
+        <label>{{ 'common.status' | translate }}</label>
+        <select name="status" class="form-control input-lg" [(ngModel)]="searchResourceModel.status" >
+          <option [value]="0">{{ 'common.all' | translate }}</option>
+          <option [value]="1">{{ 'common.enable' | translate }}</option>
+          <option [value]="2">{{ 'common.disable' | translate }}</option>
+        </select>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="margin-left9 btn btn-primary " (click)="search()" >{{ 'common.search' | translate }}</button>
+        <button type="button" class="margin-left9 btn btn-success " (click)="createResourceDialog.show()"> {{ 'resource.createResource' | translate }}</button>
+      </div>
+    </form>
+
+    <br>
+
+    <table class="table table-bordered table-striped table-condensed">
+      <thead>
+      <tr>
+        <th>{{ 'resource.resourceName' | translate }}</th>
+        <th>{{ 'common.describe' | translate }}</th>
+        <th>{{ 'resource.no' | translate }}</th>
+        <th>{{ 'common.createTime' | translate }}</th>
+        <th>{{ 'common.creator' | translate }}</th>
+        <th>{{ 'common.modifyTime' | translate }}</th>
+        <th>{{ 'common.modifier' | translate }}</th>
+        <th>{{ 'common.status' | translate }}</th>
+        <th>{{ 'common.operation' | translate }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of tableList">
+        <td>{{item.resourcename}}</td>
+        <td>{{item.resourcedesc}}</td>
+        <td>{{item.resourceorder}}</td>
+        <td>{{item.createdatetime}}</td>
+        <td>{{item.createby}}</td>
+        <td>{{item.updatedatetime}}</td>
+        <td>{{item.updateby}}</td>
+        <td>{{item.status?'启用':'禁用'}}</td>
+        <td><a href="javascript:void(0)" (click)="readyedit(item)" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.modify' | translate }}</a></td>
+      </tr>
+      </tbody>
+    </table>
+    <nav>
+      <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                  [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                  [totalItems]="totalItems" [itemsPerPage]="pageSize" [maxSize]="maxSize" [(ngModel)]="currentPage" (numPages)="smallnumPages = $event"
+                  (pageChanged)="pageChanged($event)"></pagination>
+
+    </nav>
+  </div>
+</div>
+
+
+<p-growl [value]="msgs" sticky="sticky"></p-growl>
+<!--创建资源对话框-->
+<div bsModal #createResourceDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'resource.createResource' | translate }}</h4>
+        <button type="button" class="close" (click)="createResourceDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="add()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="resourceName_add" class="form-control-label">{{ 'resource.resourceName' | translate }}</label>
+            <input type="text" class="form-control"  id="resourceName_add"  name="resourceName" [(ngModel)]="useResourceModel.resourceName"  required>
+          </div>
+          <div class="form-group">
+            <label for="resourceDesc_add" class="form-control-label">{{ 'resource.resourceDescribe' | translate }}</label>
+            <textarea rows="5"  class="form-control" id="resourceDesc_add" name="resourceDesc" [(ngModel)]="useResourceModel.resourceDesc" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="createResourceDialog.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!--资源修改对话框-->
+<div bsModal #updateResourceDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'resource.modifyResource' | translate }}</h4>
+        <button type="button" class="close" (click)="updateResourceDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="update()" >
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="resourceName_add" class="form-control-label">{{ 'resource.resourceName' | translate }}</label>
+            <input type="text" class="form-control"  id="resourceName_edit"  name="resourceName" [(ngModel)]="useResourceModel.resourceName"  required>
+          </div>
+          <div class="form-group">
+            <label for="resourceDesc_add" class="form-control-label">{{ 'resource.resourceDescribe' | translate }}资源描述</label>
+            <textarea rows="5"  class="form-control" id="resourceDesc_edit" name="resourceDesc" [(ngModel)]="useResourceModel.resourceDesc" required></textarea>
+          </div>
+          <div class="form-group" ng-app="selectss">
+            <label for="resourceDesc_edit" class="form-control-label">{{ 'common.status' | translate }}</label>
+            <select name="status" ng-model="selectstatus" ng-init="selectstatus = useResourceModel.status" class="form-control input-lg" [(ngModel)]="useResourceModel.status" >
+              <option value="1">{{ 'common.enable' | translate }}</option>
+              <option value="2">{{ 'common.disable' | translate }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="updateResourceDialog.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

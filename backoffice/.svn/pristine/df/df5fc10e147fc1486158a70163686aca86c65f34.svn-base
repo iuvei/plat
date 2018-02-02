@@ -1,0 +1,1058 @@
+import {Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {ModalDirective} from "ng2-bootstrap/modal/modal.component";
+import {ConfirmationService, TreeNode} from "primeng/primeng";
+
+import {AccountService} from "./account.service";
+import {AccountAddTableDirective} from "./account-add-table.directive";
+import {AccountTableComponent} from "./account-table.component";
+import {AccountForm} from "./accountfrom";
+import {AccountVO} from "./accountvo";
+import {AccountModalConfig} from "./account-modal-config";
+import {ToasterService} from "angular2-toaster";
+import {TranslateService} from "@ngx-translate/core";
+import {isUndefined} from "util";
+import {CommonUtil} from "../common/CommonUtil";
+
+@Component({
+  templateUrl: 'account.component.html',
+  styleUrls: ['./account.component.scss'],
+})
+export class AccountComponent implements  OnInit,OnDestroy {
+
+  // query param
+  public searchUserName: string = '';
+  // public searchUserLevel: string = '0';
+  // public searchAccountStatus: string = '0';
+  // public searchBetStatus: string = '0';
+
+  // 加载限红数据
+  public isVip: boolean = false;
+  public isMobile: boolean = false;
+  public isPhone: boolean = false;
+  public islp: boolean = false;
+
+  public createAccount: AccountVO = new AccountVO();
+  public modifyAccount: AccountVO = new AccountVO();
+  public constModifyAccount: AccountVO = new AccountVO();
+
+  // 修改所有下线投注弹窗标志
+  public modifyAllBetStatusModalFlag: boolean = false;
+  // 修改所有下线账号状态弹窗标志
+  public modifyAllAccountStatusModalFlag: boolean = false;
+  // 激活所有下线账号称号弹窗标志
+  public modifyAllActiveTitleModalFlag: boolean = false;
+
+  // 添加用户弹窗
+  @ViewChild('addAccountModal')
+  public addAccountModal: ModalDirective;
+  // 修改代理网用户弹窗
+  @ViewChild('modifyAccountModal')
+  public modifyAccountModal: ModalDirective;
+
+  // 修改现金网会员弹窗
+  @ViewChild('modifyCashAccountModal')
+  public modifyCashAccountModal: ModalDirective;
+  // 修改密码弹窗
+  @ViewChild('modifyPasswordModal')
+  public modifyPasswordModal: ModalDirective;
+  // 调整点数弹窗
+  @ViewChild('modifyBalanceModal')
+  public modifyBalanceModal: ModalDirective;
+
+  @ViewChild(AccountAddTableDirective)
+  public addTableView: AccountAddTableDirective;
+
+  // 修改密码
+  public newPassword: string = '';
+  public confirmPassword: string = '';
+
+  // 修改所有下级账号状态
+  public allAccountStatus: string = '';
+  // 修改所有下级投注状态
+  public allBetStatus: string = '';
+  // 激活所有下级称号状态
+  public allActiveTitle: string = '';
+
+  // 修改点数参数
+  modifyBalanceType: string;
+  modifyBalancePoint: string;
+  modifyBalanceNote: string;
+
+  // 限红树数据
+  limitTreeData: TreeNode[] ;
+  // 已选择限红树
+  selectedLimitTreeData: TreeNode[];
+
+  // 加载用户类型
+  userTypeList: any[] = [];
+
+  // 创建用户显示配置
+  createModalConfig: AccountModalConfig = new AccountModalConfig();
+  // 修改用户显示配置
+  modifyModalConfig: AccountModalConfig = new AccountModalConfig();
+
+  // 表格List
+  tabeleComponentArray: AccountTableComponent[] = [];
+
+  // 选择的表格行数据
+  selectRowData: any;
+  // 当前选择的子表格
+  _childTable: any;
+  // 当前登录用户
+  currentUser: any;
+
+  transferType: any[] =[];
+
+  constructor(private accountService: AccountService, private _componentFactoryResolver: ComponentFactoryResolver,
+              private confirmationService: ConfirmationService, private _toaster: ToasterService,
+              private _translate: TranslateService) {
+  }
+
+  ngOnInit() {
+    const user = JSON.parse(localStorage.getItem('loginUser'));
+    this.currentUser = user.user;
+    // let data = JSON.parse(sessionStorage.getItem("account-component"));
+    // if(data){
+    //   this.searchUserName = data.searchUserName;
+    //   for(let i=0;i<data.formList.length;i++){
+    //     this.loadComponent(data.formList[i]);
+    //   }
+    // }else {
+      this.loadComponent(null);
+    // }
+    //const a={};
+    //a["name"]= this._translate.instant("common.in");
+   // a["value"] = "1";
+    //this.typeList.push(a);
+    this.initData();
+  }
+
+  initData(){
+    this.transferType.push({'name':this._translate.instant("common.in"),'value':'1'});
+    this.transferType.push({'name':this._translate.instant("common.out"),'value':'2'});
+
+    this.userTypeList.push({'levelname':this._translate.instant("account.agent"),'lid':'1'});
+    this.userTypeList.push({'levelname':this._translate.instant("account.member"),'lid':'2'});
+  }
+
+
+  ngOnDestroy(): void {
+    // let data ={
+    //   "searchUserName":this.searchUserName,
+    //   "formList":[]
+    // };
+    // for(let i=0;i<this.tabeleComponentArray.length;i++){
+    //   data.formList.push(this.tabeleComponentArray[i].form);
+    // }
+    // sessionStorage.setItem("account-component",JSON.stringify(data));
+  }
+
+  public search() {
+    let data: AccountForm;
+    if (!isUndefined(this.searchUserName) && this.searchUserName !== '') {
+      data = new AccountForm();
+      data.loginName = this.searchUserName;
+    }
+    // data.type = this.searchUserLevel;
+    // data.accountStatus = this.searchAccountStatus;
+    // data.betStatus = this.searchBetStatus;
+    this.loadComponent(data);
+  }
+
+  loadComponent(data: AccountForm) {
+    // 创建AccountTableComponent工厂
+    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(AccountTableComponent);
+    const viewContainerRef = this.addTableView.viewContainerRef;
+    this.addTableView.viewContainerRef.clear();
+    this.tabeleComponentArray = [];
+    const componentRef = viewContainerRef.createComponent(componentFactory);
+    this.tabeleComponentArray.push((<AccountTableComponent>componentRef.instance));
+    (<AccountTableComponent>componentRef.instance).viewRef = componentRef.hostView;
+    (<AccountTableComponent>componentRef.instance).form = data;
+    (<AccountTableComponent>componentRef.instance).addTableView = this.addTableView;
+    (<AccountTableComponent>componentRef.instance)._parent = this;
+  }
+
+  create() {
+    if (!/^[A-Za-z_0-9]{3,16}$/.test(this.createAccount.loginName)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.illegalUserName'));
+      return false;
+    }
+
+    if (!/^[A-Za-z0-9]{6,15}$/.test(this.createAccount.password)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.password.error'));
+      return false;
+    }
+
+    if (this.createAccount.password !== this.createAccount.repwd) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.pwdError'));
+      return false;
+    }
+    if (this.createAccount.washPercentage !='0' && !Number(this.createAccount.washPercentage)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.washCode.error'));
+      return false;
+    }
+    if (this.createAccount.userType ==1 && this.createAccount.intoPercentage !='0' && !Number(this.createAccount.intoPercentage)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.agentHold.error'));
+      return false;
+    }
+    const spercentage = CommonUtil.forDight(parseFloat(this.selectRowData.washPercentage)*100,2);
+    if (Number(this.createAccount.washPercentage) > spercentage) {
+      this._toaster.pop('error', this._translate.instant('common.warning'),
+        this._translate.instant('account.realWashCodeNoMoreThan') + spercentage+"%");
+      return false;
+    }
+
+    if (Number(this.createAccount.type) !== 2) {
+      const intoPercentage = CommonUtil.forDight(parseFloat(this.selectRowData.intoPercentage)*100,2);
+      if (Number(this.createAccount.intoPercentage) > intoPercentage) {
+        this._toaster.pop('error', this._translate.instant('common.warning'),
+          this._translate.instant('account.realHoldNoMoreThan') + intoPercentage+"%");
+        return false;
+      }
+    }
+
+    if (this.selectedLimitTreeData.length ==0) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.chipsillegal'));
+      return false;
+    }
+    const chips: string[] = [];
+    chips['type1'] = 0;
+    chips['type3'] = 0;
+    for (const tree of this.selectedLimitTreeData) {
+      if (tree.data !== 0) {
+        if(tree.type =='1'){
+          chips['type1']=Number.parseInt(chips['type1'])+1;
+        }else if(tree.type =='3'){
+          chips['type3']=Number.parseInt(chips['type3'])+1;
+        }
+        chips.push(tree.data);
+      }
+    }
+    if(Number.parseInt(chips['type1']) <1 || Number.parseInt(chips['type3']) <1){
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.chips.to.short'));
+      return false;
+    }
+
+    if (this.createAccount.type =='2' && (Number.parseInt(chips['type1']) >3 || Number.parseInt(chips['type3']) >3)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.chips.to.long'));
+      return false;
+    }
+    this.createAccount.chips = ","+chips.join(',')+",";
+    this.createAccount.parentId = this.selectRowData.id;
+    this.accountService.create(this.createAccount).subscribe(
+      data => {
+        if (data.status === 0) {
+          this.closeAddAccountModal();
+          this._childTable.refreshTableData();
+          const index = this.tabeleComponentArray.indexOf(this._childTable);
+          if (this.tabeleComponentArray.length > index) {
+            this.tabeleComponentArray[index + 1].refreshTableData();
+          }
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  modify() {
+    if (this.modifyAccount.washPercentage !='0' && !Number(this.modifyAccount.washPercentage)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.washCode.error'));
+      return false;
+    }
+    if (this.modifyAccount.userType ==1 && this.modifyAccount.intoPercentage !='0' && !Number(this.modifyAccount.intoPercentage)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.agentHold.error'));
+      return false;
+    }
+    if (Number(this.modifyAccount.washPercentage) >  Number(this.modifyModalConfig.washCodeMaxPercent)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'),
+        this._translate.instant('account.realWashCodeNoMoreThan') + this.modifyModalConfig.washCodeMaxPercent+"%");
+      return false;
+    }
+
+    if (Number(this.modifyAccount.type) !== 2) {
+      if (Number(this.modifyAccount.intoPercentage) >  Number(this.modifyModalConfig.agentHoldMaxPercent)) {
+        this._toaster.pop('error', this._translate.instant('common.warning'),
+          this._translate.instant('account.realHoldNoMoreThan') + this.modifyModalConfig.agentHoldMaxPercent+"%");
+        return false;
+      }
+    }
+    if (this.selectedLimitTreeData.length === 0) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.chipsillegal'));
+      return false;
+    }
+    const chips: string[] = [];
+    chips['type1'] = 0;
+    chips['type3'] = 0;
+    for (const tree of this.selectedLimitTreeData) {
+      if (tree.data !== 0) {
+        if (tree.type == '1') {
+          chips['type1'] = Number.parseInt(chips['type1']) + 1;
+        } else if(tree.type == '3') {
+          chips['type3'] = Number.parseInt(chips['type3']) + 1;
+        }
+        chips.push(tree.data);
+      }
+    }
+    if(Number.parseInt(chips['type1']) <1 || Number.parseInt(chips['type3']) <1){
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.chips.to.short'));
+      return false;
+    }
+    if (this.modifyAccount.type == '2' &&(Number.parseInt(chips['type1']) >3 || Number.parseInt(chips['type3']) >3)) {
+      this._toaster.pop('error', this._translate.instant('common.warning'), this._translate.instant('account.chips.to.long'));
+      return false;
+    }
+
+    this.modifyAccount.chips = ","+chips.join(',')+",";
+    this.accountService.modify(this.modifyAccount).subscribe(
+      data => {
+        if (data.status === 0) {
+          this.closeModifyAccountModal();
+          this.closeModifyCashAccountModal();
+          this._childTable.refreshTableData();
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  getUserType() {
+    this.accountService.getUserType({
+      id : this.selectRowData.levelid
+    }).subscribe(
+      data => {
+        this.userTypeList = data;
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  getLimitData(selectData?: string[]) {
+    let userId = this.selectRowData.id;
+    if (selectData) { // 编辑，传上级ID
+      userId = this.selectRowData.parentId;
+    }
+    this.accountService.getLimitData({
+        'id': userId
+    }).subscribe(
+      data => {
+        const root = data.data;
+        root[0].label=this._translate.instant("common.root");
+        if (selectData) {
+          this.selectedLimitTreeData = [];
+          const treeNodeList: TreeNode[] = [];
+          for (const note of root[0].children) {
+            let label = '';
+            if(note.type ==1){
+              label += this._translate.instant("common.baccarat");
+            }else{
+              label += this._translate.instant("common.roulette");
+            }
+            label +=this._translate.instant("common.max")+":"+note.max+" "+this._translate.instant("common.min")+":"+note.min +" "
+            +this._translate.instant("common.chips")+":"+note.chips;
+            note.label = label;
+            for (const tree of selectData) {
+              if (note.data === Number(tree)) {
+                treeNodeList.push(note);
+              }
+            }
+          }
+          this.selectedLimitTreeData = treeNodeList;
+        }
+
+        root[0].expanded = true;
+        this.limitTreeData = root;
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  getSuperLimitData(userId) {
+    this.accountService.getLimitData({
+        'id': userId}).subscribe(
+      data => {
+        const root = data.data;
+        root[0].label=this._translate.instant("common.root");
+        for (const note of root[0].children) {
+          let label = '';
+          if(note.type ==1){
+            label += this._translate.instant("common.baccarat");
+          }else{
+            label += this._translate.instant("common.roulette");
+          }
+          label +=this._translate.instant("common.max")+":"+note.max+" "+this._translate.instant("common.min")+":"+note.min +" "
+            +this._translate.instant("common.chips")+":"+note.chips;
+          note.label = label;
+        }
+        root[0].expanded = true;
+        this.limitTreeData = root;
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  // 修改密码
+  modifyPassword() {
+    if (this.newPassword !== this.confirmPassword) {
+      this._toaster.pop('error', this._translate.instant('common.error'), this._translate.instant('common.confirmPasswordFailure'));
+      return false;
+    }
+    this.accountService.modifyPassword({
+      id: this.selectRowData.id,
+      userType: this.selectRowData.userType,
+      password: this.newPassword
+    }).subscribe(
+      data => {
+        if (data.status === 0) {
+          this.closeModifyPasswordModal();
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+  // 修改账号状态
+  modifyAccountStatus() {
+    let status = 0;
+    let header = '';
+    let message = '';
+    if (this.selectRowData.userStatus === 2) {
+      status = 1;
+      header = this._translate.instant('account.enableAccount');
+      message = this._translate.instant('account.confirmEnableAccount');
+    } else {
+      status = 2;
+      header = this._translate.instant('account.disableAccount');
+      message = this._translate.instant('account.confirmDisableAccount');
+    }
+
+    this.confirmationService.confirm({
+      //header: header,
+      message: message,
+      accept : () => {
+        this.accountService.modifyAccountStatus({
+          id: this.selectRowData.id,
+          type: this.selectRowData.type,
+          userStatus: status
+        }).subscribe(
+        data => {
+          if (data.status === 0) {
+            this._childTable.refreshTableData();
+            this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+          } else {
+            this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+          }
+        },
+        err => {
+          console.log(err);
+        });
+      }
+    });
+  }
+  // 修改所有下线账号状态
+  modifyAllAccountStatus() {
+    this.accountService.modifyAccountStatus({
+      id: this.selectRowData.id,
+      type: this.selectRowData.type,
+      userStatus: this.allAccountStatus
+    }).subscribe(
+      data => {
+        if (data.status === 0) {
+          this.modifyAllAccountStatusModalFlag = false;
+          let index = this.tabeleComponentArray.indexOf(this._childTable);
+          for (; this.tabeleComponentArray.length > index ; index++) {
+            this.tabeleComponentArray[index].refreshTableData();
+          }
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+  // 修改投注状态
+  modifyBetStatus() {
+    let status = 0;
+    let header = '';
+    let message = '';
+    if (this.selectRowData.isBet === 2) {
+      status = 1;
+      header = this._translate.instant('account.enableBetFunction');
+      message = this._translate.instant('account.confirmEnableBetFunction');
+    } else {
+      status = 2;
+      header = this._translate.instant('account.disableBetFunction');
+      message = this._translate.instant('account.confirmDisableBetFunction');
+    }
+    this.confirmationService.confirm({
+      //header: header,
+      message: message,
+      accept : () => {
+        this.accountService.modifyBetStatus({
+          id: this.selectRowData.id,
+          type: this.selectRowData.type,
+          isBet: status
+        }).subscribe(
+          data => {
+            if (data.status === 0) {
+              this._childTable.refreshTableData();
+              this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+            } else {
+              this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+            }
+          },
+          err => {
+            console.log(err);
+          });
+      }
+    });
+  }
+  // 修改称号激活状态
+  modifyActiveTitle() {
+    let status = false;
+    let header = '';
+    let message = '';
+    if (typeof (this.selectRowData.title) === 'undefined' || this.selectRowData.title === '' ) {
+      status = true;
+      header = this._translate.instant('account.activeTitle');
+      message = this._translate.instant('account.confirmActiveTitle');
+    } else {
+      status = false;
+      header = this._translate.instant('account.inactiveTitle');
+      message = this._translate.instant('account.confirmInActiveTitle');
+    }
+    this.confirmationService.confirm({
+      //header: header,
+      message: message,
+      accept : () => {
+        this.accountService.modifyTitleStatus({
+          id: this.selectRowData.uid,
+          levelId: this.selectRowData.levelid,
+          isActiveTitle: status
+        }).subscribe(
+          data => {
+            if (data.ok) {
+              this._childTable.refreshTableData();
+              this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+            } else {
+              this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+            }
+          },
+          err => {
+            console.log(err);
+          });
+      }
+    });
+  }
+  // 修改所有下线投注状态
+  modifyAllBetStatus() {
+    this.accountService.modifyBetStatus({
+      id: this.selectRowData.id,
+      type: this.selectRowData.type,
+      isBet: this.allBetStatus
+    }).subscribe(
+      data => {
+        if (data.status === 0) {
+          this.modifyAllBetStatusModalFlag = false;
+          let index = this.tabeleComponentArray.indexOf(this._childTable);
+          for (; this.tabeleComponentArray.length > index ; index++) {
+            this.tabeleComponentArray[index].refreshTableData();
+          }
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  // 激活所有下线称号
+  modifyAllActiveTitle() {
+    let status = false;
+    if (this.allActiveTitle === 'true') {
+      status = true;
+    } else if (this.allActiveTitle === 'false') {
+      status = false;
+    } else {
+      this._toaster.pop('error', this._translate.instant('common.error'), this._translate.instant('common.plsSelect'));
+      return ;
+    }
+    this.accountService.modifyTitleStatus({
+      id: this.selectRowData.uid,
+      levelId: this.selectRowData.levelId,
+      isActiveTitle: status
+    }).subscribe(
+      data => {
+        if (data.ok) {
+          this.modifyAllActiveTitleModalFlag = false;
+          let index = this.tabeleComponentArray.indexOf(this._childTable);
+          for (; this.tabeleComponentArray.length > index ; index++) {
+            this.tabeleComponentArray[index].refreshTableData();
+          }
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  // 调整点数
+  modifyBalance() {
+    this.accountService.modifyBalance({
+      id: this.selectRowData.id,
+      parentId: this.selectRowData.parentId,
+      userType: this.selectRowData.userType,
+      accountRecordType: this.modifyBalanceType,
+      balance: this.modifyBalancePoint,
+      remark: this.modifyBalanceNote
+    }).subscribe(
+      data => {
+        if (data.status === 0) {
+          this.closeModifyBalanceModal();
+          const index = this.tabeleComponentArray.indexOf(this._childTable);
+          this.tabeleComponentArray[index - 1].refreshTableData();
+          this._childTable.refreshTableData();
+          this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+        } else {
+          this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  forDight(dight, how) {
+    dight = Math.round(dight * Math.pow(10, how)) / Math.pow(10, how);
+    return  dight;
+  }
+
+  // 根据用户ID获取数据
+  getUserByUid() {
+    this.accountService.getUserByUid({
+      id: this.selectRowData.parentId
+    }).subscribe(
+      rc => {
+          this.modifyModalConfig.washCodeMaxPercent = this.forDight(rc.data.washPercentage * 100, 2);
+          this.modifyModalConfig.agentHoldMaxPercent = this.forDight(rc.data.intoPercentage * 100, 2);
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  openModifyBalanceModal() {
+    this.modifyBalancePoint = '';
+    this.modifyBalanceType = '1';
+    this.modifyBalanceModal.show();
+  }
+
+  openAddAccountModal() {
+    this.getSuperLimitData(this.selectRowData.id);
+    this.createModalConfig.washCode = true;
+    this.createModalConfig.agentHold = true;
+    this.createModalConfig.washCodeMaxPercent = this.forDight(this.selectRowData.washPercentage * 100, 2);
+    this.createModalConfig.agentHoldMaxPercent = this.forDight(this.selectRowData.intoPercentage * 100, 2);
+
+    this.createModalConfig.balance = this.selectRowData.balance;
+    this.createAccount.userType = null;
+    this.selectedLimitTreeData = [];
+    this.addAccountModal.show();
+  }
+  // 开启修改代理网用户弹窗
+  openModifyAccountModal() {
+    for (const key in this.modifyAccount) {
+     if (this.selectRowData.hasOwnProperty(key)) {
+       this.modifyAccount[key] = this.selectRowData[key];
+     }
+    }
+
+    this.accountService.getUserByUid({
+      id: this.selectRowData.userId
+    }).subscribe(
+      rc => {
+        this.modifyAccount =rc.data;
+        this.accountService.getLimitData({
+          'id': this.selectRowData.parentId}).subscribe(
+          data => {
+            const root = data.data;
+            root[0].label=this._translate.instant("common.root");
+            for (const note of root[0].children) {
+              let label = '';
+              if(note.type ==1){
+                label += this._translate.instant("common.baccarat");
+              }else{
+                label += this._translate.instant("common.roulette");
+              }
+              label +=this._translate.instant("common.max")+":"+note.max+" "+this._translate.instant("common.min")+":"+note.min +" "
+                +this._translate.instant("common.chips")+":"+note.chips;
+              note.label = label;
+            }
+            root[0].expanded = true;
+            this.limitTreeData = root;
+
+            this.getLimitData(this.modifyAccount.chips.split(','));
+            this.getUserByUid();
+
+            this.modifyAccount.userType = this.selectRowData.userType;
+
+            this.modifyModalConfig.washCode = true;
+            this.modifyModalConfig.maxWin = true;
+            this.modifyModalConfig.tiger = true;
+            this.modifyModalConfig.ticket = true;
+            this.modifyModalConfig.vipPackage = true;
+            this.modifyModalConfig.voice = true;
+
+            if (Number(this.modifyAccount.type) === 2) {
+              this.modifyModalConfig.title = true;
+              this.modifyModalConfig.agentHold=false;
+              this.modifyModalConfig.vipPackage = false;
+            }else{
+              this.modifyModalConfig.agentHold = true;
+              this.modifyModalConfig.maxWin = false;
+              this.modifyModalConfig.vipPackage = true;
+            }
+
+            this.modifyAccount.washPercentage = this.forDight(this.selectRowData.washPercentage*100, 2);
+            this.modifyAccount.intoPercentage = this.forDight(this.selectRowData.intoPercentage*100, 2);
+            this.constModifyAccount = Object.assign({}, this.modifyAccount);
+            this.modifyAccountModal.show();
+          },
+          err => {
+            console.log(err);
+          });
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  // 开启修改现金网用户弹窗
+  openModifyCashAccountModal() {
+    for (const key in this.modifyAccount) {
+      if (this.selectRowData.hasOwnProperty(key)) {
+        this.modifyAccount[key] = this.selectRowData[key];
+      }
+    }
+    this.accountService.getUserByUid({
+      id: this.selectRowData.userId
+    }).subscribe(
+      rc => {
+        this.modifyAccount =rc.data;
+
+        this.accountService.getLimitData({
+          'id': this.selectRowData.parentId}).subscribe(
+          data => {
+            const root = data.data;
+            root[0].label=this._translate.instant("common.root");
+            for (const note of root[0].children) {
+              let label = '';
+              if(note.type ==1){
+                label += this._translate.instant("common.baccarat");
+              }else{
+                label += this._translate.instant("common.roulette");
+              }
+              label +=this._translate.instant("common.max")+":"+note.max+" "+this._translate.instant("common.min")+":"+note.min +" "
+                +this._translate.instant("common.chips")+":"+note.chips;
+              note.label = label;
+            }
+            root[0].expanded = true;
+            this.limitTreeData = root;
+
+            this.modifyModalConfig.washCode = true;
+            this.getLimitData(this.modifyAccount.chips.split(','));
+            this.getUserByUid();
+            if (this.modifyAccount.washPercentage !='') {
+              this.modifyModalConfig.washCode = false;
+              this.modifyAccount.washPercentage = this.forDight(this.selectRowData.washPercentage * 100, 2);
+            }
+            if (this.modifyAccount.intoPercentage != '') {
+              this.modifyAccount.intoPercentage = this.forDight(this.selectRowData.intoPercentage * 100, 2);
+            }
+            if (Number(this.modifyAccount.type) === 2) {
+              this.modifyModalConfig.agentHold=false;
+              this.modifyModalConfig.vipPackage = false;
+            }else{
+              this.modifyModalConfig.agentHold = true;
+              this.modifyModalConfig.vipPackage = true;
+            }
+            this.modifyAccount.id =this.selectRowData.id;
+            this.modifyAccount.userType =this.selectRowData.userType;
+            this.constModifyAccount = Object.assign({}, this.modifyAccount);
+            this.modifyCashAccountModal.show();
+          },
+          err => {
+            console.log(err);
+          });
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  openModifyPasswordModal() {
+    this.modifyPasswordModal.show();
+  }
+
+  // 创建用户根据选择类型显示不同内容
+  onChangeUserType() {
+    this.initAccountModal(this.createAccount.type, this.createModalConfig);
+  }
+
+  // 根据不同用户类型显示不同内容
+  private initAccountModal(levelId: string, config: AccountModalConfig) {
+    if (Number(levelId) != 2) {
+      config.maxWin = false;
+      config.agentHold = true;
+      config.vipPackage =true;
+    }else {
+      config.washCode = true;
+      config.agentHold = false;
+      config.maxWin = true;
+      config.vipPackage =false;
+    }
+    config.isExpandedLimitData = true;
+  }
+
+  closeModifyBalanceModal() {
+    this.modifyBalanceType = '';
+    this.modifyBalancePoint = '';
+    this.modifyBalanceNote = '';
+    this.modifyBalanceModal.hide();
+  }
+
+  closeModifyPasswordModal() {
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.modifyPasswordModal.hide();
+  }
+
+  closeAddAccountModal() {
+    this.createAccount = new AccountVO();
+    this.selectedLimitTreeData = [];
+    this.addAccountModal.hide();
+  }
+
+  closeModifyAccountModal() {
+    this.modifyAccount = new AccountVO();
+    this.selectedLimitTreeData = [];
+    this.modifyAccountModal.hide();
+  }
+
+  closeModifyCashAccountModal() {
+    this.modifyAccount = new AccountVO();
+    this.selectedLimitTreeData = [];
+    this.modifyCashAccountModal.hide();
+  }
+
+  createOnClickVipPackage(event) {
+    this.createModalConfig.maxWin = true;
+
+    if (Number(this.selectRowData.levelid) <= 6) {
+      this.createModalConfig.agentHold = true;
+      this.createModalConfig.voiceHold = true;
+      if (!event.target.checked) {
+        this.createModalConfig.vipPackageHold = false;
+      }
+    } else {
+      this.createModalConfig.voiceHold = false;
+      this.createModalConfig.agentHold = false;
+      this.createModalConfig.vipPackageHold = false;
+      if (!event.target.checked) {
+        this.createModalConfig.vipPackageHold = false;
+      }
+    }
+    this.createAccount.biggestWinMoney = 0;
+    this.createAccount.coPercentage = '';
+  }
+
+  modifyOnClickVipPackage(event) {
+    if (!event.target.checked && this.constModifyAccount.isPackage) {
+      event.target.checked = true;
+      this._toaster.pop('error', this._translate.instant('common.validateFail'), this._translate.instant('account.notCancelPackage'));
+      return ;
+    }
+    this.modifyModalConfig.maxWin = true;
+    if (Number(this.selectRowData.levelid) <= 6) {
+      this.modifyModalConfig.agentHold = true;
+      if (!event.target.checked) {
+        this.modifyModalConfig.vipPackageHold = false;
+      }
+    } else {
+      this.modifyModalConfig.agentHold = false;
+      this.modifyModalConfig.vipPackageHold = false;
+      if (!event.target.checked) {
+        this.modifyModalConfig.vipPackageHold = false;
+      }
+    }
+    this.modifyAccount.biggestWinMoney = 0;
+    this.modifyAccount.coPercentage = '';
+  }
+
+  createOnClickVoice(event) {
+    this.createModalConfig.maxWin = true;
+
+    if (Number(this.selectRowData.levelid) <= 6) {
+      if (event.target.checked) {
+        this.createModalConfig.voiceWashCode = true;
+        this.createModalConfig.voiceHold = true;
+      } else {
+        this.createModalConfig.voiceWashCode = false;
+        this.createModalConfig.voiceHold = false;
+      }
+    } else {
+      this.createModalConfig.voiceHold = false;
+      if (event.target.checked) {
+        this.createModalConfig.voiceWashCode = true;
+      } else {
+        this.createModalConfig.voiceWashCode = false;
+      }
+    }
+    this.createAccount.sPercentage3 = '';
+    this.createAccount.oPercentage3 = '';
+  }
+
+  modifyOnClickVoice(event) {
+    if (!event.target.checked && this.constModifyAccount.isPhone) {
+      event.target.checked = true;
+      this._toaster.pop('error', this._translate.instant('common.validateFail'), this._translate.instant('common.notCancelVoice'));
+      return ;
+    }
+    this.modifyModalConfig.maxWin = true;
+
+    if (Number(this.selectRowData.levelid) <= 6) {
+      if (event.target.checked) {
+        this.modifyModalConfig.voiceWashCode = true;
+        this.modifyModalConfig.voiceHold = true;
+      } else {
+        this.modifyModalConfig.voiceWashCode = false;
+        this.modifyModalConfig.voiceHold = false;
+      }
+    } else {
+      this.modifyModalConfig.voiceHold = false;
+      if (event.target.checked) {
+        this.modifyModalConfig.voiceWashCode = true;
+      } else {
+        this.modifyModalConfig.voiceWashCode = false;
+      }
+    }
+    this.modifyAccount.sPercentage3 = '';
+    this.modifyAccount.oPercentage3 = '';
+  }
+
+  createOnClickTiger(event) {
+    if (event.target.checked) {
+      this.createModalConfig.tigerWashCode = true;
+      this.createModalConfig.tigerRechargeMoney = true;
+      if (Number(this.selectRowData.levelid) <= 6) {
+        this.createModalConfig.tigerHold = true;
+      } else {
+        this.createModalConfig.tigerHold = false;
+      }
+    } else {
+      this.createModalConfig.tigerWashCode = false;
+      this.createModalConfig.tigerHold = false;
+      this.createModalConfig.tigerRechargeMoney = false;
+    }
+    this.createAccount.tigersPercentage = '';
+    this.createAccount.tigeroPercentage = '';
+  }
+
+  modifyOnClickTiger(event) {
+    if (event.target.checked) {
+      this.modifyModalConfig.tigerWashCode = true;
+      if (Number(this.selectRowData.levelid) <= 6) {
+        this.modifyModalConfig.tigerHold = true;
+      } else {
+        this.modifyModalConfig.tigerHold = false;
+      }
+    } else {
+      this.modifyModalConfig.tigerWashCode = false;
+      this.modifyModalConfig.tigerHold = false;
+    }
+    this.modifyAccount.tigersPercentage = '';
+    this.modifyAccount.tigeroPercentage = '';
+  }
+
+  createOnClickTicket(event) {
+    if (event.target.checked) {
+      this.createModalConfig.ticketWashCode = true;
+      this.createModalConfig.ticketLimit = true;
+
+      if (Number(this.selectRowData.levelid) <= 6) {
+        this.createModalConfig.ticketHold = true;
+      } else {
+        this.createModalConfig.ticketHold = false;
+      }
+    } else {
+      this.createModalConfig.ticketWashCode = false;
+      this.createModalConfig.ticketLimit = false;
+      this.createModalConfig.ticketHold = false;
+    }
+    this.createAccount.ticketsPercentage = '';
+    this.createAccount.ticketoPercentage = '';
+    this.createAccount.ticketLimit = '';
+  }
+
+  modifyOnClickTicket(event) {
+    if (event.target.checked) {
+      this.modifyModalConfig.ticketWashCode = true;
+      this.modifyModalConfig.ticketLimit = true;
+
+      if (Number(this.selectRowData.levelid) <= 6) {
+        this.modifyModalConfig.ticketHold = true;
+      } else {
+        this.modifyModalConfig.ticketHold = false;
+      }
+    } else {
+      this.modifyModalConfig.ticketWashCode = false;
+      this.modifyModalConfig.ticketLimit = false;
+      this.modifyModalConfig.ticketHold = false;
+    }
+    this.modifyAccount.ticketsPercentage = '';
+    this.modifyAccount.ticketoPercentage = '';
+    this.modifyAccount.ticketLimit = '';
+  }
+
+  refreshAllUserChipsData() {
+    this.confirmationService.confirm({
+      header: this._translate.instant('account.refreshUserChips'),
+      message: this._translate.instant('account.isRefreshUserChips'),
+      accept : () => {
+        this.accountService.refreshAllUserChipsData().subscribe(
+          data => {
+            if (data.ok) {
+              this._toaster.pop('success', this._translate.instant('common.success'), data.msg);
+            } else {
+              this._toaster.pop('error', this._translate.instant('common.error'), data.msg);
+            }
+          },
+          err => {
+            console.log(err);
+          });
+      }
+    });
+  }
+
+}

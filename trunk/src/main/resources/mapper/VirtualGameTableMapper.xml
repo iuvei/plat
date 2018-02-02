@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IVirtualGameTableMapper">
+
+	<sql id="dynamicWhere">
+		<where>
+            <if test="startTime!=null and endTime!=null">AND v.create_time BETWEEN #{startTime} AND #{endTime}</if>
+            <if test="userId != null and userId !='' ">AND lu.parent_path REGEXP CONCAT('/',#{userId},'/') </if>
+            <if test="gameTableId != null and gameTableId !='' ">AND v.gametable_id=#{gameTableId} </if>
+            <if test="gameId != null and gameId !='' ">AND v.game_id =#{gameId} </if>
+            <if test="type != null and type !='' ">AND v.type != #{type} </if>
+            <if test="vType != null and vType !='' ">AND v.type=#{vType} </if>
+            <if test="status != null and status !=''">AND v.status=#{status} </if>
+            <if test="createUser != null and createUser !=''">AND v.create_user=#{createUser} </if>
+            <if test="roomName != null and roomName !='' ">AND v.room_name like CONCAT(#{roomName},"%") </if>
+            <if test="fullRoomName != null and fullRoomName !='' ">AND v.room_name =#{fullRoomName} </if>
+            
+		</where>
+	</sql>
+	
+    <select id="queryVirtualGameTableByPage" resultType="com.na.manager.entity.VirtualGameTable">
+		SELECT
+			v.*,g.name as tableName,lu.parent_id AS parentId,ga.name as gameName
+		FROM
+			virtual_gametable v left join gametable g on v.gametable_id = g.id LEFT JOIN game ga ON v.game_id=ga.id LEFT JOIN live_user lu ON v.owner_id=lu.user_id
+        <include refid="dynamicWhere" />  
+       	ORDER BY v.id,v.status DESC
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+    
+    <select id="getVirtualGameTableCount" resultType="Long">
+      	SELECT
+			count(*)
+		FROM
+			virtual_gametable v left join gametable g on v.gametable_id = g.id LEFT JOIN live_user lu ON v.owner_id=lu.user_id
+		 <include refid="dynamicWhere" />  
+    </select>
+    
+     <insert id="add" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+      INSERT INTO `virtual_gametable` (
+          `gametable_id`,
+          `game_id`,
+          `type`,
+          `room_name`,
+          `password`,
+          `max_members`,
+          `min_balance`,
+          `hedge_percentage`,
+          `no_hedge_percentage`,
+          `water_percentage`,
+          `owner_id`,
+          `create_time`,
+          `create_user`
+        )
+        VALUES
+          (
+            #{gameTableId},
+            #{gameId},
+            #{type},
+            #{roomName},
+            #{password},
+            #{maxMembers},
+            #{minBalance},
+            #{hedgePercentage},
+            #{noHedgePercentage},
+          	#{waterPercentage},
+            #{ownerId},
+            #{createTime},
+            #{createUser}
+          )
+    </insert>
+    
+     <update id="update">
+        UPDATE
+          `virtual_gametable`
+        <set>
+        	<if test="roomName != null and roomName != ''">`room_name` = #{roomName},</if>
+            <if test="password != null and password != ''">`password` = #{password},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="gameTableId != null">`gametable_id` = #{gameTableId},</if>
+            <if test="maxMembers != null and maxMembers != ''">`max_members` = #{maxMembers},</if>
+            <if test="minBalance != null and minBalance != ''">`min_balance` = #{minBalance},</if>
+            <if test="hedgePercentage != null and hedgePercentage != ''">`hedge_percentage` = #{hedgePercentage},</if>
+            <if test="noHedgePercentage != null and noHedgePercentage != ''">`no_hedge_percentage` = #{noHedgePercentage},</if>
+            <if test="waterPercentage != null and waterPercentage != ''">`water_percentage` = #{waterPercentage},</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IRoomNoHedgeMapper">
+
+ 	<sql id="selectColumns">
+ 		<![CDATA[
+      		a.loginName,
+			a.nickName, 
+			a.roomNumber,
+			a.roundId,
+			SUM(a.noHedgeTotal) AS noHedgeTotal,
+			SUM(a.noHedgeWinLost) AS noHedgeWinLost,
+			SUM(a.noHedgeTotal)*a.washPercentage AS nohedgeCommission,
+			(SUM(a.noHedgeTotal)*a.washPercentage+SUM(a.noHedgeWinLost))*(1-p.no_hedge_percentage) AS noHedgeSettle,
+			a.washPercentage AS proxyWashPercentage,
+			p.no_hedge_percentage AS noHedgePercentage
+		]]>
+    </sql>
+    
+    <sql id="selectColumnsTemp">
+ 		<![CDATA[
+      	b.round_id AS roundId,
+		vg.id AS roomNumber,
+		SUM(IF(b.trade_item_id<>102 AND b.trade_item_id <> 101,b.amount,0)) AS noHedgeTotal,
+	 	SUM(IF(b.trade_item_id<>102 AND b.trade_item_id <> 101,b.win_lost_amount,0)) AS noHedgeWinLost,
+		]]>
+    </sql>
+
+    <!-- 包房和对下级代理报表  -->
+    <select id="queryRoomNoHedgeTeamReport" resultType="com.na.manager.bean.vo.RoomVO">
+        select 
+			<include refid="selectColumns" />
+			from (
+			SELECT
+				u.login_name AS loginName,u.nick_name AS nickName,u.id,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+				<include refid="selectColumnsTemp" />
+				#{userId} as agentId 
+			FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+			WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.user_parent_path 
+			REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+			<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+			GROUP BY b.round_id,vg.id)AS t 
+			LEFT JOIN USER u ON u.id = t.agentId LEFT JOIN live_user lu ON lu.user_id = u.id
+		) a LEFT JOIN percentage_config p ON a.id =p.user_id ORDER BY a.agentId
+    </select>
+    
+    <!-- 包房和对代理报表  -->
+    <select id="queryRoomNoHedgeProxyReport" resultType="com.na.manager.bean.vo.RoomVO">
+    	select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.user_parent_path  
+		REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.id =p.user_id GROUP BY a.loginName
+    </select>
+    
+    <!-- 包房和对房间报表  -->
+    <select id="queryRoomNoHedgeRoomReport" resultType="com.na.manager.bean.vo.RoomVO">
+    	select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id as userId,lu.wash_percentage as washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 AND b.parent_id =#{userId}
+		AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.userId =p.user_id GROUP BY a.id
+    </select>
+    
+    <!-- 包房和对局报表  -->
+    <select id="queryRoomNoHedgeRoundReport" resultType="com.na.manager.bean.vo.RoomVO">
+        select 	
+			<include refid="selectColumns" />
+ 			from (SELECT
+				u.nick_name as nickName,u.id as userId,lu.wash_percentage AS washPercentage,t.*
+				FROM (
+			    	SELECT
+		<include refid="selectColumnsTemp" />
+		vg.owner_id,
+		vg.id,
+		vg.create_user as loginName
+		FROM bet_order b LEFT JOIN round r ON b.round_id = r.id LEFT JOIN virtual_gametable vg ON vg.id = b.virtualgametable_id LEFT JOIN USER u ON u.id = b.user_id 
+		LEFT JOIN live_user lu ON lu.user_id = u.id WHERE b.table_type = 2 AND b.`status` = 3 AND b.parent_id != 418 
+		<if test="roomNumber != null and roomNumber != '' ">AND vg.id = #{roomNumber}</if>
+		AND b.user_parent_path REGEXP CONCAT('/',#{userId},'/') AND b.bet_time BETWEEN #{startTime} AND #{endTime} 
+		<if test="roomAgent != null and roomAgent !='' "> AND vg.create_user=#{roomAgent} </if>
+		GROUP BY b.round_id,vg.id)AS t 
+		LEFT JOIN USER u ON u.id = t.owner_id LEFT JOIN live_user lu ON lu.user_id = u.id)a LEFT JOIN percentage_config p ON a.userId =p.user_id GROUP BY a.roundId ORDER BY a.roundId DESC
+    </select>
+
+</mapper>

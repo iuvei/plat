@@ -1,0 +1,10 @@
+.mytable th,td {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+table {
+  overflow-x: scroll;
+}
+
+table td{word-break: keep-all;white-space:nowrap;}
+

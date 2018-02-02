@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+       Copyright 2015-2016 the original author or authors.
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.user.socketserver.dao.IBetOrderMapper">
+
+    <insert id="addBetOrder">
+      INSERT INTO `bet_order` (
+    	  `id`,
+          `user_id`,
+          `login_name`,
+          `trade_item_id`,
+          `game_id`,
+          `game_table_id`,
+          `virtualgametable_id`,
+          `play_id`,
+          `boots_id`,
+          `round_id`,
+          `round_num`,
+          `boots_num`,
+          `amount`,
+          `bet_rate`,
+          `wash_percentage`,
+          `o_percentage`,
+          `bet_time`,
+          `status`,
+          `user_pre_balance`,
+          `source`,
+          `bet_type`,
+          `table_type`,
+          `parent_id`,
+          `user_parent_Path`,
+          `source_value`,
+          `trade_item_key`,
+          `bet_ip`,
+		  `device_type`,
+		  `device_info`
+        )
+        VALUES
+          (
+            #{id},
+            #{userId},
+            #{loginName},
+            #{tradeItemId},
+            #{gameId},
+            #{gameTableId},
+            #{virtualgametableId},
+            #{playId},
+            #{bootsId},
+            #{roundId},
+            #{roundNum},
+            #{bootsNum},
+            #{amount},
+            #{betRate},
+            #{washPercentage},
+            #{oPercentage},
+            #{betTime},
+            #{status},
+            #{userPreBalance},
+            #{source},
+            #{betType},
+            #{tableType},
+            #{parentId},
+            #{userParentPath},
+            #{sourceValue},
+            #{tradeItemKey},
+            #{betIp},
+            #{deviceType},
+            #{deviceInfo}
+          )
+    </insert>
+    
+    <insert id="batchAddBetOrder">
+    	<foreach close="" collection="list" index="index" item="item" open="" separator=";">
+		      INSERT INTO `bet_order` (
+		    	  `id`,
+		          `user_id`,
+		          `login_name`,
+		          `trade_item_id`,
+		          `game_id`,
+		          `game_table_id`,
+		          `virtualgametable_id`,
+		          `play_id`,
+		          `boots_id`,
+		          `round_id`,
+		          `round_num`,
+		          `boots_num`,
+		          `amount`,
+		          `bet_rate`,
+		          `wash_percentage`,
+		          `o_percentage`,
+		          `bet_time`,
+		          `status`,
+		          `user_pre_balance`,
+		          `source`,
+		          `bet_type`,
+		          `table_type`,
+		          `parent_id`,
+		          `user_parent_path`,
+		          `source_value`,
+		          `trade_item_key`,
+				  `bet_ip`,
+				  `device_type`,
+				  `device_info`
+		        )
+		        VALUES
+		          (
+		            #{item.id},
+		            #{item.userId},
+		            #{item.loginName},
+		            #{item.tradeItemId},
+		            #{item.gameId},
+		            #{item.gameTableId},
+		            #{item.virtualgametableId},
+		            #{item.playId},
+		            #{item.bootsId},
+		            #{item.roundId},
+		            #{item.roundNum},
+		            #{item.bootsNum},
+		            #{item.amount},
+		            #{item.betRate},
+		            #{item.washPercentage},
+		            #{item.oPercentage},
+		            #{item.betTime},
+		            #{item.status},
+		            #{item.userPreBalance},
+		            #{item.source},
+		            #{item.betType},
+		            #{item.tableType},
+		            #{item.parentId},
+		            #{item.userParentPath, jdbcType=VARCHAR},
+		            #{item.sourceValue},
+		            #{item.tradeItemKey},
+					#{item.betIp},
+					#{item.deviceType},
+					#{item.deviceInfo}
+		          )
+    	</foreach>
+    </insert>
+    
+<!--     <update id="batchUpdate" parameterType="java.util.List">   -->
+<!--         <foreach close="" collection="list" index="index" item="item" open="" separator=";">   -->
+<!-- 			UPDATE `bet_order` SET -->
+<!-- 				`round_result` = #{item.roundResult,jdbcType=VARCHAR}, -->
+<!-- 				`status` = #{item.status,jdbcType=INTEGER}, -->
+<!-- 				`win_lost_status` = #{item.winLostStatus,jdbcType=INTEGER}, -->
+<!-- 				`win_lost_amount` = #{item.winLostAmount,jdbcType=DOUBLE}, -->
+<!-- 				`settle_rate` = #{item.settleRate,jdbcType=DOUBLE}, -->
+<!-- 				`settle_time` = #{item.settleTime}, -->
+<!-- 				`valid_amount` = #{item.validAmount,jdbcType=DOUBLE} -->
+<!--             WHERE  -->
+<!--             	`id` = #{item.id,jdbcType=BIGINT}   -->
+<!--         </foreach>   -->
+<!--     </update> -->
+    
+	<update id="batchUpdate" parameterType="java.util.List">
+	    update `bet_order`
+	    <trim prefix="set" suffixOverrides=",">
+	    	<trim prefix="`round_result` =case" suffix="end,">
+	        	<foreach collection="list" item="i" index="index">
+	            	<if test="i.roundResult != null">
+	                	when id=#{i.id} then #{i.roundResult}
+	                </if>
+	  			</foreach>
+	      	</trim>
+	    	<trim prefix=" `status` =case" suffix="end,">
+	        	<foreach collection="list" item="i" index="index">
+	            	<if test="i.status != null">
+	                	when id=#{i.id} then #{i.status}
+	               	</if>
+	         	</foreach>
+	      	</trim>
+	      	<trim prefix=" `win_lost_status` =case" suffix="end," >
+	        	<foreach collection="list" item="i" index="index">
+	          		<if test="i.winLostStatus != null">
+	                	when id=#{i.id} then #{i.winLostStatus}
+	               	</if>
+	         	</foreach>
+	      	</trim>
+			<trim prefix="`win_lost_amount` =case" suffix="end," >
+	          	<foreach collection="list" item="i" index="index">
+	               	<if test="i.winLostAmount != null">
+	                	when id=#{i.id} then #{i.winLostAmount}
+	                </if>
+	          	</foreach>
+	   		</trim>
+	   		<trim prefix="`settle_rate` =case" suffix="end," >
+	          	<foreach collection="list" item="i" index="index">
+	               	<if test="i.settleRate != null">
+	                	when id=#{i.id} then #{i.settleRate}
+	                </if>
+	          	</foreach>
+	   		</trim>
+	   		<trim prefix="`settle_time` =case" suffix="end," >
+	          	<foreach collection="list" item="i" index="index">
+	               	<if test="i.settleTime != null">
+	                	when id=#{i.id} then #{i.settleTime}
+	                </if>
+	          	</foreach>
+	   		</trim>
+	   		<trim prefix="`valid_amount` =case" suffix="end," >
+	          	<foreach collection="list" item="i" index="index">
+	               	<if test="i.validAmount != null">
+	                	when id=#{i.id} then #{i.validAmount}
+	                </if>
+	          	</foreach>
+	   		</trim>
+	   	</trim>
+	    where
+	    <foreach collection="list" separator="or" item="i" index="index">
+            id = #{i.id}
+        </foreach>
+	</update>
+	
+	<select id="getBetOrderByUserCount" resultType="int">
+		SELECT 
+			count(1)
+		FROM (
+			SELECT 
+				r.gameId,
+				r.round_id
+			FROM (
+				SELECT
+					b.bet_time,
+					gt.`name` AS gameName,
+					g.id AS gameId,
+					b.game_table_id tableId,
+					p.`NAME` playName,
+					b.round_result,
+					b.round_id,
+					b.round_num,
+					t.`NAME` AS betName,
+					b.win_lost_status,
+					sum(b.amount) as amount,
+					sum(b.win_lost_amount) winLostAmount,
+					gt.`NAME` AS gameTableName,
+					b.valid_amount AS validAmount,
+					REPLACE(t.addition, ',', ' ') as addition
+				FROM
+					bet_order b
+				LEFT JOIN gametable gt ON gt.id = b.game_table_id
+				LEFT JOIN game g ON g.id = b.game_id
+				LEFT JOIN trade_item t ON t.id = b.trade_item_id
+				LEFT JOIN play p ON p.id = b.play_id
+				LEFT JOIN i18n i on i.`key` = g.`name`
+				WHERE
+					user_id = #{userId}
+				AND bet_time >= str_to_date(#{beginDate}, '%Y-%m-%d %H:%i:%s')
+				AND bet_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+				GROUP BY round_id, t.id
+			) r 
+			GROUP BY r.round_id
+		) aa
+	</select>
+	
+	<select id="getBetOrderByUser" resultType="java.util.HashMap">
+		SELECT 
+			r.gameId,
+			r.round_id,
+			r.bet_time,
+			CONCAT(r.gameName,',局号:',r.round_id) AS `gameTableName`,
+		  	r.round_result,
+		  	CASE r.gameId WHEN 1 THEN GROUP_CONCAT(r.betName,':',r.amount) WHEN 3 THEN GROUP_CONCAT(r.addition,':',r.amount) END AS `bets`,
+		  	SUM(r.winLostAmount + r.amount) AS winLostAmount
+		FROM (
+			SELECT
+				b.id,
+				b.bet_time,
+				gt.`name` AS gameName,
+				g.id AS gameId,
+				b.game_table_id tableId,
+				p.`NAME` playName,
+				b.round_result,
+				b.round_id,
+				b.round_num,
+				t.`NAME` AS betName,
+				b.win_lost_status,
+				sum(b.amount) as amount,
+				sum(b.win_lost_amount) winLostAmount,
+				gt.`NAME` AS gameTableName,
+				b.valid_amount AS validAmount,
+				CASE WHEN t.key in ('FIG','COL','RED','BLA','ODD','EVE','SMA','BIG') THEN CONCAT('#',t.name) ELSE REPLACE(t.addition, ',', ' ') END as addition
+			FROM
+				bet_order b
+			LEFT JOIN gametable gt ON gt.id = b.game_table_id
+			LEFT JOIN game g ON g.id = b.game_id
+			LEFT JOIN trade_item t ON t.id = b.trade_item_id
+			LEFT JOIN play p ON p.id = b.play_id
+			LEFT JOIN i18n i on i.`key` = g.`name`
+			WHERE
+				user_id = #{userId}
+			AND bet_time >= str_to_date(#{beginDate}, '%Y-%m-%d %H:%i:%s')
+			AND bet_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+			GROUP BY round_id, t.id
+		) r 
+		GROUP BY r.round_id
+		ORDER BY r.bet_time desc
+		limit ${begin},${end}
+	</select>
+
+</mapper>

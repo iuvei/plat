@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.na.manager.dao.IAgentWinLostMapper">
+
+	<!--统计代理团队 -->
+	<select id="statisAgentTeam" resultType="com.na.manager.bean.vo.AgentWinLostVO">
+    <![CDATA[
+	    SELECT
+			das.*,
+			u.login_name AS 'loginName',
+			u.nick_name AS 'nickName',
+			u2.parent_path AS 'parentPath',
+			u2.wash_percentage AS 'washPercentage',
+			u2.into_percentage AS 'intoPercentage',
+			das.washBetting * u2.wash_percentage AS 'washAmount',
+			das.winLostAmount + das.washBetting * u2.wash_percentage AS 'agentIncome',
+			(das.winLostAmount + das.washBetting * u2.wash_percentage) * (1-u2.into_percentage) AS 'agentCompanyIncome',
+			IFNULL((das.winLostAmount + das.washBetting * u2.wash_percentage)/das.washBetting,0) AS 'winloSepercentage'
+		FROM
+			(
+				SELECT
+					COUNT(1) AS 'tradetime',
+					IFNULL(SUM(b.amount), 0) AS 'amountBetting',
+					IFNULL(SUM(b.win_lost_amount), 0) AS 'winLostAmount',
+					IFNULL(SUM(b.valid_amount), 0) AS 'washBetting',
+					#{userId} AS 'agentId'
+				FROM
+					bet_order b
+				WHERE
+					b.user_parent_path LIKE CONCAT(#{userPath}, '%') AND b.parent_id != 418 AND b.`status` =3
+				AND b.bet_time >=#{startTime}
+				AND b.bet_time <=#{endTime} AND (b.table_type <> 2 OR b.table_type is null)
+			) AS das
+		LEFT JOIN USER u ON das.agentId = u.id
+		LEFT JOIN live_user u2 ON u.id = u2.user_id
+		]]>
+	</select>
+
+	<!--统计代理直系代理 -->
+	<select id="statisDirectProxy" resultType="com.na.manager.bean.vo.AgentWinLostVO">
+    <![CDATA[
+		SELECT
+			das.*, 
+			u.login_name AS 'loginName',
+			u.nick_name AS 'nickName',
+			u2.parent_path AS 'parentPath',
+			u2.wash_percentage AS 'washPercentage',
+			u2.into_percentage AS 'intoPercentage',
+			das.washBetting * u2.wash_percentage AS 'washAmount',
+			das.winLostAmount + das.washBetting * u2.wash_percentage AS 'agentIncome',
+			(das.winLostAmount + das.washBetting * u2.wash_percentage) * (1-u2.into_percentage) AS 'agentCompanyIncome',
+			IFNULL((das.winLostAmount + das.washBetting * u2.wash_percentage)/das.washBetting,0) AS 'winloSepercentage',
+			u2.type liveUserType
+		FROM
+			(
+				SELECT
+					count(1) 'tradetime',
+					IFNULL(SUM(b.amount), 0) AS 'amountBetting',
+					IFNULL(SUM(b.win_lost_amount), 0) AS 'winLostAmount',
+					IFNULL(SUM(b.valid_amount), 0) AS 'washBetting',
+					SUBSTRING_INDEX(SUBSTRING_INDEX(b.user_parent_path,CONCAT('/',#{userId},'/'),-1),'/',1) AS 'agentId'
+				FROM
+					bet_order b
+				WHERE
+					b.user_parent_path LIKE CONCAT(#{userPath}, '%') AND b.parent_id != 418 AND b.`status` =3
+					AND b.bet_time >=#{startTime}
+					AND b.bet_time <=#{endTime}
+					AND b.parent_id <> #{userId} AND (b.table_type <> 2 OR b.table_type is null)
+		 		GROUP BY SUBSTRING_INDEX(SUBSTRING_INDEX(b.user_parent_path,CONCAT('/',#{userId},'/'),-1),'/',1)
+			) das
+		LEFT JOIN live_user u2 ON u2.user_id = das.agentId 
+		left join user u on u.id = u2.user_id
+		]]>
+	</select>
+
+	<!--统计代理直系会员汇总 -->
+	<select id="statisDirectMember" resultType="com.na.manager.bean.vo.AgentWinLostVO">
+    <![CDATA[
+		SELECT
+			das.*, 
+			u.login_name AS 'loginName',
+			u.nick_name AS 'nickName',
+			u2.parent_path AS 'parentPath',
+			das.winLostAmount + das.washAmount AS 'agentIncome',
+			u2.into_percentage,
+			(das.winLostAmount + das.washAmount) * (1 - u2.into_percentage) AS 'agentCompanyIncome',
+			IFNULL((das.winLostAmount + das.washAmount) / das.washBetting,0) AS 'winloSepercentage',
+			u2.type liveUserType
+		FROM
+			(
+				SELECT
+					count(1) 'tradetime',
+					IFNULL(SUM(b.amount), 0) AS 'amountBetting',
+					IFNULL(SUM(b.win_lost_amount), 0) AS 'winLostAmount',
+					IFNULL(SUM(b.valid_amount), 0) AS 'washBetting',
+					b.wash_percentage AS 'washPercentage',
+					IFNULL(SUM(IFNULL(b.valid_amount,0) * b.wash_percentage),0) AS 'washAmount',
+					b.parent_id AS 'agentId'
+				FROM
+					bet_order b
+				WHERE
+					b.parent_id = #{userId} AND (b.table_type <> 2 OR b.table_type is null) AND b.parent_id != 418 AND b.`status` =3
+					AND b.bet_time >=#{startTime}
+					AND b.bet_time <=#{endTime}
+		 		GROUP BY b.parent_id
+			) das
+		LEFT JOIN live_user u2 ON u2.user_id = das.agentId 
+		left join user u on u.id = u2.user_id
+		]]>
+	</select>
+
+	<!--统计代理直系会员列表 -->
+	<select id="listDirectdMember" resultType="com.na.manager.bean.vo.AgentWinLostVO">
+    <![CDATA[
+	    SELECT
+			das.*, u.login_name AS 'loginName',
+			u.nick_name AS 'nickName',
+			u2.parent_path AS 'parentPath',
+			u2.wash_percentage AS 'washPercentage',
+			das.winLostAmount + das.washAmount AS 'agentIncome',
+			IFNULL((das.winLostAmount + das.washAmount) / das.washBetting,0) AS 'winloSepercentage'
+		FROM
+			(
+				SELECT
+					COUNT(1) AS 'tradetime',
+					IFNULL(SUM(b.amount), 0) AS 'amountBetting',
+					IFNULL(SUM(b.win_lost_amount), 0) AS 'winLostAmount',
+					IFNULL(SUM(b.valid_amount), 0) AS 'washBetting',
+					IFNULL(
+						SUM(
+							IFNULL(b.valid_amount,0) * b.wash_percentage
+						),
+						0
+					) AS 'washAmount',
+					b.user_id AS 'agentId'
+				FROM
+					bet_order b
+				WHERE
+					b.parent_id = #{userId} AND (b.table_type <> 2 OR b.table_type is null) AND b.parent_id != 418 AND b.`status` =3
+				AND b.bet_time >=#{startTime}
+				AND b.bet_time <=#{endTime} 
+				GROUP BY agentId
+			) AS das
+		LEFT JOIN USER u ON das.agentId = u.id
+		LEFT JOIN live_user u2 ON u.id = u2.user_id and u2.type =2
+		]]>
+	</select>
+
+</mapper>

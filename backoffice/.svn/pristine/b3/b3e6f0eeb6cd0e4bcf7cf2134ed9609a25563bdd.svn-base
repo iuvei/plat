@@ -1,0 +1,133 @@
+import {Injectable} from "@angular/core";
+import {Response} from "@angular/http";
+
+import "rxjs/add/operator/map";
+import {CustomHttp} from "../../components/customhttp";
+import {Common} from "../../common/common";
+import {TranslateService} from "@ngx-translate/core";
+import {Dict} from "../../model/dict";
+import {SearchModel} from "./search.model";
+import {isUndefined} from "util";
+import {CommonUtil} from "../../common/CommonUtil";
+
+@Injectable()
+export class TransRecordService {
+
+  private url = '/tranRecordReport/search';
+  private realUrl = '/tranRecordReport/searchReal';
+  private dicts ;
+
+  constructor(private http: CustomHttp, private _translate: TranslateService) {
+    this.dicts = JSON.parse(localStorage['loginUser']).dicts as Dict[];
+  }
+
+  public search(startDate: String, endDate: String, loginName: String,
+                 gameId: String, currentPage: number, pageSize: number) {
+    let data = {
+      'startTime': startDate,
+      'endTime': endDate,
+      'angentName': loginName,
+      'gameId': gameId,
+      'currentPage': currentPage,
+      'pageSize': pageSize
+    }
+    return this.http.post(Common.URL + this.url, data).map((res: Response) => res.json());
+  }
+
+  public searchReal(searchModel: SearchModel) {
+    let data = {
+      'startTime': CommonUtil.formatDate(searchModel.startTime),
+      'endTime': CommonUtil.formatDate(searchModel.endTime),
+      'agentName': searchModel.loginName,
+      'gameId': searchModel.gameId==-1 ? null : searchModel.gameId,
+      'betNo': searchModel.betNo,
+      'roundId': searchModel.roundId,
+      'currentPage': searchModel.currentPage,
+      'pageSize': searchModel.pageSize
+    }
+
+    return this.http.post(Common.URL + this.realUrl, data).map((res: Response) => res.json());
+  }
+
+  //处理记录类型 1 普通台、2 包台
+  public formatType(value) {
+    if (value == 0) {
+      return this._translate.instant('msg.d3_table');
+    } else {
+      return this._translate.instant('msg.d3_livevip');
+    }
+  }
+
+  cardFlower = {'H':'♥','D':'♦','C':'♣','S':'♠'};
+  cardFlowerColor = {'H':'round-result-red','D':'round-result-red','C':'round-result-black','S':'round-result-black'};
+  cardNumber = {'1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'10','11':'J','12':'Q','13':'K'};
+  public formatter1(data){
+    let ret  = "";
+    if(data.roundResult ==undefined){
+      return ret;
+    }
+    let jsonObj = eval('(' + data.roundResult + ')');
+    if(data.gameId!=1){
+      return data.roundResult;
+    }else{
+      let result = jsonObj.result.split('');
+      ret = `${this.getDictName(['round_baccarat_first'],result[0])}${this.getDictName(['round_baccarat_second'],result[1])}${this.getDictName(['round_baccarat_third'],result[2])}`;
+      ret += ` (${this.getDictName('round_baccarat_first',1)}:${this.makeCard(jsonObj.b)} ${this.getDictName('round_baccarat_first',2)}:${this.makeCard(jsonObj.p)}) `;
+      return ret;
+    }
+  }
+
+  //花色与点数
+  private makeCard(result){
+    let ret = "";
+    //闲家花色与点数
+    for(let i=0;i<result.length;i++){
+      let card = result[i];
+      ret += `<span class="${this.cardFlowerColor[card.m]}">${this.cardFlower[card.m]}</span>:${this.cardNumber[card.n+""]}`;
+      if(i<result.length-1){
+        ret+= ","
+      }
+    }
+    return ret;
+  }
+
+  public getDictName(type,value){
+    let list = this.dicts[type];
+    for (let i=0;i<list.length;i++){
+      if(list[i].value==value){
+        return list[i].name;
+      }
+    }
+    return '';
+  }
+
+  //格式化金钱
+  public formatMoney(s, type) {
+    var fs = false;
+    if (s < 0) {
+      s = s*-1;
+      fs = true;
+    }
+    if (/[^0-9\.]/.test(s))
+      return "0";
+    if (s == null || s == "")
+      return "0";
+    s = s.toString().replace(/^(\d*)$/, "$1.");
+    s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+    s = s.replace(".", ",");
+    var re = /(\d)(\d{3},)/;
+    while (re.test(s))
+      s = s.replace(re, "$1,$2");
+    s = s.replace(/,(\d\d)$/, ".$1");
+    if (type == 0) {// 不带小数位(默认是有小数位)
+      var a = s.split(".");
+      if (a[1] == "00") {
+        s = a[0];
+      }
+    }
+    if (fs) {
+      s = "-" + s;
+    }
+    return s;
+  }
+}

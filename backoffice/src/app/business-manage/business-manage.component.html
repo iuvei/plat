@@ -1,0 +1,25 @@
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> {{title}}
+        </div>
+        <div class="card-block">
+          <form class="form-inline" (ngSubmit)="search()">
+            <div class="form-group">
+              <label for="exampleInputName2">{{ 'businessManager.merchantNo' | translate }}</label>
+              <input type="text" class="form-control input-xlarge" id="exampleInputName2" [(ngModel)]="searchBusinessManage.number" name="perName" [placeholder]="'businessManager.merchantNo' | translate">
+            </div>
+            <!--<div class="form-group">-->
+              <!--<label for="exampleInputEmail2">{{ 'businessManager.merchantIdentify' | translate }}</label>-->
+              <!--<input type="text" class="form-control input-xlarge" id="exampleInputEmail2" [(ngModel)]="searchBusinessManage.buHdr" name="perName" [placeholder]="'businessManager.merchantIdentify' | translate">-->
+            <!--</div>-->
+            &nbsp;&nbsp;
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+                <button type="button" class="btn btn-success" style="display: none">{{ 'common.create' | translate }}</button>
+            </div>
+          </form>
+            <div #adhost>
+              <business-table [userBusinessList]="userBusinessList" (onExpend)="searchChild($event)" (onClose)="clearAllTable()" (onHandle)="onTableHandle($event)"></business-table>
+            </div>
+        </div>
+      </div>

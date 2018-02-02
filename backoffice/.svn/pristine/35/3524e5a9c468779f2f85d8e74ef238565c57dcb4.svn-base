@@ -1,0 +1,31 @@
+import {Injectable} from "@angular/core";
+import {Response} from "@angular/http";
+import "rxjs/add/operator/map";
+import {CustomHttp} from "../../components/customhttp";
+import {Common} from "../../common/common";
+import {TranslateService} from "@ngx-translate/core";
+import {Dict} from "../../model/dict";
+import {CommonUtil} from "../../common/CommonUtil";
+
+@Injectable()
+export class RoomYLService {
+
+  private realUrl = '/roomYLReport/search';
+  private dicts ;
+
+  constructor(private http: CustomHttp, private _translate: TranslateService) {
+    this.dicts = JSON.parse(localStorage['loginUser']).dicts as Dict[];
+  }
+
+  public search(startTime:Date,endTime:Date,agentName:string,roomAgent:string,roomNumber:string,statisType:number) {
+    let data = {
+      'startTime': CommonUtil.formatDate(startTime),
+      'endTime': CommonUtil.formatDate(endTime),
+      'agentName': agentName,
+      'roomAgent': roomAgent,
+      "roomNumber":roomNumber,
+      "statisType":statisType
+    }
+    return this.http.post(Common.URL + this.realUrl, data).map((res: Response) => res.json());
+  }
+}

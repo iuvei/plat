@@ -1,0 +1,101 @@
+import {Component, OnDestroy, OnInit} from "@angular/core";
+import {PointInOutService} from "./pointinout.service";
+import {TranslateService} from "@ngx-translate/core";
+import {CommonUtil} from "../../common/CommonUtil";
+import {Common} from "../../common/common";
+
+@Component({
+  templateUrl: 'pointinout.component.html',
+  styleUrls: ['./pointinout.component.scss']
+})
+export class PointInOutComponent implements  OnInit,OnDestroy {
+  public totalItems: number = 0;
+  public currentPage: number = 1;
+  public pageSize: number = 50;
+  public maxSize: number = Common.MAX_PAGE_SIZE;
+  public deposit: number = 0;
+  public withwraw: number = 0;
+
+  public tableList: any[] = [];
+
+  //quert param
+  public startTime: Date = new Date();
+  public endTime: Date = new Date();
+  public loginName: string = '';
+
+  constructor(private pointInOutService: PointInOutService, private _translate: TranslateService) {
+  }
+
+  ngOnInit() {
+    let obj = JSON.parse(sessionStorage.getItem("pointinout-component"));
+    if(obj){
+      this.totalItems=obj.totalItems;
+      this.currentPage=obj.currentPage;
+      this.pageSize = obj.pageSize;
+      this.deposit = obj.deposit;
+      this.tableList = obj.tableList;
+      this.startTime = new Date(obj.startTime);
+      this.endTime = new Date(obj.endTime);
+      this.loginName = obj.loginName;
+    }else {
+      this.startTime = CommonUtil.getStartDate();
+      this.endTime = CommonUtil.getEndDate();
+    }
+    //this.search();
+  }
+
+
+  ngOnDestroy(): void {
+    let json = {
+      'totalItems':this.totalItems,
+      'currentPage':this.currentPage,
+      'pageSize':this.pageSize,
+      'deposit':this.deposit,
+      'withwraw':this.withwraw,
+      'tableList':this.tableList,
+      'startTime':this.startTime,
+      'endTime':this.endTime,
+      'loginName':this.loginName,
+      };
+    sessionStorage.setItem("pointinout-component",JSON.stringify(json));
+  }
+
+  public pageChanged(event: any): void {
+    this.currentPage =  event.page;
+    this.search();
+  }
+
+  public search() {
+    this.pointInOutService.search(CommonUtil.formatDate(this.startTime),CommonUtil.formatDate(this.endTime),
+      this.loginName, this.currentPage, this.pageSize).subscribe(
+      accountRecord => {
+        this.totalItems = accountRecord.data.total;
+        if(this.totalItems ==0){
+          this.tableList=[];
+          this.deposit =0;
+          this.withwraw =0;
+        }else{
+          this.tableList = this.dealListData(accountRecord.data.data);
+          this.deposit=this.pointInOutService.formatMoney(accountRecord.data.otherInfo.deposit, 2);
+          this.withwraw=this.pointInOutService.formatMoney(accountRecord.data.otherInfo.withwraw, 2);
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  dealListData(datas:any[]){
+    if(datas.length<=0){
+      return datas;
+    }
+    for(let data of datas){
+      //处理金额
+      data.amount = this.pointInOutService.formatMoney(data.amount, 2);
+      data.preBalance = this.pointInOutService.formatMoney(data.preBalance, 2);
+      data.afterAmount = this.pointInOutService.formatMoney(data.afterAmount, 2);
+    }
+    return datas;
+  }
+
+}

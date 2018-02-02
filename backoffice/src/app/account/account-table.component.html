@@ -1,0 +1,236 @@
+<style type="text/css">
+  .modal-dialog{
+    max-width: 600px !important;
+    top:20%;
+  }
+</style>
+<br>
+<table class="table table-bordered table-striped table-condensed table-hover table-sm">
+  <thead>
+  <tr>
+    <th>{{ 'businessManager.hierarchy' | translate }}：</th>
+    <th colspan="13">{{path}}</th>
+    <th class="text-center">
+      <a href="javascript:void(0)" (click)="refreshTableData()" tooltip="'common.refresh' | translate" ><i class="fa fa-refresh" aria-hidden="true"></i></a>&nbsp;&nbsp;
+    </th>
+  </tr>
+  <tr>
+    <th>{{ 'common.userName' | translate }}</th>
+    <th>{{ 'common.nickName' | translate }}</th>
+    <th>{{ 'common.level' | translate }}</th>
+    <th>{{ 'account.remainPoint' | translate }}</th>
+    <!-- <th>{{ 'account.electGameBalance' | translate }}</th>-->
+    <th>{{ 'account.hold' | translate }}</th>
+    <th>{{ 'account.registerDate' | translate }}</th>
+    <th>{{ 'account.isOnline' | translate }}</th>
+    <th>{{ 'account.accountStatus' | translate }}</th>
+    <th>{{ 'account.betStatus' | translate }}</th>
+    <th>{{ 'account.roomMember' | translate }}</th>
+    <th>{{ 'common.operation' | translate }}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let item of dataList">
+    <td>
+      <a *ngIf="item.type != 2" href="javascript:void(0);" (click)="searchUser(item)" >{{item.loginName}}</a>
+      <template [ngIf]="item.type == 2" >{{item.loginName}}</template>
+    </td>
+    <td>{{item.nickName}}</td>
+    <td [ngSwitch]="item.type">
+      <font *ngSwitchCase="1" color="#882a2a" >{{ 'account.agent' | translate }}</font>
+      <font *ngSwitchCase="2" color="#0059c8">{{ 'account.member' | translate }}</font>
+      <font *ngSwitchCase="3" color="#0059c8">{{ 'account.generalAgent' | translate }}</font>
+      <template ngSwitchDefault >--</template>
+    </td>
+    <td align="right">
+      <ng-container *ngIf="checkHasPermission('UpdateUserPoint')">
+        <template [ngIf]="currentUser.userType == 4 " >
+          <template [ngIf]="currentUser.source == 1 || currentUser.source == 3 " >
+            <a *ngIf="item.id != currentUser.id" href="javascript:void(0);" (click)="openModifyBalanceModal(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{item.balance}}</a>
+            <font *ngIf="item.id == currentUser.id" >{{item.balance}}</font>
+          </template>
+          <template [ngIf]="currentUser.source == 2" >
+            <a *ngIf="item.parentId == currentUser.id" href="javascript:void(0);" (click)="openModifyBalanceModal(item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{item.balance}}</a>
+            <font *ngIf="item.id == currentUser.id || (item.id != currentUser.id && item.parentId != currentUser.id) " >{{item.balance}}</font>
+          </template>
+        </template>
+        <template [ngIf]="currentUser.userType == 3 " >
+          <font>{{item.balance}}</font>
+        </template>
+      </ng-container>
+      <ng-container *ngIf="!checkHasPermission('UpdateUserPoint')">
+        <font>{{item.balance}}</font>
+      </ng-container>
+    </td>
+    <!--<td>{{item.slotbalance}}</td>-->
+    <td align="right">
+      <template [ngIf]="item.source == 1 || item.source == 3 " >
+        <font *ngIf="item.type == 1 || item.type == 3" color="red" >{{item.intoPercentage * 100 | number:'1.0-4'}}%</font>
+        <template [ngIf]="item.type == 2">--</template>
+      </template>
+      <template [ngIf]="item.source == 2" >
+        <font *ngIf="item.type == 3 || item.type == 1 " color="red" >{{item.intoPercentage * 100 | number:'1.0-4'}}%</font>
+        <template [ngIf]="item.type == 2">--</template>
+      </template>
+    </td>
+    <td>{{item.createTime}}</td>
+    <td [ngSwitch]="item.online">
+      <font *ngSwitchCase="true" color='#009600'>{{ 'common.online' | translate }}</font>
+      <font *ngSwitchDefault color='#283861'>{{ 'common.offline' | translate }}</font>
+    </td>
+    <td [ngSwitch]="item.userStatus">
+      <ng-container *ngIf="checkHasPermission('UpdateUserStatus')">
+        <template [ngIf]="currentUser.userType == 4 " >
+          <template [ngIf]="currentUser.source == 1 || currentUser.source == 3 " >
+            <a *ngIf="item.type == 1 || item.type == 3 " href="javascript:void(0);" (click)="openModifyAllAccountStatusModal(item)">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="1" color='green'>{{item.userStatus | AccountStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="red">{{item.userStatus | AccountStatusPipe | translate}}</font>
+            </a>
+            <a *ngIf="item.type == 2 " href="javascript:void(0);" (click)="modifyAccountStatus(item)" >
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="1" color='green'>{{item.userStatus | AccountStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="red">{{item.userStatus | AccountStatusPipe | translate}}</font>
+            </a>
+          </template>
+          <template [ngIf]="currentUser.source == 2" >
+            <a *ngIf="item.id == currentUser.id " href="javascript:void(0);" (click)="openModifyAllAccountStatusModal(item)">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="1" color='green'>{{item.userStatus | AccountStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="red">{{item.userStatus | AccountStatusPipe | translate}}</font>
+            </a>
+            <a *ngIf="item.parentId == currentUser.id " href="javascript:void(0);" (click)="modifyAccountStatus(item)" >
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="1" color='green'>{{item.userStatus | AccountStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="red">{{item.userStatus | AccountStatusPipe | translate}}</font>
+            </a>
+            <template [ngIf]="item.parentId != currentUser.id && item.id != currentUser.id" >
+              <font *ngSwitchCase="1" color='green'>{{item.userStatus | AccountStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="red">{{item.userStatus | AccountStatusPipe | translate}}</font>
+            </template>
+          </template>
+        </template>
+        <template [ngIf]="currentUser.userType == 3 " >
+          <font *ngSwitchCase="1" color='green'>{{item.userStatus | AccountStatusPipe | translate}}</font>
+          <font *ngSwitchDefault color="red">{{item.userStatus | AccountStatusPipe | translate}}</font>
+        </template>
+      </ng-container>
+      <ng-container *ngIf="!checkHasPermission('UpdateUserStatus')">
+        <font *ngSwitchCase="1" color='green'>{{item.userStatus | AccountStatusPipe | translate}}</font>
+        <font *ngSwitchDefault color="red">{{item.userStatus | AccountStatusPipe | translate}}</font>
+      </ng-container>
+    </td>
+    <td [ngSwitch]="item.isBet">
+      <ng-container *ngIf="checkHasPermission('UpdateUserStatus')">
+        <template [ngIf]="currentUser.userType == 4 " >
+          <template [ngIf]="currentUser.source == 1 || currentUser.source == 3 " >
+            <a *ngIf="item.type == 1 || item.type == 3" href="javascript:void(0);" (click)="openModifyAllBatStatusModal(item)">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="2" color='red'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color='green'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+            </a>
+            <a *ngIf="item.type == 2 " href="javascript:void(0);" (click)="modifyBetStatus(item)" >
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="2" color='red'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="green">{{item.isBet | AccountBetStatusPipe | translate}}</font>
+            </a>
+          </template>
+          <template [ngIf]="currentUser.source == 2" >
+            <a *ngIf="item.id == currentUser.id " href="javascript:void(0);" (click)="openModifyAllBatStatusModal(item)">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="2" color='red'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="green">{{item.isBet | AccountBetStatusPipe | translate}}</font>
+            </a>
+            <a *ngIf="item.parentId == currentUser.id " href="javascript:void(0);" (click)="modifyBetStatus(item)" >
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              <font *ngSwitchCase="2" color='red'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="green">{{item.isBet | AccountBetStatusPipe | translate}}</font>
+            </a>
+            <template [ngIf]="item.parentId != currentUser.id && item.id != currentUser.id">
+              <font *ngSwitchCase="2" color='red'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+              <font *ngSwitchDefault color="green">{{item.isBet | AccountBetStatusPipe | translate}}</font>
+            </template>
+          </template>
+        </template>
+        <template [ngIf]="currentUser.userType == 3 " >
+          <font *ngSwitchCase="2" color='red'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+          <font *ngSwitchDefault color="green">{{item.isBet | AccountBetStatusPipe | translate}}</font>
+        </template>
+      </ng-container>
+      <ng-container *ngIf="!checkHasPermission('UpdateUserStatus')">
+        <font *ngSwitchCase="2" color='red'>{{item.isBet | AccountBetStatusPipe | translate}}</font>
+        <font *ngSwitchDefault color="green">{{item.isBet | AccountBetStatusPipe | translate}}</font>
+      </ng-container>
+    </td>
+    <td>
+      <template [ngIf]="item.type == 2">
+        <span style="text-align: center;">--</span>
+      </template>
+      <template [ngIf]="item.type != 2">
+        <span style="text-align: right;">{{item.roomMember}}</span>
+      </template>
+    </td>
+    <td>
+      <template [ngIf]="currentUser.source == 1 || currentUser.source == 3 " >
+        <a *ngIf=" item.type != 2 && checkHasPermission('AddSubMember')" href="javascript:void(0);" (click)="openAddAccountModal(item)" ><i class="fa fa-user" aria-hidden="true"></i>{{ 'account.createLowerUser' | translate }}</a>
+        <a *ngIf=" item.id != currentUser.id  && checkHasPermission('EditProxyUserInfo')" href="javascript:void(0);" (click)="openModifyAccountModal(item)" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.editor' | translate }}</a>
+        <a *ngIf=" item.id != currentUser.id  && checkHasPermission('EditCashUserInfo')" href="javascript:void(0);" (click)="openModifyCashAccountModal(item)" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.editor' | translate }}</a>
+        <a *ngIf="checkHasPermission('UpdateSubPassword')" href="javascript:void(0);" (click)="openModifyPasswordModal(item)" ><i class="fa fa-key" aria-hidden="true"></i>{{ 'common.modifyPassword' | translate }}</a>
+      </template>
+      <template [ngIf]="currentUser.source == 2" >
+        <a *ngIf="(item.id == currentUser.id || item.parentId == currentUser.id) && checkHasPermission('EditProxyUserInfo') " href="javascript:void(0);" (click)="openModifyAccountModal(item)" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.editor' | translate }}</a>
+        <a *ngIf="(item.id == currentUser.id || item.parentId == currentUser.id) && checkHasPermission('EditCashUserInfo') " href="javascript:void(0);" (click)="openModifyCashAccountModal(item)" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.editor' | translate }}</a>
+        <a *ngIf="(item.id == currentUser.id || item.parentId == currentUser.id) && checkHasPermission('UpdateSubPassword')" href="javascript:void(0);" (click)="openModifyPasswordModal(item)" ><i class="fa fa-key" aria-hidden="true"></i>{{ 'common.modifyPassword' | translate }}</a>
+      </template>
+      <a *ngIf="item.type != 2 && checkHasPermission('PercentageConfig') && (item.parentId == currentUser.id || currentUser.id == 2)" href="javascript:void(0);" (click)="openSetPercentageConfig(item)" ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>{{ 'common.percentageConfig' | translate }}</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+
+<div bsModal #addPercentageConfig="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width: 300px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'account.priteroompercentage' | translate }}</h4>
+        <button type="button" class="close" (click)="addPercentageConfig.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (submit)="save()" >
+        <div class="modal-body">
+          <div class="form-group">
+            <input name="userId2" type="hidden" class="form-control" [(ngModel)]="newConfig.userId">
+            <label class="form-control-label">{{ 'account.waterpercentage' | translate }}:</label>
+            <div class="input-group">
+              <input *ngIf="!saveFlag" name="waterPercentage" type="number" class="form-control" [(ngModel)]="updateConfig.waterPercentage" disabled>
+              <input *ngIf="saveFlag" name="waterPercentage1" type="number" class="form-control" [(ngModel)]="newConfig.waterPercentage" required>
+              <div class="input-group-addon">% / {{parentConfig.waterPercentage*100 | number:'1.0-4'}}%</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label">{{ 'account.hedgepercentage' | translate }}:</label>
+            <div class="input-group">
+              <input *ngIf="!saveFlag" type="text" class="form-control" name="hedgePercentage" [(ngModel)]="updateConfig.hedgePercentage" disabled>
+              <input *ngIf="saveFlag" type="text" class="form-control" name="hedgePercentage1" [(ngModel)]="newConfig.hedgePercentage" required>
+              <div class="input-group-addon">% / {{parentConfig.hedgePercentage*100 | number:'1.0-4'}}%</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label">{{ 'account.nohedgepercentage' | translate }}:</label>
+            <div class="input-group">
+              <input *ngIf="!saveFlag" type="text" class="form-control" name="noHedgePercentage" [(ngModel)]="updateConfig.noHedgePercentage" disabled>
+              <input *ngIf="saveFlag" type="text" class="form-control" name="noHedgePercentage1" [(ngModel)]="newConfig.noHedgePercentage" required>
+              <div class="input-group-addon">% / {{parentConfig.noHedgePercentage*100 | number:'1.0-4'}}%</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button *ngIf="saveFlag" type="submit" class="btn btn-primary" >{{ 'common.save' | translate }}</button>
+          <button type="button" class="btn btn-secondary" (click)="addPercentageConfig.hide()">{{ 'common.close' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

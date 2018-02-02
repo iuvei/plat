@@ -1,0 +1,134 @@
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> {{title}}
+        </div>
+        <div class="card-block">
+          <form class="form-inline" (ngSubmit)="search()">
+            <div class="form-group">
+              <label for="searchStartTime">{{ 'common.date' | translate }}：</label>
+              <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="searchAccountRecord.startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+            </div>
+            <div class="form-group">
+              <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+              <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="searchAccountRecord.endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputName2">{{ 'AccountRecord.searchLoginName' | translate }}</label>
+              <input type="text" class="form-control input-xlarge" id="exampleInputName2" [(ngModel)]="searchAccountRecord.userName" name="userName" [placeholder]="'AccountRecord.searchLoginName' | translate">
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" (click)="search()">{{ 'common.search' | translate }}</button>
+                <button type="button" class="btn btn-success" style="display: none">{{ 'common.create' | translate }}</button>
+            </div>
+          </form>
+          <br>
+          <table class="table table-bordered table-striped table-condensed table-hover">
+            <thead>
+            <tr>
+              <th>{{ 'AccountRecord.id' | translate }}</th>
+              <th>{{ 'AccountRecord.time' | translate }}</th>
+              <th>{{ 'AccountRecord.loginName' | translate }}</th>
+              <th>{{ 'AccountRecord.type' | translate }}</th>
+              <th>{{ 'AccountRecord.preBalance' | translate }}</th>
+              <th>{{ 'AccountRecord.amount' | translate }}</th>
+              <th>{{ 'AccountRecord.afterAmount' | translate }}</th>
+              <th>{{ 'AccountRecord.execUser' | translate }}</th>
+              <th>{{ 'AccountRecord.businessKey' | translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of accountRecordList">
+              <td>{{item.id}}</td>
+              <td>{{item.time}}</td>
+              <td><abbr title="{{'AccountRecord.currentBalance' | translate}}：{{item.currentBalance | number:'1.2'}}"><span>{{item.loginName}}</span></abbr></td>
+              <td>
+                  <a *ngIf="item.type==3 || item.type==5 || item.type==4" href="javascript:void(0)" (click)="findBetOrderDetail(item.businessKey)">{{item.type | DictPipe:'account_record_type'}}</a>
+                  <span *ngIf="item.type==1 || item.type==2">{{item.type | DictPipe:'account_record_type'}}</span>
+              </td>
+              <td align="right"><span>{{item.preBalance | number:'1.2'}}</span></td>
+              <td align="right"><money [value]="item.amount"></money></td>
+              <td align="right"><span>{{item.afterAmount | number:'1.2'}}</span></td>
+              <td>{{item.execUser}}</td>
+              <td><a href="javascript:void(0)" (click)="findBetOrderDetail(item.businessKey)">{{item.businessKey}}</a></td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination [boundaryLinks]="true" translate  [firstText]="_translate.instant('common.firstPage')"  [lastText]="_translate.instant('common.lastPage')"
+                      [previousText]="_translate.instant('common.previousPage')" [nextText]="_translate.instant('common.nextPage')" [rotate]="false"
+                      [totalItems]="totalItems" [itemsPerPage]="searchAccountRecord.pageSize" [maxSize]="maxSize" [(ngModel)]="searchAccountRecord.currentPage" (numPages)="numPages = $event"
+                      (pageChanged)="pageChanged($event)"></pagination>
+        </div>
+      </div>
+
+
+      <!--订单详情对话框-->
+      <div bsModal #betOrderDetailDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">{{ 'AccountRecord.betOrderDetailTitle' | translate }}</h4>
+              <button type="button" class="close" (click)="betOrderDetailDialog.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label class="form-control-label">{{ 'transrecord.betNo' | translate }}：</label>
+                  <span>{{betOrderDetail.betId}}</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-control-label">{{ 'transrecord.roundGood' | translate }}：</label>
+                  <span>{{betOrderDetail.roundId}}</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-control-label">{{ 'transrecord.betTime' | translate }}：</label>
+                  <span>{{betOrderDetail.betTime}}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.sendTime' | translate }}：</label>
+                  <span>{{betOrderDetail.settleTime}}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.member' | translate }}：</label>
+                  <span>{{betOrderDetail.userName}}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'common.game' | translate }}：</label>
+                  <span>{{betOrderDetail.scenesType}}{{betOrderDetail.gameTable}}-{{betOrderDetail.betNum}}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.gameResult' | translate }}：</label>
+                  <div [innerHTML] = "betOrderDetail.roundResult"></div>
+                  <!--<div>和(闲:<span style="font-size:20px;color:#f00;">♦</span>8,<span style="font-size:20px;color:#000;">♠</span>7,<span style="font-size:20px;color:#000;">♣</span>6庄:<span style="font-size:20px;color:#000;">♠</span>8,<span style="font-size:20px;color:#000;">♣</span>3,<span style="font-size:20px;color:#000;">♠</span>K)</div>-->
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.betNumber' | translate }}：</label>
+                  <span>{{betOrderDetail.itemName}}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.betBeforeBalance' | translate }}：</label>
+                  <span>{{betOrderDetail.preBalance  | number:'1.2' }}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.betMoney' | translate }}：</label>
+                  <span>{{betOrderDetail.amount  | number:'1.2'}}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.winlost' | translate }}：</label>
+                  <span *ngIf = "betOrderDetail.winLostStatus == '1' "><font color='red'>{{ 'msg.d6_lose' | translate }}</font></span>
+                  <span *ngIf = "betOrderDetail.winLostStatus == '2' "><font color='green'>{{ 'msg.d6_win' | translate }}</font></span>
+                  <span *ngIf = "betOrderDetail.winLostStatus == '3' ">{{ 'msg.d6_tie' | translate }}</span>
+                  <span *ngIf = "betOrderDetail.winLostStatus == '0' ">{{ 'msg.d6_return' | translate }}</span>
+                </div>
+                <div class="form-group">
+                  <label>{{ 'transrecord.winlostMoney' | translate }}：</label>
+                  <money [value]="betOrderDetail.winLostAmount"></money>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="betOrderDetailDialog.hide()">{{ 'common.close' | translate }}</button>
+              </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+

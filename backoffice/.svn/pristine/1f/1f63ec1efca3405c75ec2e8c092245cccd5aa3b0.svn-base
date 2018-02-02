@@ -1,0 +1,81 @@
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> <div [innerHTML]="title"></div>
+  </div>
+  <div class="card-block" >
+    <form class="form-inline" (ngSubmit)="search()">
+      <div class="form-group">
+        <label for="searchStartTime">{{ 'common.date' | translate }}</label>
+        <p-calendar id="searchStartTime" name="searchStartTime" [(ngModel)]="searchModel.startTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+      <div class="form-group">
+        <label for="searchEndTime">{{ 'common.to' | translate }}</label>
+        <p-calendar id="searchEndTime" name="searchEndTime" [(ngModel)]="searchModel.endTime" dateFormat="yy-mm-dd" [showTime]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" required></p-calendar>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="margin-left9 btn btn-primary">{{ 'common.search' | translate }}</button>
+      </div>
+    </form>
+    <!-- 包房和对展示面板-->
+    <div #roomNoHedgePanel></div>
+  </div>
+</div>
+
+<div bsModal #betOrderDialog="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" [config]="{backdrop: 'static'}" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width:90%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'room.betOrderView' | translate }}</h4>
+        <button type="button" class="close" (click)="betOrderDialog.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered table-striped table-condensed mytable" style="width: 98%; font-size: 14px;">
+          <thead>
+          <tr>
+            <th width="8%">{{ 'transrecord.betNo' | translate }}</th>
+            <th width="12%">{{ 'transrecord.betTime' | translate }}</th>
+            <th width="12%">{{ 'transrecord.sendTime' | translate }}</th>
+            <th width="6%">{{ 'transrecord.member' | translate }}</th>
+            <th width="6%">{{ 'transrecord.roomNumber' | translate }}</th>
+            <th width="11%">{{ 'common.game' | translate }}</th>
+            <th>{{ 'transrecord.gameResult' | translate }}</th>
+            <th>{{ 'transrecord.betNumber' | translate }}</th>
+            <th width="4%" >{{ 'transrecord.betMoney' | translate }}</th>
+            <th width="2%" >{{ 'transrecord.winlost' | translate }}</th>
+            <th width="4%">{{ 'transrecord.winlostMoney' | translate }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of realTableList" style="line-height: 0.5rem" >
+            <td>{{item.betId}}</td>
+            <td>{{item.betTime}}</td>
+            <td>{{item.settleTime}}</td>
+            <td>{{item.userName}}</td>
+            <td>{{item.vTableId}}</td>
+            <td>{{item.gameName}}</td>
+            <td><div [innerHTML] = "makeRoundResult(item)"></div></td>
+            <td>{{item.itemName}}</td>
+            <td align="right">{{item.amount  | number:'1.2'}}</td>
+            <td>
+              <span *ngIf = "item.winLostStatus == '1' "><font color='red'>{{ 'msg.d6_lose' | translate }}</font></span>
+              <span *ngIf = "item.winLostStatus == '2' "><font color='green'>{{ 'msg.d6_win' | translate }}</font></span>
+              <span *ngIf = "item.winLostStatus == '3' ">{{ 'msg.d6_tie' | translate }}</span>
+              <span *ngIf = "item.winLostStatus == '0' ">{{ 'msg.d6_return' | translate }}</span>
+            </td>
+            <td align="right">
+              <money [value]="item.winLostAmount"></money>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="betOrderDialog.hide()">{{ 'common.close' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
